@@ -7,22 +7,25 @@ loadEnvConfig(process.cwd());
 
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/$/, "");
+const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
 const richMenuJson = process.argv[2] || "/Users/zeroline/Downloads/files/richmenu-pack/richmenu.json";
 const richMenuImage = process.argv[3] || "/Users/zeroline/Downloads/files/richmenu-pack/richmenu.png";
 
 if (!token) throw new Error("LINE_CHANNEL_ACCESS_TOKEN is required");
 if (!appUrl) throw new Error("NEXT_PUBLIC_APP_URL is required");
+if (!liffId) throw new Error("NEXT_PUBLIC_LIFF_ID is required");
 
 const raw = JSON.parse(fs.readFileSync(richMenuJson, "utf8"));
+const liffUrl = (route) => `https://liff.line.me/${liffId}${route}`;
 const actionMap = {
-  "/entry": "/line/entry",
-  "/wallet": "/line/wallet",
-  "/catch": "/line/catch",
-  "/ranking": "/ranking",
+  "/entry": liffUrl("/line/entry"),
+  "/wallet": liffUrl("/line/wallet"),
+  "/catch": liffUrl("/line/catch"),
+  "/ranking": `${appUrl}/ranking`,
 };
 
 const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking)/g, (_all, route) => {
-  return `${appUrl}${actionMap[route] || route}`;
+  return actionMap[route] || `${appUrl}${route}`;
 }));
 
 for (const area of menu.areas || []) {
