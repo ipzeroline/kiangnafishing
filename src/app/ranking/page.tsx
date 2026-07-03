@@ -110,8 +110,7 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
             <p className="ranking-eyebrow">Kiangna Fishing Lake Ranking</p>
             <h1>กระดานอันดับนักตกปลา</h1>
             <p>
-              สรุปผลงานเดือน {thaiMonthLabel(mk)} จากรายการที่ผ่านการตรวจสอบ พร้อมระดับสมาชิกและสัญลักษณ์ ranking
-              เพื่อให้การแข่งขันโปร่งใสและติดตามผลงานได้อย่างมืออาชีพ
+              ผลงานเดือน {thaiMonthLabel(mk)} จากรายการที่ตรวจสอบแล้ว พร้อมระดับสมาชิกและสัญลักษณ์ ranking
             </p>
           </div>
           <div className="ranking-hero-card">
