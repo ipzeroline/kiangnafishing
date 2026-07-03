@@ -1,0 +1,129 @@
+import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
+import { Locale, SitePage, pagePaths, siteContact, siteContent } from "@/lib/site";
+
+const navItems = ["home", "news", "articles", "gallery", "about", "contact"] as const;
+
+export default function SiteChrome({
+  locale,
+  page,
+  children,
+}: {
+  locale: Locale;
+  page: SitePage;
+  children: React.ReactNode;
+}) {
+  const content = siteContent[locale];
+  const otherLocale: Locale = locale === "th" ? "en" : "th";
+  const langLabel = otherLocale === "en" ? "English" : "ไทย";
+
+  return (
+    <div className="site-shell">
+      <header className="site-header">
+        <Link href={pagePaths.home[locale]} className="site-brand" aria-label={content.brand}>
+          <span className="site-brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 28" role="img">
+              <path d="M4 15.5c5.4-5.5 11.6-5.5 18 0-6.4 5.5-12.6 5.5-18 0Z" />
+              <path d="M21.5 15.5 25 12v7l-3.5-3.5Z" />
+              <circle cx="9.2" cy="14.5" r="1.15" />
+              <path d="M13 9.4c1.9-3.2 5.4-4.5 8.4-2.8" />
+            </svg>
+          </span>
+          <span>{content.brand}</span>
+        </Link>
+        <nav className="site-nav" aria-label="Primary navigation">
+          {navItems.map((item) => (
+            <Link key={item} href={pagePaths[item][locale]} className={item === page ? "active" : ""}>
+              {content.nav[item]}
+            </Link>
+          ))}
+        </nav>
+        <div className="site-actions">
+          <details className="mobile-menu">
+            <summary aria-label={locale === "th" ? "เปิดเมนู" : "Open menu"} title={locale === "th" ? "เมนู" : "Menu"}>
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            </summary>
+            <div className="mobile-menu-panel">
+              <div className="mobile-menu-section">
+                {navItems.map((item) => (
+                  <Link key={item} href={pagePaths[item][locale]}>{content.nav[item]}</Link>
+                ))}
+              </div>
+              <div className="mobile-menu-section">
+                <p>{locale === "th" ? "ช่องทางติดต่อ" : "Contact Channels"}</p>
+                <a href={siteContact.phoneHref}>{siteContact.phone}</a>
+                <a href={siteContact.emailHref}>{siteContact.email}</a>
+                <a href={siteContact.lineHref}>LINE {siteContact.lineId}</a>
+              </div>
+            </div>
+          </details>
+          <ThemeToggle label={locale === "th" ? "เปลี่ยนโหมดสี" : "Toggle color mode"} />
+          <Link
+            href={pagePaths[page][otherLocale]}
+            className="site-lang"
+            aria-label={otherLocale === "en" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
+            title={otherLocale === "en" ? "English" : "ภาษาไทย"}
+          >
+            <span aria-hidden="true">{otherLocale === "en" ? "🇬🇧" : "🇹🇭"}</span>
+            <b>{langLabel}</b>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M4 6l4 4 4-4" />
+            </svg>
+          </Link>
+        </div>
+      </header>
+      {children}
+      <footer className="site-footer">
+        <div className="site-footer-main">
+          <div className="site-footer-about">
+            <p className="site-footer-brand">{content.brand}</p>
+            <p>
+              {locale === "th"
+                ? "บ่อตกปลาพรีเมียมในพื้นที่พะเยาและดอกคำใต้ ให้บริการลูกค้าผ่าน LINE Official Account เพื่อให้เครดิต แต้ม คูปอง QR เข้าบ่อ และผลงานปลาอยู่ในระบบที่ตรวจสอบได้"
+                : "A premium fishing lake serving anglers through LINE Official Account, keeping credits, points, coupons, entry QR, and catch records organized and auditable."}
+            </p>
+            <div className="site-footer-line">
+              <span>LINE</span>
+              <strong>{siteContact.lineId}</strong>
+            </div>
+            <div className="site-footer-contact">
+              <a href={siteContact.phoneHref}>{siteContact.phone}</a>
+              <a href={siteContact.emailHref}>{siteContact.email}</a>
+            </div>
+          </div>
+          <div className="site-footer-col">
+            <h2>{locale === "th" ? "เว็บไซต์" : "Website"}</h2>
+            {navItems.map((item) => (
+              <Link key={item} href={pagePaths[item][locale]}>{content.nav[item]}</Link>
+            ))}
+          </div>
+          <div className="site-footer-col">
+            <h2>{locale === "th" ? "บริการผ่าน LINE" : "LINE Services"}</h2>
+            <p>{locale === "th" ? "QR เข้าบ่อ" : "Entry QR"}</p>
+            <p>{locale === "th" ? "เครดิตและแต้ม" : "Credits and points"}</p>
+            <p>{locale === "th" ? "ส่งผลงานปลาและดูอันดับ" : "Catch submissions and ranking"}</p>
+            <p>{locale === "th" ? "คูปองและรางวัล" : "Coupons and rewards"}</p>
+          </div>
+          <div className="site-footer-col">
+            <h2>{locale === "th" ? "ข้อมูลสำคัญ" : "Important Information"}</h2>
+            <Link href={pagePaths.privacy[locale]}>{locale === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}</Link>
+            <Link href={pagePaths.terms[locale]}>{locale === "th" ? "ข้อกำหนดและเงื่อนไข" : "Terms and Conditions"}</Link>
+            <Link href={pagePaths.contact[locale]}>{content.nav.contact}</Link>
+            <a href={siteContact.phoneHref}>{siteContact.phone}</a>
+            <a href={siteContact.emailHref}>{siteContact.email}</a>
+          </div>
+        </div>
+        <div className="site-footer-bottom">
+          <p>Copyright © 2026 {content.brand}. {locale === "th" ? "สงวนสิทธิ์ทุกประการ" : "All rights reserved."}</p>
+          <div>
+            <Link href={pagePaths.privacy[locale]}>{locale === "th" ? "ความเป็นส่วนตัว" : "Privacy"}</Link>
+            <Link href={pagePaths.terms[locale]}>{locale === "th" ? "เงื่อนไข" : "Terms"}</Link>
+            <span>{locale === "th" ? "ไทย" : "English"}</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
