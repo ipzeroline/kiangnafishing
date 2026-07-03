@@ -6,7 +6,7 @@ import { monthKeyBKK } from "@/lib/date";
 
 export async function POST(req: Request) {
   const user = await getSessionUser();
-  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE OA" }, { status: 401 });
+  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   const species = String(body.species || "").trim();
   const weightKg = Number(body.weightKg || 0);

@@ -191,8 +191,8 @@ export default function MemberManager({
       <div className="rounded-lg bg-white shadow-sm ring-1 ring-line">
         <div className="flex flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="font-display text-lg font-semibold text-deep">สมาชิกจาก LINE OA</h3>
-            <p className="text-sm text-dim">ข้อมูลหลักจะผูกกับ LINE ID เมื่อสมาชิกแอด LINE และใช้งาน Rich Menu</p>
+            <h3 className="font-display text-lg font-semibold text-deep">สมาชิกจาก LINE</h3>
+            <p className="text-sm text-dim">ข้อมูลหลักจะผูกกับ LINE ID เมื่อสมาชิกแอด LINE และใช้งาน เมนูบริการ</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={hasDuplicate
@@ -324,7 +324,7 @@ export default function MemberManager({
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-display text-xl font-semibold text-deep">แก้ไขสมาชิก</h3>
-                <p className="text-sm text-dim">แก้ได้เฉพาะข้อมูลแสดงผลและสถานะ ข้อมูล LINE จะมาจาก LINE OA</p>
+                <p className="text-sm text-dim">แก้ได้เฉพาะข้อมูลแสดงผลและสถานะ ข้อมูล LINE จะมาจาก LINE</p>
               </div>
               <button type="button" onClick={closeModal} className="rounded-lg bg-mist px-3 py-1.5 text-sm font-semibold text-deep">ปิด</button>
             </div>

@@ -7,7 +7,7 @@ type PendingTopup = { id: string; payAmount: number; getAmount: number; createdA
 
 export async function GET() {
   const user = await getSessionUser();
-  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE OA" }, { status: 401 });
+  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE" }, { status: 401 });
   const pending = await queryOne<PendingTopup>(
     "SELECT id, payAmount, getAmount, createdAt FROM topups WHERE userId=? AND status='PENDING' ORDER BY createdAt DESC LIMIT 1",
     [user.id]
@@ -22,7 +22,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const user = await getSessionUser();
-  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE OA" }, { status: 401 });
+  if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   const payAmount = Math.floor(Number(body.payAmount || 0));
   if (![100, 300, 500, 1000, 2000].includes(payAmount)) {

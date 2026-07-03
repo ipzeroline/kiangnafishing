@@ -45,7 +45,7 @@ export default async function MemberPage() {
               )}
               <div className="min-w-0">
                 <p className="truncate font-semibold">{user.alias || user.name}</p>
-                <p className="mt-1 truncate text-sm text-white/55">{user.lineDisplayName || "LINE Official Account"}</p>
+                <p className="mt-1 truncate text-sm text-white/55">{user.lineDisplayName || "LINE"}</p>
               </div>
             </div>
             <p className="text-sm text-white/60">รหัสสมาชิก</p>
@@ -61,7 +61,7 @@ export default async function MemberPage() {
               </div>
               <div className="rounded-lg bg-white/10 p-3">
                 <p className="text-white/55">LINE</p>
-                <p className="mt-1 font-semibold">{user.lineDisplayName || "อยู่ระหว่างเชื่อมต่อจาก LINE OA"}</p>
+                <p className="mt-1 font-semibold">{user.lineDisplayName || "อยู่ระหว่างเชื่อมต่อจาก LINE"}</p>
               </div>
             </div>
           </aside>
@@ -88,7 +88,7 @@ export default async function MemberPage() {
               <h2 className="font-display text-lg font-semibold text-deep">รายการบริการของสมาชิก</h2>
               <p className="mt-2 text-sm leading-relaxed text-dim">
                 QR เข้าบ่อ การเติมเครดิต การส่งผลงานปลา การดูอันดับ ตารางลงปลา และการติดต่อเจ้าหน้าที่
-                ดำเนินการผ่าน Rich Menu ใน LINE Official Account เพื่อให้ข้อมูลสมาชิกผูกกับบัญชี LINE และลดความเสี่ยงจากรายการผิดบัญชี
+                ดำเนินการผ่านเมนูบริการใน LINE เพื่อให้ข้อมูลสมาชิกผูกกับบัญชี LINE และลดความเสี่ยงจากรายการผิดบัญชี
               </p>
             </section>
           </div>

@@ -31,11 +31,11 @@ export default async function WalletPage() {
           <div className="rounded-card bg-white p-6 shadow-sm ring-1 ring-line">
             <h2 className="font-display text-xl font-semibold text-deep">กระเป๋าเงิน</h2>
             <p className="mt-2 text-sm leading-relaxed text-dim">
-              หน้านี้ใช้ดูยอดคงเหลือและประวัติเท่านั้น การเติมเงินต้องทำผ่าน LINE Official Account จาก Rich Menu เพื่อผูกธุรกรรมกับบัญชี LINE ของสมาชิก
+              หน้านี้ใช้ดูยอดคงเหลือและประวัติเท่านั้น การเติมเงินต้องทำผ่าน LINE จากเมนูบริการ เพื่อผูกธุรกรรมกับบัญชี LINE ของสมาชิก
             </p>
             <div className="mt-5 rounded-lg border border-line bg-mist p-4">
               <p className="text-sm font-semibold text-deep">เมนูใน LINE</p>
-              <p className="mt-1 text-sm text-dim">เปิดปุ่ม “กระเป๋าเงิน” ใน Rich Menu เพื่อเติมเงินหรือแจ้งสลิป</p>
+              <p className="mt-1 text-sm text-dim">เปิดปุ่ม “กระเป๋าเงิน” ในเมนูบริการเพื่อเติมเงินหรือแจ้งสลิป</p>
             </div>
           </div>
         </section>

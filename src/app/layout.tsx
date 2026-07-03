@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "เคียงนา Fishing Lake",
     template: "%s",
   },
-  description: "เคียงนา Fishing Lake บ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ และบ่อตกปลาใหญ่พะเยา พร้อมบริการผ่าน LINE Official Account",
+  description: "เคียงนา Fishing Lake บ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ และบ่อตกปลาใหญ่พะเยา พร้อมบริการผ่าน LINE",
   applicationName: "เคียงนา Fishing Lake",
   keywords: [
     "เคียงนา Fishing Lake",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "บ่อตกปลาใหญ่ดอกคำใต้",
     "Fishing Lake Thailand",
     "บ่อตกปลาพรีเมียม",
-    "LINE Official Account",
+    "LINE",
   ],
   authors: [{ name: "เคียงนา Fishing Lake" }],
   creator: "เคียงนา Fishing Lake",

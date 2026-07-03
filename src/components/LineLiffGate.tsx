@@ -7,6 +7,7 @@ declare global {
   interface Window {
     liff?: {
       init(input: { liffId: string }): Promise<void>;
+      isInClient(): boolean;
       isLoggedIn(): boolean;
       login(input?: { redirectUri?: string }): void;
       getProfile(): Promise<{ userId: string; displayName: string; pictureUrl?: string }>;
@@ -28,6 +29,10 @@ export default function LineLiffGate({ children }: { children: React.ReactNode }
       }
       if (!window.liff) return;
       await window.liff.init({ liffId });
+      if (!window.liff.isInClient()) {
+        setError("กรุณาเปิดเมนูนี้ผ่าน LINEเท่านั้น");
+        return;
+      }
       if (!window.liff.isLoggedIn()) {
         window.liff.login({ redirectUri: window.location.href });
         return;

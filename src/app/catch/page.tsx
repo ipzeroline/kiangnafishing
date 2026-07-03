@@ -23,9 +23,9 @@ export default async function CatchPage() {
       <TopBar title="ส่งผลงานปลา / อัลบั้มผลงาน" back />
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:px-8 xl:grid-cols-[420px_minmax(0,1fr)]">
         <aside className="rounded-card bg-white p-6 shadow-sm ring-1 ring-line">
-          <h2 className="font-display text-xl font-semibold text-deep">ส่งผลงานปลาผ่าน LINE OA</h2>
+          <h2 className="font-display text-xl font-semibold text-deep">ส่งผลงานปลาผ่าน LINE</h2>
           <p className="mt-2 text-sm leading-relaxed text-dim">
-            การส่งผลงานปลาให้ใช้เมนู “ส่งผลงานปลา” ใน Rich Menu เท่านั้น เพื่อให้รูปภาพและข้อมูลรายการผูกกับ LINE ID ของสมาชิกโดยตรง
+            การส่งผลงานปลาให้ใช้เมนู “ส่งผลงานปลา” ในเมนูบริการเท่านั้น เพื่อให้รูปภาพและข้อมูลรายการผูกกับ LINE ID ของสมาชิกโดยตรง
           </p>
           <div className="mt-5 rounded-lg border border-line bg-mist p-4 text-sm text-dim">
             กรุณาถ่ายรูปคู่ตาชั่งให้ชัดเจนแล้วส่งผ่าน LINE เจ้าหน้าที่จะตรวจสอบและยืนยันเข้าสู่กระดานอันดับ

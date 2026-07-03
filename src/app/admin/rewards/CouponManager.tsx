@@ -132,7 +132,7 @@ export default function CouponManager({ coupons, redemptions }: { coupons: Coupo
         <form onSubmit={redeemCoupon} className="rounded-lg bg-deep p-5 text-white shadow-sm">
           <p className="text-sm text-white/62">Quick Reward</p>
           <h3 className="mt-2 font-display text-2xl font-semibold">แลกคูปองให้สมาชิก</h3>
-          <p className="mt-2 text-sm text-white/65">ใช้ที่หน้าเคาน์เตอร์เมื่อสมาชิกแจ้งรหัสคูปองจาก LINE OA หรือกิจกรรม</p>
+          <p className="mt-2 text-sm text-white/65">ใช้ที่หน้าเคาน์เตอร์เมื่อสมาชิกแจ้งรหัสคูปองจาก LINE หรือกิจกรรม</p>
           <div className="mt-5 space-y-3">
             <input value={redeem.memberCode} onChange={(e) => setRedeem((v) => ({ ...v, memberCode: e.target.value.toUpperCase() }))}
               placeholder="รหัสสมาชิก เช่น FP0001"

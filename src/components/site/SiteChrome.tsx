@@ -81,8 +81,8 @@ export default function SiteChrome({
             <p className="site-footer-brand">{content.brand}</p>
             <p>
               {locale === "th"
-                ? "บ่อตกปลาพรีเมียมในพื้นที่พะเยาและดอกคำใต้ ให้บริการลูกค้าผ่าน LINE Official Account เพื่อให้เครดิต แต้ม คูปอง QR เข้าบ่อ และผลงานปลาอยู่ในระบบที่ตรวจสอบได้"
-                : "A premium fishing lake serving anglers through LINE Official Account, keeping credits, points, coupons, entry QR, and catch records organized and auditable."}
+                ? "บ่อตกปลาพรีเมียมในพื้นที่พะเยาและดอกคำใต้ ให้บริการลูกค้าผ่าน LINE เพื่อให้เครดิต แต้ม คูปอง QR เข้าบ่อ และผลงานปลาอยู่ในระบบที่ตรวจสอบได้"
+                : "A premium fishing lake serving anglers through the LINE account, keeping credits, points, coupons, entry QR, and catch records organized and auditable."}
             </p>
             <div className="site-footer-line">
               <span>LINE</span>

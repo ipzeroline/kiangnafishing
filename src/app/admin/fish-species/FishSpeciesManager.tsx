@@ -137,7 +137,7 @@ export default function FishSpeciesManager({ species }: { species: SpeciesRow[] 
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-display text-xl font-semibold text-deep">{editing ? "แก้ไขชนิดปลา" : "เพิ่มชนิดปลา"}</h3>
-                <p className="text-sm text-dim">ข้อมูลนี้ใช้ควบคุมมาตรฐานรายการปลาที่ส่งผ่าน LINE OA</p>
+                <p className="text-sm text-dim">ข้อมูลนี้ใช้ควบคุมมาตรฐานรายการปลาที่ส่งผ่าน LINE</p>
               </div>
               <button type="button" onClick={() => setModalOpen(false)} className="rounded-lg bg-mist px-3 py-1.5 text-sm font-semibold text-deep">ปิด</button>
             </div>

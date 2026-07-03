@@ -155,6 +155,7 @@ export default async function AdminPage() {
           <Link href="/admin/members" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">สมาชิก</Link>
           <Link href="/admin/credits" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">เครดิต / แต้ม</Link>
           <Link href="/admin/fish-species" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ชนิดปลา</Link>
+          <Link href="/admin/fish" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ผลงานปลา</Link>
           <Link href="/admin/member-ranking" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Ranking สมาชิก</Link>
           {user.role === "ADMIN" && <Link href="/admin/ranking-levels" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Level Ranking</Link>}
           <Link href="/admin/events" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Event</Link>
@@ -211,7 +212,7 @@ export default async function AdminPage() {
               <p className="mt-2 text-sm text-dim">เพิ่ม แก้ไข และกำหนดสิทธิ์ผู้ใช้งานระบบ</p>
             </Link>
             <Link href="/admin/members" className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-line">
-              <p className="text-sm text-dim">สมาชิก LINE OA</p>
+              <p className="text-sm text-dim">สมาชิก LINE</p>
               <p className="mt-2 font-display text-xl font-semibold text-deep">{members.toLocaleString("th-TH")} บัญชีสมาชิก</p>
               <p className="mt-2 text-sm text-dim">ดูข้อมูล LINE, นามแฝง, สถานะ และหมายเหตุ</p>
             </Link>
