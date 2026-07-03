@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { uploadImageToCloudinary } from "./cloudinary";
 import { execute, nextMemberCode, queryOne, uid, type User } from "./db";
 
 const LINE_API = "https://api.line.me";
@@ -78,11 +79,17 @@ export async function verifyLineIdToken(idToken: string): Promise<LineProfile | 
 }
 
 export async function upsertLineMember(profile: LineProfile): Promise<User> {
+  const cloudinaryPictureUrl = profile.pictureUrl
+    ? await uploadImageToCloudinary(profile.pictureUrl, {
+        folder: "kiangna/members",
+        publicId: profile.userId,
+      }).catch(() => profile.pictureUrl)
+    : null;
   const existing = await queryOne<User>("SELECT * FROM users WHERE lineUserId=?", [profile.userId]);
   if (existing) {
     await execute("UPDATE users SET lineDisplayName=?, linePictureUrl=?, status='ACTIVE' WHERE id=?", [
       profile.displayName,
-      profile.pictureUrl || null,
+      cloudinaryPictureUrl,
       existing.id,
     ]);
     return (await queryOne<User>("SELECT * FROM users WHERE id=?", [existing.id]))!;
@@ -93,7 +100,7 @@ export async function upsertLineMember(profile: LineProfile): Promise<User> {
   const phoneKey = `L${profile.userId.slice(-19)}`;
   await execute(
     "INSERT INTO users (id, memberCode, name, phone, lineUserId, lineDisplayName, linePictureUrl, role, status) VALUES (?,?,?,?,?,?,?,?, 'ACTIVE')",
-    [id, memberCode, profile.displayName || "LINE Member", phoneKey, profile.userId, profile.displayName, profile.pictureUrl || null, "MEMBER"]
+    [id, memberCode, profile.displayName || "LINE Member", phoneKey, profile.userId, profile.displayName, cloudinaryPictureUrl, "MEMBER"]
   );
   await execute(
     "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('lineUserId', ?, 'displayName', ?))",

@@ -4,9 +4,28 @@ import { useState } from "react";
 import LineLiffGate from "@/components/LineLiffGate";
 
 export default function CatchClient({ species }: { species: string[] }) {
-  const [form, setForm] = useState({ species: species[0] || "", weightKg: "", imagePath: "" });
+  const [form, setForm] = useState({ species: species[0] || "", weightKg: "", imagePath: "", imageData: "" });
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+
+  function readImage(file: File | undefined) {
+    if (!file) {
+      setForm((value) => ({ ...value, imageData: "" }));
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+      return;
+    }
+    if (file.size > 7 * 1024 * 1024) {
+      setMessage("ขนาดรูปภาพต้องไม่เกิน 7MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setForm((value) => ({ ...value, imageData: String(reader.result || ""), imagePath: "" }));
+    reader.onerror = () => setMessage("อ่านไฟล์รูปภาพไม่สำเร็จ");
+    reader.readAsDataURL(file);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,7 +42,7 @@ export default function CatchClient({ species }: { species: string[] }) {
       setMessage(data.error || "ส่งผลงานปลาไม่สำเร็จ");
       return;
     }
-    setForm({ species: species[0] || "", weightKg: "", imagePath: "" });
+    setForm({ species: species[0] || "", weightKg: "", imagePath: "", imageData: "" });
     setMessage("ส่งผลงานปลาเรียบร้อยแล้ว กรุณารอเจ้าหน้าที่ตรวจสอบ");
   }
 
@@ -47,9 +66,15 @@ export default function CatchClient({ species }: { species: string[] }) {
                 className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond" />
             </label>
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">ลิงก์รูปภาพ (ถ้ามี)</span>
+              <span className="mb-1 block text-sm font-medium text-ink">รูปภาพผลงานปลา</span>
+              <input type="file" accept="image/*" capture="environment" onChange={(e) => readImage(e.target.files?.[0])}
+                className="w-full rounded-lg border border-line px-3 py-3 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-mist file:px-3 file:py-2 file:font-semibold file:text-deep focus:border-pond" />
+              {form.imageData && <span className="mt-2 block text-xs font-medium text-pond">เลือกรูปภาพแล้ว ระบบจะบันทึกไว้ที่ Cloudinary</span>}
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-ink">ลิงก์รูปภาพสำรอง (ถ้ามี)</span>
               <input value={form.imagePath} onChange={(e) => setForm((v) => ({ ...v, imagePath: e.target.value }))}
-                placeholder="หากไม่ระบุ ระบบจะใช้รูปมาตรฐาน"
+                placeholder="ใช้เมื่อไม่สะดวกอัปโหลดไฟล์"
                 className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond" />
             </label>
           </div>

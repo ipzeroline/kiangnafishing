@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { execute, queryOne, uid } from "@/lib/db";
 import { monthKeyBKK } from "@/lib/date";
 
@@ -9,7 +10,7 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const species = String(body.species || "").trim();
   const weightKg = Number(body.weightKg || 0);
-  const imagePath = String(body.imagePath || "/fish-placeholder.svg").trim();
+  const imageInput = String(body.imageData || body.imagePath || "/fish-placeholder.svg").trim();
   if (species.length < 2) return NextResponse.json({ error: "กรุณาเลือกชนิดปลา" }, { status: 400 });
   if (!Number.isFinite(weightKg) || weightKg <= 0 || weightKg > 10000) {
     return NextResponse.json({ error: "น้ำหนักปลาไม่ถูกต้อง" }, { status: 400 });
@@ -21,6 +22,10 @@ export async function POST(req: Request) {
   }
 
   const id = uid();
+  const imagePath = await uploadImageToCloudinary(imageInput || "/fish-placeholder.svg", {
+    folder: "kiangna/catches",
+    publicId: id,
+  }).catch(() => imageInput || "/fish-placeholder.svg");
   await execute(
     "INSERT INTO catches (id, userId, species, weightKg, imagePath, status, monthKey) VALUES (?,?,?,?,?,'PENDING',?)",
     [id, user.id, species, weightKg, imagePath || "/fish-placeholder.svg", monthKeyBKK()]
