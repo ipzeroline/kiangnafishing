@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { query as dbQuery, type RankingLevel } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 import { monthKeyBKK, thaiMonthLabel } from "@/lib/date";
 import { levelForScore } from "@/lib/ranking";
 import TopBar from "@/components/TopBar";
@@ -57,7 +58,6 @@ async function queryLeaderboard(board: string, mk: string): Promise<Row[]> {
     ) metric ON metric.userId=u.id
     WHERE u.role='MEMBER' AND COALESCE(metric.${orderField},0) > 0
     ORDER BY COALESCE(metric.${orderField},0) DESC, score DESC
-    LIMIT 50
   `, [mk, mk]);
 }
 
@@ -91,15 +91,22 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
   const activeBoard = BOARDS.some((b) => b.key === board) ? board : "big";
   const boardMeta = BOARDS.find((b) => b.key === activeBoard) || BOARDS[0];
   const mk = monthKeyBKK();
-  const [{ rows, unit }, levels] = await Promise.all([
+  const [user, boardResult, levels] = await Promise.all([
+    getSessionUser(),
     queryBoard(activeBoard, mk),
     dbQuery<RankingLevel>("SELECT * FROM ranking_levels WHERE status='ACTIVE' ORDER BY minScore ASC"),
   ]);
+  const { rows: allRows, unit } = boardResult;
+  const rows = allRows.slice(0, 50);
   const [champion, runnerUp, thirdPlace] = rows;
   const podium = [runnerUp, champion, thirdPlace].filter(Boolean);
   const restRows = rows.slice(3);
-  const totalValue = rows.reduce((sum, row) => sum + Number(row.value || 0), 0);
-  const totalScore = rows.reduce((sum, row) => sum + Number(row.score || 0), 0);
+  const totalValue = allRows.reduce((sum, row) => sum + Number(row.value || 0), 0);
+  const totalScore = allRows.reduce((sum, row) => sum + Number(row.score || 0), 0);
+  const myIndex = user?.role === "MEMBER" ? allRows.findIndex((row) => row.memberCode === user.memberCode) : -1;
+  const myRow = myIndex >= 0 ? allRows[myIndex] : null;
+  const myScore = Number(myRow?.score ?? (user?.role === "MEMBER" ? user.points * 0.05 : 0));
+  const myLevel = user?.role === "MEMBER" ? levelForScore(myScore, levels) : null;
   const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 1 });
 
   return (
@@ -109,9 +116,9 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
         <section className="ranking-hero">
           <div className="ranking-hero-copy">
             <p className="ranking-eyebrow">Kiangna Fishing Lake Ranking</p>
-            <h1>กระดานอันดับนักตกปลา</h1>
+            <h1>กระดานอันดับ</h1>
             <p>
-              ผลงานเดือน {thaiMonthLabel(mk)} จากรายการที่ตรวจสอบแล้ว พร้อมระดับสมาชิกและสัญลักษณ์ ranking
+              ผลงานนักตกปลาเดือน {thaiMonthLabel(mk)} จากรายการที่ตรวจสอบแล้ว พร้อมระดับสมาชิกและสัญลักษณ์ ranking
             </p>
           </div>
           <div className="ranking-hero-card">
@@ -130,10 +137,36 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
           ))}
         </section>
 
+        {user?.role === "MEMBER" && (
+          <section className="ranking-my-card" aria-label="อันดับและระดับของฉัน">
+            <div className="ranking-my-profile">
+              <PublicAvatar src={user.linePictureUrl} name={user.alias || user.name} className="ranking-my-avatar" />
+              <div className="min-w-0">
+                <p>ข้อมูลของฉัน</p>
+                <h2>{user.alias || user.name}</h2>
+                <span>{user.memberCode}</span>
+              </div>
+            </div>
+            <div className="ranking-my-stats">
+              <div>
+                <p>อันดับกระดานนี้</p>
+                <strong>{myIndex >= 0 ? `#${(myIndex + 1).toLocaleString("th-TH")}` : "ยังไม่มีอันดับ"}</strong>
+                <span>{myRow ? `${nf.format(Number(myRow.value))} ${unit}` : "ยังไม่มีผลงานในเดือนนี้"}</span>
+              </div>
+              <div>
+                <p>Level ของฉัน</p>
+                <strong>{myLevel?.name || "-"}</strong>
+                <span>{myLevel ? `${myLevel.symbol} · คะแนน ${nf.format(myScore)}` : "ยังไม่มีระดับ"}</span>
+              </div>
+            </div>
+            {myLevel && <RankingLevelBadge level={myLevel} size="md" />}
+          </section>
+        )}
+
         <section className="ranking-summary-grid" aria-label="สรุปอันดับ">
           <article>
             <p>ผู้มีผลงาน</p>
-            <strong>{rows.length.toLocaleString("th-TH")}</strong>
+            <strong>{allRows.length.toLocaleString("th-TH")}</strong>
             <span>แสดงสูงสุด 50 อันดับ</span>
           </article>
           <article>

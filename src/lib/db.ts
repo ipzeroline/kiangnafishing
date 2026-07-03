@@ -58,6 +58,7 @@ export type FishCatch = {
   species: string;
   weightKg: number;
   imagePath: string;
+  caption: string | null;
   status: string;
   monthKey: string;
   createdAt: string;
@@ -271,6 +272,7 @@ async function initSchema(client: DbClient) {
       species VARCHAR(120) NOT NULL,
       weightKg DECIMAL(8,2) NOT NULL,
       imagePath VARCHAR(255) NOT NULL,
+      caption VARCHAR(180) NULL,
       status ENUM('PENDING','VERIFIED','REJECTED') NOT NULL DEFAULT 'PENDING',
       monthKey VARCHAR(7) NOT NULL,
       createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -280,6 +282,7 @@ async function initSchema(client: DbClient) {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
   await client.query("ALTER TABLE catches MODIFY imagePath VARCHAR(500) NOT NULL");
+  await client.query("ALTER TABLE catches ADD COLUMN caption VARCHAR(180) NULL").catch(() => undefined);
 
   await client.query(`
     CREATE TABLE IF NOT EXISTS topups (

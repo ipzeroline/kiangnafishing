@@ -10,7 +10,8 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const species = String(body.species || "").trim();
   const weightKg = Number(body.weightKg || 0);
-  const imageInput = String(body.imageData || body.imagePath || "/fish-placeholder.svg").trim();
+  const caption = String(body.caption || "").trim().slice(0, 180);
+  const imageInput = String(body.imageData || "/fish-placeholder.svg").trim();
   if (species.length < 2) return NextResponse.json({ error: "กรุณาเลือกชนิดปลา" }, { status: 400 });
   if (!Number.isFinite(weightKg) || weightKg <= 0 || weightKg > 10000) {
     return NextResponse.json({ error: "น้ำหนักปลาไม่ถูกต้อง" }, { status: 400 });
@@ -27,12 +28,12 @@ export async function POST(req: Request) {
     publicId: id,
   }).catch(() => imageInput || "/fish-placeholder.svg");
   await execute(
-    "INSERT INTO catches (id, userId, species, weightKg, imagePath, status, monthKey) VALUES (?,?,?,?,?,'PENDING',?)",
-    [id, user.id, species, weightKg, imagePath || "/fish-placeholder.svg", monthKeyBKK()]
+    "INSERT INTO catches (id, userId, species, weightKg, imagePath, caption, status, monthKey) VALUES (?,?,?,?,?,?,'PENDING',?)",
+    [id, user.id, species, weightKg, imagePath || "/fish-placeholder.svg", caption || null, monthKeyBKK()]
   );
   await execute(
-    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'weightKg', ?))",
-    [uid(), user.id, "LINE_CATCH_SUBMIT", "catches", id, species, weightKg]
+    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'weightKg', ?, 'caption', ?))",
+    [uid(), user.id, "LINE_CATCH_SUBMIT", "catches", id, species, weightKg, caption]
   );
   return NextResponse.json({ ok: true, catchId: id });
 }

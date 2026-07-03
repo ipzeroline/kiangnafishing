@@ -48,6 +48,7 @@ export default async function CatchPage() {
                 <img src={c.imagePath} alt={`${c.species} ${c.weightKg} กก.`} className="h-40 w-full bg-mist object-cover" />
                 <figcaption className="p-3">
                   <p className="text-sm font-semibold text-ink">{c.species} · {c.weightKg} กก.</p>
+                  {c.caption && <p className="mt-1 text-sm leading-relaxed text-dim">{c.caption}</p>}
                   <div className="mt-1 flex items-center justify-between">
                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS[c.status]?.cls}`}>
                       {STATUS[c.status]?.label}

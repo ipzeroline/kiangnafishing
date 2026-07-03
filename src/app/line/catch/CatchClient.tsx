@@ -4,7 +4,7 @@ import { useState } from "react";
 import LineLiffGate from "@/components/LineLiffGate";
 
 export default function CatchClient({ species }: { species: string[] }) {
-  const [form, setForm] = useState({ species: species[0] || "", weightKg: "", imagePath: "", imageData: "" });
+  const [form, setForm] = useState({ species: species[0] || "", weightKg: "", caption: "", imageData: "" });
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -22,7 +22,7 @@ export default function CatchClient({ species }: { species: string[] }) {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => setForm((value) => ({ ...value, imageData: String(reader.result || ""), imagePath: "" }));
+    reader.onload = () => setForm((value) => ({ ...value, imageData: String(reader.result || "") }));
     reader.onerror = () => setMessage("อ่านไฟล์รูปภาพไม่สำเร็จ");
     reader.readAsDataURL(file);
   }
@@ -42,7 +42,7 @@ export default function CatchClient({ species }: { species: string[] }) {
       setMessage(data.error || "ส่งผลงานปลาไม่สำเร็จ");
       return;
     }
-    setForm({ species: species[0] || "", weightKg: "", imagePath: "", imageData: "" });
+    setForm({ species: species[0] || "", weightKg: "", caption: "", imageData: "" });
     setMessage("ส่งผลงานปลาเรียบร้อยแล้ว กรุณารอเจ้าหน้าที่ตรวจสอบ");
   }
 
@@ -72,10 +72,12 @@ export default function CatchClient({ species }: { species: string[] }) {
               {form.imageData && <span className="mt-2 block text-xs font-medium text-pond">เลือกรูปภาพแล้ว ระบบจะบันทึกไว้ที่ Cloudinary</span>}
             </label>
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">ลิงก์รูปภาพสำรอง (ถ้ามี)</span>
-              <input value={form.imagePath} onChange={(e) => setForm((v) => ({ ...v, imagePath: e.target.value }))}
-                placeholder="ใช้เมื่อไม่สะดวกอัปโหลดไฟล์"
+              <span className="mb-1 block text-sm font-medium text-ink">แคปชั่นโดนๆ</span>
+              <input value={form.caption} onChange={(e) => setForm((v) => ({ ...v, caption: e.target.value }))}
+                maxLength={180}
+                placeholder="เช่น ตัวนี้ลากคันแทบหลุดมือ"
                 className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond" />
+              <span className="mt-1 block text-xs text-dim">{form.caption.length}/180 ตัวอักษร</span>
             </label>
           </div>
           <p className="mt-4 text-sm text-dim">หลังส่งรายการแล้ว เจ้าหน้าที่จะตรวจสอบรูปภาพและน้ำหนักก่อนยืนยันเข้าสู่กระดานอันดับ</p>
