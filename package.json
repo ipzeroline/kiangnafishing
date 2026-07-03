@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 2898",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.mjs",
     "setup": "prisma generate && prisma db push && node prisma/seed.mjs"
