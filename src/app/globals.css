@@ -1998,6 +1998,24 @@ h1, h2, h3, .font-display { font-family: var(--font-display); }
   gap: .3rem;
 }
 
+.ranking-member-with-avatar {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.ranking-avatar {
+  width: 2.65rem;
+  height: 2.65rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #135a66, #0a3540);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 10px 20px -14px rgba(10,53,64,.75);
+}
+
 .ranking-member > strong {
   color: var(--ink);
   font-size: 1rem;

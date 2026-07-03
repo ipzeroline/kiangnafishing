@@ -15,6 +15,7 @@ type RankingRow = {
   memberCode: string;
   name: string;
   alias: string | null;
+  linePictureUrl: string | null;
   walletBalance: number;
   points: number;
   visits: number;
@@ -46,7 +47,7 @@ export default async function AdminMemberRankingPage({ searchParams }: { searchP
 
   const [rows, levels] = await Promise.all([
     query<RankingRow>(`
-    SELECT u.memberCode, u.name, u.alias, u.walletBalance, u.points,
+    SELECT u.memberCode, u.name, u.alias, u.linePictureUrl, u.walletBalance, u.points,
       COALESCE(k.visits,0) visits,
       COALESCE(c.fishCount,0) fishCount,
       COALESCE(c.totalWeight,0) totalWeight,
@@ -160,13 +161,18 @@ export default async function AdminMemberRankingPage({ searchParams }: { searchP
                           <>
                       <td className="px-5 py-4"><span className={index < 3 ? "inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gold font-bold text-white" : "font-semibold text-dim"}>{index + 1}</span></td>
                       <td className="px-5 py-4">
-                        <p className={index === 0 ? "font-semibold text-white" : "font-semibold text-ink"}>{row.alias || row.name}</p>
-                        <p className={index === 0 ? "font-mono text-xs text-white/55" : "font-mono text-xs text-dim"}>{row.memberCode} · {row.bestSpecies || "-"}</p>
-                        {level && (
-                          <span className="mt-2 inline-flex">
-                            <RankingLevelBadge level={level} size="sm" />
-                          </span>
-                        )}
+                        <div className="flex items-center gap-3">
+                          <Avatar src={row.linePictureUrl} name={row.alias || row.name} dark={index === 0} />
+                          <div className="min-w-0">
+                            <p className={index === 0 ? "truncate font-semibold text-white" : "truncate font-semibold text-ink"}>{row.alias || row.name}</p>
+                            <p className={index === 0 ? "font-mono text-xs text-white/55" : "font-mono text-xs text-dim"}>{row.memberCode} · {row.bestSpecies || "-"}</p>
+                            {level && (
+                              <span className="mt-2 inline-flex">
+                                <RankingLevelBadge level={level} size="sm" />
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-5 py-4 text-right font-semibold">{n(row.score, 1)}</td>
                       <td className="px-5 py-4 text-right">{n(row.maxWeight, 2)} กก.</td>
@@ -212,7 +218,8 @@ function MiniBoard({
       <ol className="divide-y divide-line/70">
         {rows.map((row, index) => (
           <li key={`${title}-${row.memberCode}`} className="flex items-center justify-between gap-3 px-4 py-3">
-            <div className="min-w-0">
+            <Avatar src={row.linePictureUrl} name={row.alias || row.name} size="sm" />
+            <div className="min-w-0 flex-1">
               <p className="truncate font-semibold text-ink">{index + 1}. {row.alias || row.name}</p>
               <p className="truncate text-xs text-dim">{row.memberCode} · {detail(row)}</p>
             </div>
@@ -222,5 +229,17 @@ function MiniBoard({
         {rows.length === 0 && <li className="px-4 py-8 text-center text-sm text-dim">ไม่มีข้อมูล</li>}
       </ol>
     </section>
+  );
+}
+
+function Avatar({ src, name, dark = false, size = "md" }: { src: string | null; name: string; dark?: boolean; size?: "sm" | "md" }) {
+  const cls = size === "sm" ? "h-8 w-8 text-xs" : "h-10 w-10 text-sm";
+  return src ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={name} className={`${cls} shrink-0 rounded-full object-cover ring-2 ${dark ? "ring-white/20" : "ring-white"} shadow-sm`} />
+  ) : (
+    <span className={`${cls} grid shrink-0 place-items-center rounded-full ${dark ? "bg-white/15 text-white" : "bg-deep text-white"} font-bold shadow-sm`}>
+      {name.slice(0, 1)}
+    </span>
   );
 }

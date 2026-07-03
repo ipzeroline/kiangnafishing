@@ -85,9 +85,16 @@ export async function upsertLineMember(profile: LineProfile): Promise<User> {
         publicId: profile.userId,
       }).catch(() => profile.pictureUrl)
     : null;
-  const existing = await queryOne<User>("SELECT * FROM users WHERE lineUserId=?", [profile.userId]);
+  const phoneKey = `L${profile.userId.slice(-19)}`;
+  const existing = await queryOne<User>("SELECT * FROM users WHERE role='MEMBER' AND (lineUserId=? OR phone=?) ORDER BY lineUserId=? DESC LIMIT 1", [
+    profile.userId,
+    phoneKey,
+    profile.userId,
+  ]);
   if (existing) {
-    await execute("UPDATE users SET lineDisplayName=?, linePictureUrl=?, status='ACTIVE' WHERE id=?", [
+    await execute("UPDATE users SET name=COALESCE(NULLIF(name,''), ?), lineUserId=?, lineDisplayName=?, linePictureUrl=?, status='ACTIVE' WHERE id=?", [
+      profile.displayName || "LINE Member",
+      profile.userId,
       profile.displayName,
       cloudinaryPictureUrl,
       existing.id,
@@ -97,7 +104,6 @@ export async function upsertLineMember(profile: LineProfile): Promise<User> {
 
   const id = uid();
   const memberCode = await nextMemberCode();
-  const phoneKey = `L${profile.userId.slice(-19)}`;
   await execute(
     "INSERT INTO users (id, memberCode, name, phone, lineUserId, lineDisplayName, linePictureUrl, role, status) VALUES (?,?,?,?,?,?,?,?, 'ACTIVE')",
     [id, memberCode, profile.displayName || "LINE Member", phoneKey, profile.userId, profile.displayName, cloudinaryPictureUrl, "MEMBER"]

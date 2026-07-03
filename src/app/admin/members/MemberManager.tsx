@@ -11,6 +11,7 @@ type Member = {
   phone: string;
   lineUserId: string | null;
   lineDisplayName: string | null;
+  linePictureUrl: string | null;
   walletBalance: number;
   points: number;
   status: "ACTIVE" | "INACTIVE";
@@ -28,13 +29,35 @@ type FormState = {
 
 const emptyForm: FormState = { memberId: "", name: "", alias: "", status: "ACTIVE", profileNote: "" };
 
-export default function MemberManager({ members }: { members: Member[] }) {
+function MemberAvatar({ member, size = "md" }: { member: Member; size?: "sm" | "md" }) {
+  const cls = size === "sm" ? "h-9 w-9 text-sm" : "h-12 w-12 text-base";
+  const label = (member.alias || member.lineDisplayName || member.name || member.memberCode).slice(0, 1);
+  return member.linePictureUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={member.linePictureUrl} alt={member.alias || member.name} className={`${cls} shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm`} />
+  ) : (
+    <span className={`${cls} grid shrink-0 place-items-center rounded-full bg-deep font-bold text-white shadow-sm`}>{label}</span>
+  );
+}
+
+export default function MemberManager({
+  members,
+  isAdmin,
+  duplicateStats,
+}: {
+  members: Member[];
+  isAdmin: boolean;
+  duplicateStats: { duplicateLine: number; duplicatePhone: number };
+}) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(emptyForm);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [clearText, setClearText] = useState("");
   const editing = Boolean(form.memberId);
+  const hasDuplicate = Number(duplicateStats.duplicateLine || 0) > 0 || Number(duplicateStats.duplicatePhone || 0) > 0;
 
   function edit(member: Member) {
     setForm({
@@ -75,6 +98,26 @@ export default function MemberManager({ members }: { members: Member[] }) {
     router.refresh();
   }
 
+  async function clearMembers() {
+    setBusy(true);
+    setMessage("");
+    const res = await fetch("/api/admin/members", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirm: clearText }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) {
+      setMessage(data.error || "ล้างข้อมูลสมาชิกไม่สำเร็จ");
+      return;
+    }
+    setConfirmClearOpen(false);
+    setClearText("");
+    setMessage(`ล้างข้อมูลสมาชิกแล้ว ${Number(data.deletedCount || 0).toLocaleString("th-TH")} บัญชี`);
+    router.refresh();
+  }
+
   return (
     <section className="space-y-4">
       {message && <p className="rounded-lg bg-mist px-3 py-2 text-sm text-deep">{message}</p>}
@@ -85,7 +128,19 @@ export default function MemberManager({ members }: { members: Member[] }) {
             <h3 className="font-display text-lg font-semibold text-deep">สมาชิกจาก LINE OA</h3>
             <p className="text-sm text-dim">ข้อมูลหลักจะผูกกับ LINE ID เมื่อสมาชิกแอด LINE และใช้งาน Rich Menu</p>
           </div>
-          <span className="w-fit rounded-full bg-mist px-3 py-1 text-sm font-semibold text-deep">{members.length} บัญชีล่าสุด</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={hasDuplicate
+              ? "w-fit rounded-full bg-buoy/10 px-3 py-1 text-sm font-semibold text-buoy"
+              : "w-fit rounded-full bg-pond/10 px-3 py-1 text-sm font-semibold text-pond"}>
+              {hasDuplicate ? `พบข้อมูลซ้ำ LINE ${duplicateStats.duplicateLine} / เบอร์ ${duplicateStats.duplicatePhone}` : "ตรวจซ้ำแล้ว ไม่พบข้อมูลซ้ำ"}
+            </span>
+            <span className="w-fit rounded-full bg-mist px-3 py-1 text-sm font-semibold text-deep">{members.length} บัญชีล่าสุด</span>
+            {isAdmin && (
+              <button onClick={() => setConfirmClearOpen(true)} className="w-fit rounded-full bg-buoy px-3 py-1 text-sm font-semibold text-white">
+                ล้างสมาชิกทั้งหมด
+              </button>
+            )}
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-left text-sm">
@@ -102,8 +157,13 @@ export default function MemberManager({ members }: { members: Member[] }) {
               {members.map((member) => (
                 <tr key={member.id}>
                   <td className="px-5 py-4">
-                    <p className="font-semibold text-ink">{member.alias || member.name}</p>
-                    <p className="text-xs text-dim">{member.memberCode} · {member.name} · {member.phone}</p>
+                    <div className="flex items-center gap-3">
+                      <MemberAvatar member={member} />
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-ink">{member.alias || member.name}</p>
+                        <p className="truncate text-xs text-dim">{member.memberCode} · {member.name} · {member.phone}</p>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-5 py-4">
                     <p className="font-semibold text-ink">{member.lineDisplayName || "ยังไม่เชื่อม LINE"}</p>
@@ -181,6 +241,30 @@ export default function MemberManager({ members }: { members: Member[] }) {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {confirmClearOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-deep/60 px-4 py-6 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg rounded-lg bg-white p-5 shadow-xl ring-1 ring-line">
+            <h3 className="font-display text-xl font-semibold text-buoy">ยืนยันการล้างข้อมูลสมาชิก</h3>
+            <p className="mt-2 text-sm leading-relaxed text-dim">
+              ระบบจะลบเฉพาะสมาชิก LINE ทั้งหมด รวมถึงประวัติที่ผูกกับสมาชิกผ่าน foreign key เช่น เช็คอิน เครดิต เติมเงิน คูปอง และผลงานปลา
+              โดยไม่ลบเจ้าหน้าที่หรือผู้ดูแลระบบ การดำเนินการนี้ย้อนกลับไม่ได้
+            </p>
+            <label className="mt-4 block">
+              <span className="mb-1 block text-sm font-medium text-ink">พิมพ์ CLEAR MEMBERS เพื่อยืนยัน</span>
+              <input value={clearText} onChange={(event) => setClearText(event.target.value)}
+                className="w-full rounded-lg border border-line px-3 py-2.5 font-mono outline-none focus:border-buoy focus:ring-2 focus:ring-buoy/15" />
+            </label>
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => { setConfirmClearOpen(false); setClearText(""); }} className="rounded-lg bg-mist px-4 py-2.5 text-sm font-semibold text-deep">ยกเลิก</button>
+              <button disabled={busy || clearText !== "CLEAR MEMBERS"} onClick={clearMembers}
+                className="rounded-lg bg-buoy px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+                {busy ? "กำลังล้างข้อมูล..." : "ล้างข้อมูลสมาชิก"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>

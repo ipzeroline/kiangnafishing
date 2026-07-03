@@ -14,14 +14,23 @@ export default async function MembersPage() {
 
   const members = await query<{
     id: string; memberCode: string; name: string; alias: string | null; phone: string;
-    lineUserId: string | null; lineDisplayName: string | null; walletBalance: number; points: number;
+    lineUserId: string | null; lineDisplayName: string | null; linePictureUrl: string | null; walletBalance: number; points: number;
     status: "ACTIVE" | "INACTIVE"; profileNote: string | null; createdAt: string;
   }>(`
-    SELECT id, memberCode, name, alias, phone, lineUserId, lineDisplayName, walletBalance, points, status, profileNote, createdAt
+    SELECT id, memberCode, name, alias, phone, lineUserId, lineDisplayName, linePictureUrl, walletBalance, points, status, profileNote, createdAt
     FROM users
     WHERE role='MEMBER'
     ORDER BY createdAt DESC
     LIMIT 200
+  `);
+  const duplicateStats = await query<{ duplicateLine: number; duplicatePhone: number }>(`
+    SELECT
+      (SELECT COUNT(*) FROM (
+        SELECT lineUserId FROM users WHERE role='MEMBER' AND lineUserId IS NOT NULL GROUP BY lineUserId HAVING COUNT(*) > 1
+      ) d) duplicateLine,
+      (SELECT COUNT(*) FROM (
+        SELECT phone FROM users WHERE role='MEMBER' GROUP BY phone HAVING COUNT(*) > 1
+      ) p) duplicatePhone
   `);
 
   return (
@@ -59,7 +68,7 @@ export default async function MembersPage() {
           </div>
         </header>
         <div className="px-4 py-6 sm:px-6 lg:px-8">
-          <MemberManager members={members} />
+          <MemberManager members={members} isAdmin={user.role === "ADMIN"} duplicateStats={duplicateStats[0] || { duplicateLine: 0, duplicatePhone: 0 }} />
         </div>
       </section>
     </main>

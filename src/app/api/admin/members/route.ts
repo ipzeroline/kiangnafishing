@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
-import { execute, queryOne, uid } from "@/lib/db";
+import { execute, queryOne, transaction, uid } from "@/lib/db";
 
 async function requireStaff() {
   const user = await getSessionUser();
@@ -36,4 +36,30 @@ export async function PUT(req: Request) {
     [uid(), staff.id, "MEMBER_PROFILE_UPDATE", "users", member.id, status]
   );
   return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(req: Request) {
+  const staff = await requireStaff();
+  if (!staff || staff.role !== "ADMIN") {
+    return NextResponse.json({ error: "เฉพาะผู้ดูแลระบบเท่านั้น" }, { status: 403 });
+  }
+
+  const body = await req.json().catch(() => ({}));
+  if (String(body.confirm || "") !== "CLEAR MEMBERS") {
+    return NextResponse.json({ error: "กรุณายืนยันด้วยข้อความ CLEAR MEMBERS" }, { status: 400 });
+  }
+
+  const countRow = await queryOne<{ count: number }>("SELECT COUNT(*) count FROM users WHERE role='MEMBER'");
+  const deletedCount = Number(countRow?.count || 0);
+
+  await transaction(async (db) => {
+    await execute("DELETE FROM users WHERE role='MEMBER'", [], db);
+    await execute(
+      "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('deletedMembers', ?))",
+      [uid(), staff.id, "MEMBER_CLEAR_ALL", "users", null, deletedCount],
+      db
+    );
+  });
+
+  return NextResponse.json({ ok: true, deletedCount });
 }

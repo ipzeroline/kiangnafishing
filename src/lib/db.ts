@@ -273,6 +273,7 @@ async function initSchema(client: DbClient) {
       INDEX idx_catches_user (userId)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
+  await client.query("ALTER TABLE catches MODIFY imagePath VARCHAR(500) NOT NULL");
 
   await client.query(`
     CREATE TABLE IF NOT EXISTS topups (

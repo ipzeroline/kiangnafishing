@@ -18,6 +18,7 @@ const BOARDS = [
 type Row = {
   name: string;
   memberCode: string;
+  linePictureUrl: string | null;
   value: number;
   detail?: string;
   score: number;
@@ -27,7 +28,7 @@ async function queryLeaderboard(board: string, mk: string): Promise<Row[]> {
   const orderField = board === "count" ? "fishCount" : board === "weight" ? "totalWeight" : board === "regular" ? "visits" : "maxWeight";
   const valueField = board === "count" ? "fishCount" : board === "weight" ? "totalWeight" : board === "regular" ? "visits" : "maxWeight";
   return dbQuery<Row>(`
-    SELECT u.name, u.memberCode,
+    SELECT u.name, u.memberCode, u.linePictureUrl,
       COALESCE(metric.${valueField},0) value,
       metric.bestSpecies detail,
       (COALESCE(metric.maxWeight,0) * 10 + COALESCE(metric.totalWeight,0) * 2 + COALESCE(metric.fishCount,0) * 5 + COALESCE(metric.visits,0) * 3 + u.points * 0.05) score
@@ -156,7 +157,7 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                 return (
                   <article key={row.memberCode} className={`podium-card podium-${originalIndex + 1}`}>
                     <div className="podium-medal">{originalIndex + 1}</div>
-                    <div className="podium-avatar">{row.name.slice(0, 1)}</div>
+                    <PublicAvatar src={row.linePictureUrl} name={row.name} className="podium-avatar" />
                     <p>{originalIndex === 0 ? "Champion" : originalIndex === 1 ? "Runner-up" : "Third place"}</p>
                     <h2>{row.name}</h2>
                     <span>{row.detail ? `${row.detail} · ` : ""}{row.memberCode}</span>
@@ -182,10 +183,13 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                   return (
                     <li key={r.memberCode}>
                       <span className="ranking-no">{i + 1}</span>
-                      <div className="ranking-member">
+                      <div className="ranking-member ranking-member-with-avatar">
+                        <PublicAvatar src={r.linePictureUrl} name={r.name} className="ranking-avatar" />
+                        <div className="min-w-0">
                         <strong>{r.name}</strong>
                         <p>{r.detail ? `${r.detail} · ` : ""}{r.memberCode}</p>
                         {level && <RankingLevelBadge level={level} size="sm" />}
+                        </div>
                       </div>
                       <div className="ranking-value">
                         <strong>{nf.format(Number(r.value))}</strong>
@@ -206,5 +210,14 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
       </div>
       <BottomNav />
     </main>
+  );
+}
+
+function PublicAvatar({ src, name, className }: { src: string | null; name: string; className: string }) {
+  return src ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={name} className={`${className} object-cover`} />
+  ) : (
+    <div className={className}>{name.slice(0, 1)}</div>
   );
 }

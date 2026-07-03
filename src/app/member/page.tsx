@@ -36,6 +36,18 @@ export default async function MemberPage() {
 
         <section className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
           <aside className="rounded-card bg-deep p-6 text-white shadow-sm">
+            <div className="mb-5 flex items-center gap-4">
+              {user.linePictureUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.linePictureUrl} alt={user.alias || user.name} className="h-16 w-16 rounded-2xl object-cover ring-2 ring-white/15" />
+              ) : (
+                <span className="grid h-16 w-16 place-items-center rounded-2xl bg-white/12 text-2xl font-bold text-white">{(user.alias || user.name).slice(0, 1)}</span>
+              )}
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{user.alias || user.name}</p>
+                <p className="mt-1 truncate text-sm text-white/55">{user.lineDisplayName || "LINE Official Account"}</p>
+              </div>
+            </div>
             <p className="text-sm text-white/60">รหัสสมาชิก</p>
             <p className="mt-2 font-mono text-3xl font-semibold">{user.memberCode}</p>
             <div className="mt-6 space-y-3 text-sm">
