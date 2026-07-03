@@ -820,36 +820,128 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
 
 export function ContactSitePage({ locale }: { locale: Locale }) {
   const content = siteContent[locale];
+  const contactCards = locale === "th"
+    ? [
+        ["LINE", siteContact.lineId, "สอบถามรอบลงปลา เครดิต QR เข้าบ่อ ส่งผลงานปลา และติดต่อเจ้าหน้าที่", siteContact.lineHref, "เพิ่มเพื่อน LINE"],
+        ["โทรศัพท์", siteContact.phone, "โทรสอบถามข้อมูลการเข้าใช้บริการ จองหมาย และกิจกรรมหน้าบ่อ", siteContact.phoneHref, "โทรเลย"],
+        ["อีเมล", siteContact.email, "ติดต่อเรื่องข้อมูลธุรกิจ เอกสาร หรือคำถามที่ต้องการรายละเอียดเพิ่มเติม", siteContact.emailHref, "ส่งอีเมล"],
+      ]
+    : [
+        ["LINE", siteContact.lineId, "Ask about fish releases, credits, entry QR, catch submissions, and staff support.", siteContact.lineHref, "Add LINE friend"],
+        ["Phone", siteContact.phone, "Call for lake visits, spot reservations, and event information.", siteContact.phoneHref, "Call now"],
+        ["Email", siteContact.email, "Send business questions, document requests, or detailed inquiries.", siteContact.emailHref, "Send email"],
+      ];
+  const serviceList = locale === "th"
+    ? ["บ่อตกปลาพะเยาและดอกคำใต้", "รอบลงปลาและกิจกรรมหน้าบ่อ", "QR เข้าบ่อ เครดิต แต้ม และคูปอง", "ส่งผลงานปลาและตรวจสอบอันดับ", "แผนที่และเส้นทางไปเคียงนา Fishing Lake"]
+    : ["Fishing lake in Phayao and Dok Kham Tai", "Fish release schedules and lake events", "Entry QR, credits, points, and coupons", "Catch submissions and ranking verification", "Map and directions to Kiangna Fishing Lake"];
+  const faqs = locale === "th"
+    ? [
+        ["ติดต่อเคียงนา Fishing Lake ทางไหนเร็วที่สุด", "แนะนำให้เพิ่มเพื่อน LINE @038gyaxo เพื่อสอบถามรอบลงปลา เครดิต QR เข้าบ่อ การส่งผลงานปลา และติดต่อเจ้าหน้าที่"],
+        ["บ่ออยู่พื้นที่ไหน", "เคียงนา Fishing Lake ให้บริการในพื้นที่พะเยาและดอกคำใต้ สามารถเปิดเส้นทางจาก Google Maps ในหน้านี้ได้ทันที"],
+        ["ต้องเตรียมข้อมูลอะไรก่อนสอบถาม", "หากเป็นสมาชิกให้แจ้งชื่อหรือบัญชี LINE ที่ใช้บริการ หากสอบถามจองหมายหรือกิจกรรมให้แจ้งวันที่ต้องการเข้าใช้บริการ"],
+      ]
+    : [
+        ["What is the fastest way to contact Kiangna Fishing Lake?", "Add LINE @038gyaxo for fish releases, credits, entry QR, catch submissions, and staff support."],
+        ["Where is the lake located?", "Kiangna Fishing Lake serves anglers in Phayao and Dok Kham Tai. Use the Google Maps link on this page for directions."],
+        ["What should I prepare before contacting staff?", "Members can share their name or LINE account. For visits or events, include the date you plan to come."],
+      ];
+  const contactJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": `${siteUrl}${pagePaths.contact[locale]}#contact-page`,
+        name: locale === "th" ? "ติดต่อเคียงนา Fishing Lake" : "Contact Kiangna Fishing Lake",
+        url: `${siteUrl}${pagePaths.contact[locale]}`,
+        inLanguage: locale === "th" ? "th-TH" : "en",
+        about: { "@id": `${siteUrl}#localbusiness` },
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": `${siteUrl}#localbusiness`,
+        name: "เคียงนา Fishing Lake",
+        alternateName: "Kiangna Fishing Lake",
+        url: siteUrl,
+        telephone: siteContact.phone,
+        email: siteContact.email,
+        areaServed: ["Phayao", "Dok Kham Tai"],
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            telephone: siteContact.phone,
+            contactType: "customer service",
+            availableLanguage: ["Thai"],
+          },
+        ],
+        sameAs: [siteContact.lineHref, siteContact.mapHref],
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${siteUrl}${pagePaths.contact[locale]}#faq`,
+        mainEntity: faqs.map(([question, answer]) => ({
+          "@type": "Question",
+          name: question,
+          acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
+      },
+    ],
+  };
   return (
     <ContentPage locale={locale} page="contact" eyebrow="Contact" title={content.sections.contactTitle}>
-      <div className="site-contact-grid">
-        <section className="site-contact-panel">
-          <h2>{locale === "th" ? "LINE" : "LINE account"}</h2>
-          <p>{siteContact.lineId}</p>
-          <Link href={siteContact.lineHref} className="site-primary-btn">{content.cta}</Link>
-        </section>
-        <section className="site-contact-panel">
-          <h2>{locale === "th" ? "โทรศัพท์" : "Phone"}</h2>
-          <p><a href={siteContact.phoneHref}>{siteContact.phone}</a></p>
-          <h2>{locale === "th" ? "อีเมล" : "Email"}</h2>
-          <p><a href={siteContact.emailHref}>{siteContact.email}</a></p>
-        </section>
-        <section className="site-contact-panel">
-          <h2>{locale === "th" ? "เมนู LINE สำหรับลูกค้า" : "LINE customer menu"}</h2>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
+      <section className="contact-hero-panel">
+        <div>
+          <p className="site-eyebrow">{locale === "th" ? "Kiangna Fishing Lake Contact" : "Kiangna Fishing Lake Contact"}</p>
+          <h2>{locale === "th" ? "สอบถามรอบลงปลา จองหมาย และเส้นทางมาบ่อตกปลาเคียงนา" : "Ask about fish releases, reservations, and directions to Kiangna Fishing Lake"}</h2>
           <p>
             {locale === "th"
-              ? "QR เข้าบ่อ การเติมเครดิต การส่งผลงานปลา การดูอันดับ และการติดต่อเจ้าหน้าที่ ดำเนินการผ่านเมนูบริการใน LINE"
-              : "Entry QR, top-ups, catch submissions, rankings, and admin contact are handled through the lake LINE service menu."}
+              ? "ติดต่อเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ ผ่าน LINE โทรศัพท์ อีเมล หรือเปิดแผนที่ Google Maps เพื่อวางแผนเข้าบ่อได้สะดวก"
+              : "Contact Kiangna Fishing Lake in Phayao and Dok Kham Tai through LINE, phone, email, or Google Maps before your visit."}
           </p>
-        </section>
+        </div>
+        <div className="contact-hero-actions">
+          <Link href={siteContact.lineHref} className="site-primary-btn" target="_blank" rel="noopener noreferrer">{content.cta}</Link>
+          <Link href={siteContact.mapHref} className="site-secondary-btn" target="_blank" rel="noopener noreferrer">
+            {locale === "th" ? "เปิดแผนที่" : "Open map"}
+          </Link>
+        </div>
+      </section>
+
+      <div className="site-contact-grid contact-card-grid">
+        {contactCards.map(([title, value, detail, href, cta]) => (
+          <section className="site-contact-panel contact-channel-card" key={title}>
+            <p className="site-eyebrow">{title}</p>
+            <h2>{value}</h2>
+            <p>{detail}</p>
+            <Link href={href} className="site-secondary-btn" target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener noreferrer" : undefined}>
+              {cta}
+            </Link>
+          </section>
+        ))}
       </div>
+
+      <section className="contact-service-panel">
+        <div>
+          <p className="site-eyebrow">{locale === "th" ? "ข้อมูลที่สอบถามได้" : "What You Can Ask"}</p>
+          <h2>{locale === "th" ? "รวมช่องทางสำหรับนักตกปลาที่ต้องการมาใช้บริการ" : "Helpful contact topics for anglers"}</h2>
+          <p>
+            {locale === "th"
+              ? "หน้านี้ออกแบบให้ค้นหาและติดต่อได้ง่าย ทั้งคำค้นบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ รอบลงปลา ผลงานปลา อันดับนักตกปลา และเส้นทางไปบ่อ"
+              : "This page is structured for anglers looking for a fishing lake in Phayao, fish releases, catch rankings, gallery records, and directions."}
+          </p>
+        </div>
+        <ul>
+          {serviceList.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      </section>
+
       <section className="site-map-panel">
         <div className="site-map-copy">
           <p className="site-eyebrow">{locale === "th" ? "Location" : "Location"}</p>
-          <h2>{locale === "th" ? "แผนที่ เคียงนา Fishing Lake" : "Kiangna Fishing Lake Map"}</h2>
+          <h2>{locale === "th" ? "แผนที่ เคียงนา Fishing Lake พะเยา" : "Kiangna Fishing Lake Map"}</h2>
           <p>
             {locale === "th"
-              ? "ตรวจสอบตำแหน่งและเส้นทางมายังบ่อได้จากแผนที่ด้านล่าง หรือเปิดผ่าน Google Maps เพื่อใช้ระบบนำทาง"
+              ? "ตรวจสอบตำแหน่งและเส้นทางมายังบ่อตกปลาเคียงนาได้จากแผนที่ด้านล่าง หรือเปิดผ่าน Google Maps เพื่อใช้ระบบนำทาง"
               : "Use the embedded map below or open Google Maps for directions to the lake."}
           </p>
           <Link href={siteContact.mapHref} className="site-secondary-btn" target="_blank" rel="noopener noreferrer">
@@ -863,6 +955,21 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
           referrerPolicy="no-referrer-when-downgrade"
           allowFullScreen
         />
+      </section>
+
+      <section className="site-section contact-faq-section">
+        <div className="section-head">
+          <p className="site-eyebrow">FAQ</p>
+          <h2 className="h2">{locale === "th" ? "คำถามที่พบบ่อยก่อนติดต่อ" : "Contact FAQ"}</h2>
+        </div>
+        <div className="home-faq-list">
+          {faqs.map(([question, answer]) => (
+            <details className="home-faq-item" key={question}>
+              <summary>{question}</summary>
+              <p>{answer}</p>
+            </details>
+          ))}
+        </div>
       </section>
     </ContentPage>
   );

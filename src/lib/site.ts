@@ -68,8 +68,8 @@ export const siteContent = {
         description: "รู้จักเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ที่ออกแบบบริการให้ใช้งานง่ายและทันสมัย ครบทั้ง QR เข้าบ่อ เครดิต แต้ม ส่งผลงานปลา แกลลอรี่ และอันดับนักตกปลา",
       },
       contact: {
-        title: "ติดต่อเรา | เคียงนา Fishing Lake",
-        description: "ติดต่อ เคียงนา Fishing Lake โทร 062-229-3636 อีเมล kaingnagroup@gmail.com หรือ LINE @038gyaxo",
+        title: "ติดต่อเคียงนา Fishing Lake | บ่อตกปลาพะเยา ดอกคำใต้",
+        description: "ติดต่อเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ โทร 062-229-3636 เพิ่มเพื่อน LINE @038gyaxo เปิดแผนที่ Google Maps และสอบถามรอบลงปลา เครดิต อันดับ หรือการจองหมาย",
       },
       privacy: {
         title: "นโยบายความเป็นส่วนตัว | เคียงนา Fishing Lake",
@@ -141,8 +141,8 @@ export const siteContent = {
         description: "Learn how Kiangna Fishing Lake in Phayao and Dok Kham Tai provides simple modern services for entry QR, credits, points, catch submissions, gallery, and angler rankings.",
       },
       contact: {
-        title: "Contact | Kiangna Fishing Lake",
-        description: "Contact Kiangna Fishing Lake by phone 062-229-3636, email kaingnagroup@gmail.com, or the LINE account @038gyaxo.",
+        title: "Contact Kiangna Fishing Lake | Fishing Lake in Phayao",
+        description: "Contact Kiangna Fishing Lake in Phayao and Dok Kham Tai by phone, LINE @038gyaxo, email, or Google Maps for fish releases, credits, rankings, and reservations.",
       },
       privacy: {
         title: "Privacy Policy | Kiangna Fishing Lake",
