@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import nextEnv from "@next/env";
+
+const { loadEnvConfig } = nextEnv;
+loadEnvConfig(process.cwd());
 
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/$/, "");
