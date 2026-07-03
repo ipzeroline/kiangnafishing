@@ -9,10 +9,10 @@ import RankingLevelBadge from "@/components/RankingLevelBadge";
 export const dynamic = "force-dynamic";
 
 const BOARDS = [
-  { key: "big", label: "ปลาใหญ่สุด" },
-  { key: "count", label: "จำนวนตัว" },
-  { key: "weight", label: "น้ำหนักรวม" },
-  { key: "regular", label: "ขาประจำ" },
+  { key: "big", label: "ปลาใหญ่สุด", sub: "Biggest catch", unit: "กก.", metric: "น้ำหนักสูงสุด" },
+  { key: "count", label: "จำนวนตัว", sub: "Catch count", unit: "ตัว", metric: "จำนวนปลาที่ยืนยัน" },
+  { key: "weight", label: "น้ำหนักรวม", sub: "Total weight", unit: "กก.", metric: "น้ำหนักรวมเดือนนี้" },
+  { key: "regular", label: "ขาประจำ", sub: "Visit streak", unit: "วัน", metric: "จำนวนวันเข้าใช้บริการ" },
 ] as const;
 
 type Row = {
@@ -56,7 +56,7 @@ async function queryLeaderboard(board: string, mk: string): Promise<Row[]> {
     ) metric ON metric.userId=u.id
     WHERE u.role='MEMBER' AND COALESCE(metric.${orderField},0) > 0
     ORDER BY COALESCE(metric.${orderField},0) DESC, score DESC
-    LIMIT 10
+    LIMIT 50
   `, [mk, mk]);
 }
 
@@ -87,65 +87,123 @@ async function queryBoard(board: string, mk: string): Promise<{ rows: Row[]; uni
 
 export default async function RankingPage({ searchParams }: { searchParams: Promise<{ board?: string }> }) {
   const { board = "big" } = await searchParams;
+  const activeBoard = BOARDS.some((b) => b.key === board) ? board : "big";
+  const boardMeta = BOARDS.find((b) => b.key === activeBoard) || BOARDS[0];
   const mk = monthKeyBKK();
   const [{ rows, unit }, levels] = await Promise.all([
-    queryBoard(board, mk),
+    queryBoard(activeBoard, mk),
     dbQuery<RankingLevel>("SELECT * FROM ranking_levels WHERE status='ACTIVE' ORDER BY minScore ASC"),
   ]);
-  const medal = ["bg-gold", "bg-dim", "bg-[#b0764a]"];
+  const [champion, runnerUp, thirdPlace] = rows;
+  const podium = [runnerUp, champion, thirdPlace].filter(Boolean);
+  const restRows = rows.slice(3);
+  const totalValue = rows.reduce((sum, row) => sum + Number(row.value || 0), 0);
+  const totalScore = rows.reduce((sum, row) => sum + Number(row.score || 0), 0);
+  const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 1 });
 
   return (
-    <main className="min-h-dvh bg-[#f5f8f7] pb-28">
+    <main className="ranking-page min-h-dvh pb-28">
       <TopBar title={`กระดานอันดับ · ${thaiMonthLabel(mk)}`} back />
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="rounded-card bg-white p-2 shadow-sm ring-1 ring-line">
-          <div className="grid gap-2 md:grid-cols-4">
+      <div className="ranking-shell mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <section className="ranking-hero">
+          <div className="ranking-hero-copy">
+            <p className="ranking-eyebrow">Kiangna Fishing Lake Ranking</p>
+            <h1>กระดานอันดับนักตกปลา</h1>
+            <p>
+              สรุปผลงานเดือน {thaiMonthLabel(mk)} จากรายการที่ผ่านการตรวจสอบ พร้อมระดับสมาชิกและสัญลักษณ์ ranking
+              เพื่อให้การแข่งขันโปร่งใสและติดตามผลงานได้อย่างมืออาชีพ
+            </p>
+          </div>
+          <div className="ranking-hero-card">
+            <p>{boardMeta.metric}</p>
+            <strong>{champion ? nf.format(Number(champion.value)) : "0"}</strong>
+            <span>{boardMeta.unit} · {boardMeta.label}</span>
+          </div>
+        </section>
+
+        <section className="ranking-tabs" aria-label="เลือกประเภทอันดับ">
           {BOARDS.map((b) => (
-            <Link key={b.key} href={`/ranking?board=${b.key}`}
-              className={`rounded-md px-4 py-2.5 text-center text-sm font-semibold transition
-                ${board === b.key ? "bg-deep text-white shadow-sm" : "text-dim hover:bg-mist hover:text-deep"}`}>
-              {b.label}
+            <Link key={b.key} href={`/ranking?board=${b.key}`} className={activeBoard === b.key ? "active" : ""}>
+              <span>{b.label}</span>
+              <small>{b.sub}</small>
             </Link>
           ))}
-          </div>
-        </div>
-
-        <section className="mt-6 rounded-card bg-white shadow-sm ring-1 ring-line">
-          <div className="border-b border-line px-5 py-4">
-            <h2 className="font-display text-xl font-semibold text-deep">Leaderboard</h2>
-            <p className="mt-1 text-sm text-dim">Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100 รีเซ็ตทุกวันที่ 1</p>
-          </div>
-
-        <ol className="divide-y divide-line/70">
-          {rows.map((r, i) => (
-            <li key={r.memberCode}
-              className={`flex items-center gap-4 px-5 py-4 ${i === 0 ? "bg-deep text-white" : "bg-white"}`}>
-              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-sm font-bold text-white
-                ${i < 3 ? medal[i] : "bg-pond/50"}`}>{i + 1}</span>
-              <div className="min-w-0 flex-1">
-                <p className={`truncate font-medium ${i === 0 ? "text-white" : "text-ink"}`}>{r.name}</p>
-                <p className={`text-xs ${i === 0 ? "text-white/60" : "text-dim"}`}>
-                  {r.detail ? `${r.detail} · ` : ""}{r.memberCode}
-                </p>
-                {(() => {
-                  const level = levelForScore(Number(r.score), levels);
-                  return level ? (
-                    <span className="mt-2 inline-flex">
-                      <RankingLevelBadge level={level} size="sm" />
-                    </span>
-                  ) : null;
-                })()}
-              </div>
-              <p className={`font-display text-lg font-semibold ${i === 0 ? "text-gold" : "text-deep"}`}>
-                {r.value.toLocaleString("th-TH")} <span className="text-xs font-normal">{unit}</span>
-              </p>
-            </li>
-          ))}
-          {rows.length === 0 && (
-            <p className="px-5 py-8 text-center text-sm text-dim">กระดานนี้ยังว่าง</p>
-          )}
-        </ol>
         </section>
+
+        <section className="ranking-summary-grid" aria-label="สรุปอันดับ">
+          <article>
+            <p>ผู้มีผลงาน</p>
+            <strong>{rows.length.toLocaleString("th-TH")}</strong>
+            <span>แสดงสูงสุด 50 อันดับ</span>
+          </article>
+          <article>
+            <p>คะแนนรวม</p>
+            <strong>{nf.format(totalScore)}</strong>
+            <span>จากเครดิต แต้ม ปลา และการเข้าใช้บริการ</span>
+          </article>
+          <article>
+            <p>ค่ารวมของกระดาน</p>
+            <strong>{nf.format(totalValue)}</strong>
+            <span>{unit} จากอันดับที่แสดง</span>
+          </article>
+        </section>
+
+        {rows.length > 0 ? (
+          <>
+            <section className="ranking-podium" aria-label="สามอันดับแรก">
+              {podium.map((row) => {
+                const originalIndex = rows.findIndex((item) => item.memberCode === row.memberCode);
+                const level = levelForScore(Number(row.score), levels);
+                return (
+                  <article key={row.memberCode} className={`podium-card podium-${originalIndex + 1}`}>
+                    <div className="podium-medal">{originalIndex + 1}</div>
+                    <div className="podium-avatar">{row.name.slice(0, 1)}</div>
+                    <p>{originalIndex === 0 ? "Champion" : originalIndex === 1 ? "Runner-up" : "Third place"}</p>
+                    <h2>{row.name}</h2>
+                    <span>{row.detail ? `${row.detail} · ` : ""}{row.memberCode}</span>
+                    {level && <RankingLevelBadge level={level} size={originalIndex === 0 ? "md" : "sm"} />}
+                    <strong>{nf.format(Number(row.value))} <small>{unit}</small></strong>
+                  </article>
+                );
+              })}
+            </section>
+
+            <section className="ranking-board">
+              <div className="ranking-board-head">
+                <div>
+                  <p className="ranking-eyebrow">Leaderboard</p>
+                  <h2>{boardMeta.label} · Top 50</h2>
+                </div>
+                <p>Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100 รีเซ็ตทุกวันที่ 1</p>
+              </div>
+              <ol className="ranking-list">
+                {restRows.map((r, offset) => {
+                  const i = offset + 3;
+                  const level = levelForScore(Number(r.score), levels);
+                  return (
+                    <li key={r.memberCode}>
+                      <span className="ranking-no">{i + 1}</span>
+                      <div className="ranking-member">
+                        <strong>{r.name}</strong>
+                        <p>{r.detail ? `${r.detail} · ` : ""}{r.memberCode}</p>
+                        {level && <RankingLevelBadge level={level} size="sm" />}
+                      </div>
+                      <div className="ranking-value">
+                        <strong>{nf.format(Number(r.value))}</strong>
+                        <span>{unit}</span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          </>
+        ) : (
+          <section className="ranking-empty">
+            <h2>กระดานนี้ยังไม่มีข้อมูล</h2>
+            <p>เมื่อมีผลงานที่ผ่านการตรวจสอบ ระบบจะแสดงอันดับล่าสุดในหน้านี้โดยอัตโนมัติ</p>
+          </section>
+        )}
       </div>
       <BottomNav />
     </main>
