@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Member = {
@@ -28,6 +28,7 @@ type FormState = {
 };
 
 const emptyForm: FormState = { memberId: "", name: "", alias: "", status: "ACTIVE", profileNote: "" };
+const pageSize = 20;
 
 function MemberAvatar({ member, size = "md" }: { member: Member; size?: "sm" | "md" }) {
   const cls = size === "sm" ? "h-9 w-9 text-sm" : "h-12 w-12 text-base";
@@ -58,8 +59,42 @@ export default function MemberManager({
   const [clearText, setClearText] = useState("");
   const [mergeSource, setMergeSource] = useState<Member | null>(null);
   const [mergeTargetId, setMergeTargetId] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const editing = Boolean(form.memberId);
   const hasDuplicate = Number(duplicateStats.duplicateLine || 0) > 0 || Number(duplicateStats.duplicatePhone || 0) > 0 || Number(duplicateStats.duplicateProfile || 0) > 0;
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredMembers = useMemo(() => {
+    if (!normalizedSearch) return members;
+    return members.filter((member) => [
+      member.memberCode,
+      member.name,
+      member.alias,
+      member.phone,
+      member.lineUserId,
+      member.lineDisplayName,
+      member.profileNote,
+      member.status === "ACTIVE" ? "ใช้งาน" : "ปิดใช้งาน",
+    ].some((value) => String(value || "").toLowerCase().includes(normalizedSearch)));
+  }, [members, normalizedSearch]);
+  const pageCount = Math.max(1, Math.ceil(filteredMembers.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const pagedMembers = filteredMembers.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const resultStart = filteredMembers.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const resultEnd = Math.min(safePage * pageSize, filteredMembers.length);
+
+  function duplicateCandidates(member: Member) {
+    const profileName = (member.lineDisplayName || member.name).trim().toLowerCase();
+    return members.filter((item) => {
+      if (item.id === member.id) return false;
+      const itemProfileName = (item.lineDisplayName || item.name).trim().toLowerCase();
+      return Boolean(
+        (member.lineUserId && item.lineUserId === member.lineUserId) ||
+        (member.phone && item.phone === member.phone) ||
+        (profileName && itemProfileName === profileName)
+      );
+    });
+  }
 
   function edit(member: Member) {
     setForm({
@@ -121,10 +156,10 @@ export default function MemberManager({
   }
 
   function openMerge(member: Member) {
-    const normalized = (member.lineDisplayName || member.name).trim().toLowerCase();
-    const suggested = members.find((item) => item.id !== member.id && (item.lineDisplayName || item.name).trim().toLowerCase() === normalized);
+    const candidates = duplicateCandidates(member);
+    if (candidates.length === 0) return;
     setMergeSource(member);
-    setMergeTargetId(suggested?.id || members.find((item) => item.id !== member.id)?.id || "");
+    setMergeTargetId(candidates[0].id);
     setMessage("");
   }
 
@@ -165,10 +200,41 @@ export default function MemberManager({
               : "w-fit rounded-full bg-pond/10 px-3 py-1 text-sm font-semibold text-pond"}>
               {hasDuplicate ? `พบข้อมูลซ้ำ LINE ${duplicateStats.duplicateLine} / เบอร์ ${duplicateStats.duplicatePhone} / โปรไฟล์ ${duplicateStats.duplicateProfile}` : "ตรวจซ้ำแล้ว ไม่พบข้อมูลซ้ำ"}
             </span>
-            <span className="w-fit rounded-full bg-mist px-3 py-1 text-sm font-semibold text-deep">{members.length} บัญชีล่าสุด</span>
+            <span className="w-fit rounded-full bg-mist px-3 py-1 text-sm font-semibold text-deep">{members.length} บัญชีทั้งหมด</span>
             {isAdmin && (
               <button onClick={() => setConfirmClearOpen(true)} className="w-fit rounded-full bg-buoy px-3 py-1 text-sm font-semibold text-white">
                 ล้างสมาชิกทั้งหมด
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 border-b border-line px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <label className="block w-full lg:max-w-lg">
+            <span className="mb-1 block text-sm font-medium text-ink">ค้นหาสมาชิก</span>
+            <input
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setPage(1);
+              }}
+              placeholder="ชื่อ, รหัสสมาชิก, เบอร์, LINE ID, LINE name"
+              className="w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm outline-none focus:border-pond focus:ring-2 focus:ring-pond/15"
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-dim">
+            <span>
+              แสดง {resultStart.toLocaleString("th-TH")}-{resultEnd.toLocaleString("th-TH")} จาก {filteredMembers.length.toLocaleString("th-TH")} รายการ
+            </span>
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setPage(1);
+                }}
+                className="rounded-lg bg-mist px-3 py-2 text-sm font-semibold text-deep"
+              >
+                ล้างคำค้น
               </button>
             )}
           </div>
@@ -185,7 +251,7 @@ export default function MemberManager({
               </tr>
             </thead>
             <tbody className="divide-y divide-line/70">
-              {members.map((member) => (
+              {pagedMembers.map((member) => (
                 <tr key={member.id}>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
@@ -213,7 +279,7 @@ export default function MemberManager({
                   </td>
                   <td className="px-5 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      {isAdmin && members.length > 1 && (
+                      {isAdmin && duplicateCandidates(member).length > 0 && (
                         <button onClick={() => openMerge(member)} className="rounded-lg bg-mist px-3 py-1.5 text-xs font-semibold text-deep">รวม</button>
                       )}
                       <button onClick={() => edit(member)} className="rounded-lg bg-deep px-3 py-1.5 text-xs font-semibold text-white">แก้ไข</button>
@@ -221,11 +287,34 @@ export default function MemberManager({
                   </td>
                 </tr>
               ))}
-              {members.length === 0 && (
-                <tr><td colSpan={5} className="px-5 py-8 text-center text-dim">ยังไม่มีสมาชิก</td></tr>
+              {filteredMembers.length === 0 && (
+                <tr><td colSpan={5} className="px-5 py-8 text-center text-dim">{members.length === 0 ? "ยังไม่มีสมาชิก" : "ไม่พบสมาชิกที่ตรงกับคำค้น"}</td></tr>
               )}
             </tbody>
           </table>
+        </div>
+        <div className="flex flex-col gap-3 border-t border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-dim">
+            หน้า {safePage.toLocaleString("th-TH")} จาก {pageCount.toLocaleString("th-TH")}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={safePage <= 1}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-deep ring-1 ring-line disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              ก่อนหน้า
+            </button>
+            <button
+              type="button"
+              disabled={safePage >= pageCount}
+              onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
+              className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-deep ring-1 ring-line disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              ถัดไป
+            </button>
+          </div>
         </div>
       </div>
 
@@ -316,7 +405,7 @@ export default function MemberManager({
               <span className="mb-1 block text-sm font-medium text-ink">เลือกสมาชิกหลักที่จะเก็บไว้</span>
               <select value={mergeTargetId} onChange={(event) => setMergeTargetId(event.target.value)}
                 className="w-full rounded-lg border border-line bg-white px-3 py-2.5 outline-none focus:border-pond focus:ring-2 focus:ring-pond/15">
-                {members.filter((member) => member.id !== mergeSource.id).map((member) => (
+                {duplicateCandidates(mergeSource).map((member) => (
                   <option key={member.id} value={member.id}>
                     {member.memberCode} · {member.alias || member.name} · {member.lineDisplayName || "ยังไม่เชื่อม LINE"}
                   </option>

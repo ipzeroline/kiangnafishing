@@ -7,7 +7,19 @@ import LogoutButton from "@/components/LogoutButton";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = Promise<{ month?: string }>;
+type SearchParams = Promise<{ month?: string; section?: string }>;
+
+const reportSections = [
+  { id: "overview", label: "ภาพรวมเดือน" },
+  { id: "members", label: "สมาชิกและ LINE" },
+  { id: "entry", label: "เข้าบ่อและรายได้" },
+  { id: "topup", label: "เติมเงินและเครดิต" },
+  { id: "fish", label: "ผลงานปลา" },
+  { id: "activity", label: "กิจกรรมรายสมาชิก" },
+  { id: "audit", label: "ธุรกรรมและ Audit" },
+] as const;
+
+type ReportSectionId = (typeof reportSections)[number]["id"];
 
 type DailyRow = {
   dateKey: string;
@@ -76,6 +88,10 @@ function validMonth(value?: string) {
   return value && /^\d{4}-\d{2}$/.test(value) ? value : monthKeyBKK();
 }
 
+function validSection(value?: string): ReportSectionId {
+  return reportSections.some((section) => section.id === value) ? value as ReportSectionId : "overview";
+}
+
 function money(value: number) {
   return "฿" + Number(value || 0).toLocaleString("th-TH");
 }
@@ -94,6 +110,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
 
   const params = await searchParams;
   const mk = validMonth(params?.month);
+  const currentSection = validSection(params?.section);
   const start = `${mk}-01`;
   const end = `${mk}-31`;
 
@@ -208,6 +225,15 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
     { label: "เติมเงินอนุมัติ", value: money(approvedTopup), sub: `${number(pendingTopup)} รายการยังรออนุมัติ` },
     { label: "ปลายืนยัน", value: number(verifiedFish), sub: `น้ำหนักรวม ${number(totalFishWeight, 2)} กก.` },
   ];
+  const inactiveMemberCount = Math.max(0, memberCount - activeMemberCount);
+  const lineLinkedPercent = memberCount > 0 ? (lineLinkedCount / memberCount) * 100 : 0;
+  const averageEntryRevenue = checkinCount > 0 ? entryRevenue / checkinCount : 0;
+  const topupCount = topups.reduce((sum, row) => sum + Number(row.count || 0), 0);
+  const topupPayAmount = topups.reduce((sum, row) => sum + Number(row.payAmount || 0), 0);
+  const topupGetAmount = topups.reduce((sum, row) => sum + Number(row.getAmount || 0), 0);
+  const averageFishWeight = verifiedFish > 0 ? totalFishWeight / verifiedFish : 0;
+  const fishPending = fishStatus.find((row) => row.status === "PENDING")?.count || 0;
+  const fishRejected = fishStatus.find((row) => row.status === "REJECTED")?.count || 0;
 
   return (
     <main className="admin-shell min-h-dvh bg-[#f5f8f7] text-ink">
@@ -246,6 +272,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
             </div>
             <div className="flex items-center gap-2">
               <form className="flex items-center gap-2">
+                <input type="hidden" name="section" value={currentSection} />
                 <input name="month" type="month" defaultValue={mk}
                   className="rounded-lg border border-line bg-white px-3 py-2 text-sm font-semibold text-deep outline-none focus:border-pond" />
                 <button className="rounded-lg bg-pond px-4 py-2 text-sm font-semibold text-white">ดูรายงาน</button>
@@ -256,18 +283,53 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
         </header>
 
         <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {kpis.map((kpi, index) => (
-              <div key={kpi.label} className={index === 0 ? "rounded-lg bg-deep p-5 text-white shadow-sm" : "rounded-lg bg-white p-5 shadow-sm ring-1 ring-line"}>
-                <p className={index === 0 ? "text-sm text-white/62" : "text-sm text-dim"}>{kpi.label}</p>
-                <p className="mt-3 font-display text-3xl font-semibold">{kpi.value}</p>
-                <p className={index === 0 ? "mt-3 text-xs text-white/55" : "mt-3 text-xs text-dim"}>{kpi.sub}</p>
-              </div>
-            ))}
-          </section>
+          <ReportCategoryNav current={currentSection} month={mk} />
 
-          <section className="grid gap-6 xl:grid-cols-2">
-            <ReportTable title="รายงานรายวัน" subtitle="เช็คอินและรายได้ค่าเข้า">
+          {currentSection === "overview" && (
+          <ReportSection
+            eyebrow="Overview"
+            title="ภาพรวมเดือน"
+            subtitle="สรุปสถานะหลักของสมาชิก การเข้าบ่อ เติมเงิน และผลงานปลาสำหรับเดือนที่เลือก"
+          >
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {kpis.map((kpi, index) => (
+                <div key={kpi.label} className={index === 0 ? "rounded-lg bg-deep p-5 text-white shadow-sm" : "rounded-lg bg-white p-5 shadow-sm ring-1 ring-line"}>
+                  <p className={index === 0 ? "text-sm text-white/62" : "text-sm text-dim"}>{kpi.label}</p>
+                  <p className="mt-3 font-display text-3xl font-semibold">{kpi.value}</p>
+                  <p className={index === 0 ? "mt-3 text-xs text-white/55" : "mt-3 text-xs text-dim"}>{kpi.sub}</p>
+                </div>
+              ))}
+            </section>
+          </ReportSection>
+          )}
+
+          {currentSection === "members" && (
+          <ReportSection
+            eyebrow="Members"
+            title="สมาชิกและการเชื่อมต่อ LINE"
+            subtitle="ใช้ตรวจฐานสมาชิกทั้งหมด สถานะใช้งาน และสัดส่วนสมาชิกที่เชื่อม LINE แล้ว"
+          >
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <DetailMetric label="สมาชิกใช้งาน" value={number(activeMemberCount)} detail={`ปิดใช้งาน ${number(inactiveMemberCount)} บัญชี`} />
+              <DetailMetric label="เชื่อม LINE แล้ว" value={number(lineLinkedCount)} detail={`${number(lineLinkedPercent, 1)}% ของสมาชิกทั้งหมด`} />
+              <DetailMetric label="สมาชิกมีกิจกรรม" value={number(memberRows.length)} detail="แสดงสูงสุด 20 อันดับในตารางด้านล่าง" />
+              <DetailMetric label="ยอดคงเหลือในกลุ่มกิจกรรม" value={money(memberRows.reduce((sum, row) => sum + Number(row.walletBalance || 0), 0))} detail="รวมเฉพาะสมาชิกที่มีกิจกรรมในเดือนนี้" />
+            </section>
+          </ReportSection>
+          )}
+
+          {currentSection === "entry" && (
+          <ReportSection
+            eyebrow="Entry"
+            title="การเข้าบ่อและรายได้ค่าเข้า"
+            subtitle="แยกจำนวนเช็คอินและรายได้ค่าเข้าบ่อตามวัน เพื่อดูวันที่มีการใช้งานสูง"
+          >
+            <section className="grid gap-4 sm:grid-cols-3">
+              <DetailMetric label="เช็คอินรวม" value={number(checkinCount)} detail="จำนวนรายการเข้าบ่อในเดือนนี้" />
+              <DetailMetric label="รายได้ค่าเข้า" value={money(entryRevenue)} detail="รวมค่าบริการจาก check-in" />
+              <DetailMetric label="เฉลี่ยต่อครั้ง" value={money(averageEntryRevenue)} detail="รายได้ค่าเข้าเฉลี่ยต่อ check-in" />
+            </section>
+            <ReportTable title="รายละเอียดรายวัน" subtitle="เช็คอินและรายได้ค่าเข้า">
               <table className="w-full min-w-[560px] text-left text-sm">
                 <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
                   <tr><th className="px-5 py-3">วันที่</th><th className="px-5 py-3">เช็คอิน</th><th className="px-5 py-3 text-right">รายได้</th></tr>
@@ -284,8 +346,22 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
                 </tbody>
               </table>
             </ReportTable>
+          </ReportSection>
+          )}
 
-            <ReportTable title="รายงานเติมเงิน" subtitle="แยกตามสถานะการอนุมัติ">
+          {currentSection === "topup" && (
+          <ReportSection
+            eyebrow="Topup"
+            title="เติมเงินและเครดิต"
+            subtitle="แยกยอดตามสถานะ ช่วยตรวจงานที่อนุมัติแล้วและงานที่ยังค้างรอดำเนินการ"
+          >
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <DetailMetric label="รายการเติมเงิน" value={number(topupCount)} detail="จำนวนรายการในเดือนนี้ทุกสถานะ" />
+              <DetailMetric label="ยอดโอนรวม" value={money(topupPayAmount)} detail="ยอดที่สมาชิกแจ้งชำระ" />
+              <DetailMetric label="ยอดเครดิตเข้า" value={money(topupGetAmount)} detail="ยอดเครดิตที่ระบบเพิ่มให้" />
+              <DetailMetric label="รออนุมัติทั้งหมด" value={number(pendingTopup)} detail="รายการ pending ปัจจุบันในระบบ" />
+            </section>
+            <ReportTable title="รายละเอียดเติมเงินตามสถานะ" subtitle="แยกตามสถานะการอนุมัติ">
               <table className="w-full min-w-[620px] text-left text-sm">
                 <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
                   <tr><th className="px-5 py-3">สถานะ</th><th className="px-5 py-3">รายการ</th><th className="px-5 py-3 text-right">ยอดโอน</th><th className="px-5 py-3 text-right">ยอดเข้า</th></tr>
@@ -303,80 +379,111 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
                 </tbody>
               </table>
             </ReportTable>
+          </ReportSection>
+          )}
 
-            <ReportTable title="รายงานปลา" subtitle="สถานะผลงานประจำเดือน">
-              <table className="w-full min-w-[620px] text-left text-sm">
+          {currentSection === "fish" && (
+          <ReportSection
+            eyebrow="Fish"
+            title="ผลงานปลาและชนิดปลา"
+            subtitle="สรุปสถานะการส่งผลงาน น้ำหนักรวม น้ำหนักเฉลี่ย และชนิดปลาที่ทำผลงานสูง"
+          >
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <DetailMetric label="ปลายืนยันแล้ว" value={number(verifiedFish)} detail={`น้ำหนักรวม ${number(totalFishWeight, 2)} กก.`} />
+              <DetailMetric label="น้ำหนักเฉลี่ย" value={`${number(averageFishWeight, 2)} กก.`} detail="เฉลี่ยเฉพาะปลาที่ยืนยันแล้ว" />
+              <DetailMetric label="รอตรวจ" value={number(fishPending)} detail="ผลงานที่ยังรอเจ้าหน้าที่ตรวจ" />
+              <DetailMetric label="ปฏิเสธ" value={number(fishRejected)} detail="ผลงานที่ไม่ผ่านการตรวจ" />
+            </section>
+            <section className="grid gap-6 xl:grid-cols-2">
+              <ReportTable title="รายละเอียดตามสถานะปลา" subtitle="สถานะผลงานประจำเดือน">
+                <table className="w-full min-w-[620px] text-left text-sm">
+                  <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
+                    <tr><th className="px-5 py-3">สถานะ</th><th className="px-5 py-3">รายการ</th><th className="px-5 py-3 text-right">น้ำหนักรวม</th><th className="px-5 py-3 text-right">ตัวใหญ่สุด</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-line/70">
+                    {fishStatus.map((row) => (
+                      <tr key={row.status}>
+                        <td className="px-5 py-4 font-semibold text-ink">{statusLabel(row.status)}</td>
+                        <td className="px-5 py-4">{number(row.count)}</td>
+                        <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
+                        <td className="px-5 py-4 text-right font-semibold text-deep">{number(row.maxWeight, 2)} กก.</td>
+                      </tr>
+                    ))}
+                    {fishStatus.length === 0 && <EmptyRow colSpan={4} label="ไม่มีข้อมูลปลาในเดือนนี้" />}
+                  </tbody>
+                </table>
+              </ReportTable>
+
+              <ReportTable title="ชนิดปลายอดนิยม" subtitle="เฉพาะรายการที่ยืนยันแล้ว">
+                <table className="w-full min-w-[620px] text-left text-sm">
+                  <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
+                    <tr><th className="px-5 py-3">ชนิดปลา</th><th className="px-5 py-3">รายการ</th><th className="px-5 py-3 text-right">น้ำหนักรวม</th><th className="px-5 py-3 text-right">ตัวใหญ่สุด</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-line/70">
+                    {fishSpecies.map((row) => (
+                      <tr key={row.species}>
+                        <td className="px-5 py-4 font-semibold text-ink">{row.species}</td>
+                        <td className="px-5 py-4">{number(row.count)}</td>
+                        <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
+                        <td className="px-5 py-4 text-right font-semibold text-deep">{number(row.maxWeight, 2)} กก.</td>
+                      </tr>
+                    ))}
+                    {fishSpecies.length === 0 && <EmptyRow colSpan={4} label="ยังไม่มีปลาที่ยืนยันแล้วในเดือนนี้" />}
+                  </tbody>
+                </table>
+              </ReportTable>
+            </section>
+          </ReportSection>
+          )}
+
+          {currentSection === "activity" && (
+          <ReportSection
+            eyebrow="Member Activity"
+            title="กิจกรรมรายสมาชิก"
+            subtitle="รวมพฤติกรรมหลักของสมาชิกแต่ละคนในเดือนนี้ เพื่อดูสมาชิกที่เข้าบ่อ เติมเงิน หรือส่งผลงานบ่อย"
+          >
+            <ReportTable title="สมาชิกที่มีกิจกรรมสูง" subtitle="รวมเช็คอิน เติมเงิน และผลงานปลา">
+              <table className="w-full min-w-[1080px] text-left text-sm">
                 <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
-                  <tr><th className="px-5 py-3">สถานะ</th><th className="px-5 py-3">รายการ</th><th className="px-5 py-3 text-right">น้ำหนักรวม</th><th className="px-5 py-3 text-right">ตัวใหญ่สุด</th></tr>
-                </thead>
-                <tbody className="divide-y divide-line/70">
-                  {fishStatus.map((row) => (
-                    <tr key={row.status}>
-                      <td className="px-5 py-4 font-semibold text-ink">{statusLabel(row.status)}</td>
-                      <td className="px-5 py-4">{number(row.count)}</td>
-                      <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
-                      <td className="px-5 py-4 text-right font-semibold text-deep">{number(row.maxWeight, 2)} กก.</td>
-                    </tr>
-                  ))}
-                  {fishStatus.length === 0 && <EmptyRow colSpan={4} label="ไม่มีข้อมูลปลาในเดือนนี้" />}
-                </tbody>
-              </table>
-            </ReportTable>
-
-            <ReportTable title="ชนิดปลายอดนิยม" subtitle="เฉพาะรายการที่ยืนยันแล้ว">
-              <table className="w-full min-w-[620px] text-left text-sm">
-                <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
-                  <tr><th className="px-5 py-3">ชนิดปลา</th><th className="px-5 py-3">รายการ</th><th className="px-5 py-3 text-right">น้ำหนักรวม</th><th className="px-5 py-3 text-right">ตัวใหญ่สุด</th></tr>
-                </thead>
-                <tbody className="divide-y divide-line/70">
-                  {fishSpecies.map((row) => (
-                    <tr key={row.species}>
-                      <td className="px-5 py-4 font-semibold text-ink">{row.species}</td>
-                      <td className="px-5 py-4">{number(row.count)}</td>
-                      <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
-                      <td className="px-5 py-4 text-right font-semibold text-deep">{number(row.maxWeight, 2)} กก.</td>
-                    </tr>
-                  ))}
-                  {fishSpecies.length === 0 && <EmptyRow colSpan={4} label="ยังไม่มีปลาที่ยืนยันแล้วในเดือนนี้" />}
-                </tbody>
-              </table>
-            </ReportTable>
-          </section>
-
-          <ReportTable title="สมาชิกที่มีกิจกรรมสูง" subtitle="รวมเช็คอิน เติมเงิน และผลงานปลา">
-            <table className="w-full min-w-[1080px] text-left text-sm">
-              <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
-                <tr>
-                  <th className="px-5 py-3">สมาชิก</th>
-                  <th className="px-5 py-3">เช็คอิน</th>
-                  <th className="px-5 py-3 text-right">ค่าเข้า</th>
-                  <th className="px-5 py-3 text-right">เติมเงิน</th>
-                  <th className="px-5 py-3 text-right">ปลา</th>
-                  <th className="px-5 py-3 text-right">น้ำหนัก</th>
-                  <th className="px-5 py-3 text-right">คงเหลือ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line/70">
-                {memberRows.map((row) => (
-                  <tr key={row.memberCode}>
-                    <td className="px-5 py-4">
-                      <p className="font-semibold text-ink">{row.alias || row.name}</p>
-                      <p className="font-mono text-xs text-dim">{row.memberCode}</p>
-                    </td>
-                    <td className="px-5 py-4">{number(row.visits)} ครั้ง</td>
-                    <td className="px-5 py-4 text-right">{money(row.entryPaid)}</td>
-                    <td className="px-5 py-4 text-right font-semibold text-pond">{money(row.topupApproved)}</td>
-                    <td className="px-5 py-4 text-right">{number(row.verifiedFish)}</td>
-                    <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
-                    <td className="px-5 py-4 text-right font-semibold text-deep">{money(row.walletBalance)}</td>
+                  <tr>
+                    <th className="px-5 py-3">สมาชิก</th>
+                    <th className="px-5 py-3">เช็คอิน</th>
+                    <th className="px-5 py-3 text-right">ค่าเข้า</th>
+                    <th className="px-5 py-3 text-right">เติมเงิน</th>
+                    <th className="px-5 py-3 text-right">ปลา</th>
+                    <th className="px-5 py-3 text-right">น้ำหนัก</th>
+                    <th className="px-5 py-3 text-right">คงเหลือ</th>
                   </tr>
-                ))}
-                {memberRows.length === 0 && <EmptyRow colSpan={7} label="ยังไม่มีสมาชิกที่มีกิจกรรมในเดือนนี้" />}
-              </tbody>
-            </table>
-          </ReportTable>
+                </thead>
+                <tbody className="divide-y divide-line/70">
+                  {memberRows.map((row) => (
+                    <tr key={row.memberCode}>
+                      <td className="px-5 py-4">
+                        <p className="font-semibold text-ink">{row.alias || row.name}</p>
+                        <p className="font-mono text-xs text-dim">{row.memberCode}</p>
+                      </td>
+                      <td className="px-5 py-4">{number(row.visits)} ครั้ง</td>
+                      <td className="px-5 py-4 text-right">{money(row.entryPaid)}</td>
+                      <td className="px-5 py-4 text-right font-semibold text-pond">{money(row.topupApproved)}</td>
+                      <td className="px-5 py-4 text-right">{number(row.verifiedFish)}</td>
+                      <td className="px-5 py-4 text-right">{number(row.totalWeight, 2)} กก.</td>
+                      <td className="px-5 py-4 text-right font-semibold text-deep">{money(row.walletBalance)}</td>
+                    </tr>
+                  ))}
+                  {memberRows.length === 0 && <EmptyRow colSpan={7} label="ยังไม่มีสมาชิกที่มีกิจกรรมในเดือนนี้" />}
+                </tbody>
+              </table>
+            </ReportTable>
+          </ReportSection>
+          )}
 
-          <section className="grid gap-6 xl:grid-cols-2">
+          {currentSection === "audit" && (
+          <ReportSection
+            eyebrow="Audit"
+            title="ธุรกรรมและการตรวจสอบระบบ"
+            subtitle="รายละเอียดล่าสุดสำหรับตรวจสอบเงินเข้าออกและการแก้ไขข้อมูลโดยเจ้าหน้าที่หรือระบบ"
+          >
+            <section className="grid gap-6 xl:grid-cols-2">
             <ReportTable title="ธุรกรรมล่าสุด" subtitle="เงินเข้าออกกระเป๋าสมาชิก">
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
@@ -414,7 +521,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
                 </tbody>
               </table>
             </ReportTable>
-          </section>
+            </section>
+          </ReportSection>
+          )}
         </div>
       </section>
     </main>
@@ -430,6 +539,60 @@ function ReportTable({ title, subtitle, children }: { title: string; subtitle: s
       </div>
       <div className="overflow-x-auto">{children}</div>
     </section>
+  );
+}
+
+function ReportCategoryNav({ current, month }: { current: ReportSectionId; month: string }) {
+  return (
+    <section className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-line">
+      <p className="text-xs font-semibold uppercase tracking-widest text-dim">Report Categories</p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        {reportSections.map((section) => (
+          <Link
+            key={section.id}
+            href={`/admin/reports?month=${month}&section=${section.id}`}
+            className={section.id === current
+              ? "rounded-lg bg-deep px-4 py-3 text-sm font-semibold text-white"
+              : "rounded-lg bg-mist px-4 py-3 text-sm font-semibold text-deep hover:bg-pond/10"}
+          >
+            {section.label}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ReportSection({
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="space-y-4">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-dim">{eyebrow}</p>
+        <h3 className="mt-1 font-display text-2xl font-semibold text-deep">{title}</h3>
+        <p className="mt-1 max-w-3xl text-sm leading-relaxed text-dim">{subtitle}</p>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function DetailMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-line">
+      <p className="text-sm text-dim">{label}</p>
+      <p className="mt-2 font-display text-2xl font-semibold text-deep">{value}</p>
+      <p className="mt-2 text-xs leading-relaxed text-dim">{detail}</p>
+    </div>
   );
 }
 

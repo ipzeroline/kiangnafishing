@@ -12,6 +12,9 @@ type Member = {
   memberCode: string;
   name: string;
   alias: string | null;
+  phone: string;
+  lineDisplayName: string | null;
+  linePictureUrl: string | null;
   walletBalance: number;
   points: number;
   status: "ACTIVE" | "INACTIVE";
@@ -36,11 +39,10 @@ export default async function CreditsPage() {
 
   const [members, ledger] = await Promise.all([
     query<Member>(`
-      SELECT id, memberCode, name, alias, walletBalance, points, status
+      SELECT id, memberCode, name, alias, phone, lineDisplayName, linePictureUrl, walletBalance, points, status
       FROM users
       WHERE role='MEMBER'
       ORDER BY status ASC, memberCode ASC
-      LIMIT 300
     `),
     query<Ledger>(`
       SELECT l.id, l.type, l.creditDelta, l.pointsDelta, l.note, l.createdAt,

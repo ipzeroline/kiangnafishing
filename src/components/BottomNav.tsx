@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/", label: "ข้อมูลสมาชิก", icon: "⌂" },
+  { href: "/member", label: "ข้อมูลสมาชิก", icon: "⌂" },
   { href: "/wallet", label: "รายละเอียด", icon: "฿" },
   { href: "/entry", label: "LINE เมนู", icon: "▣", center: true },
   { href: "/ranking", label: "อันดับ", icon: "▦" },

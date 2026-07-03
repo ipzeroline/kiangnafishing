@@ -21,7 +21,6 @@ export default async function MembersPage() {
     FROM users
     WHERE role='MEMBER'
     ORDER BY createdAt DESC
-    LIMIT 200
   `);
   const duplicateStats = await query<{ duplicateLine: number; duplicatePhone: number; duplicateProfile: number }>(`
     SELECT
