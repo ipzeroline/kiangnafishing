@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { uploadImageToCloudinary } from "./cloudinary";
-import { execute, nextMemberCode, queryOne, uid, type User } from "./db";
+import { execute, nextMemberCode, query, queryOne, uid, type User } from "./db";
 
 const LINE_API = "https://api.line.me";
 const LINE_DATA_API = "https://api-data.line.me";
@@ -13,6 +13,15 @@ export type LineProfile = {
 
 export function lineEnv(name: string) {
   return process.env[name] || "";
+}
+
+function normalizeLineName(value: string) {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+export function lineIdentityKey(profile: Pick<LineProfile, "displayName" | "pictureUrl">) {
+  const base = `${normalizeLineName(profile.displayName || "LINE Member")}|${profile.pictureUrl || ""}`;
+  return crypto.createHash("sha256").update(base).digest("hex");
 }
 
 export function getBaseUrl() {
@@ -79,6 +88,7 @@ export async function verifyLineIdToken(idToken: string): Promise<LineProfile | 
 }
 
 export async function upsertLineMember(profile: LineProfile): Promise<User> {
+  const identityKey = lineIdentityKey(profile);
   const cloudinaryPictureUrl = profile.pictureUrl
     ? await uploadImageToCloudinary(profile.pictureUrl, {
         folder: "kiangna/members",
@@ -86,17 +96,36 @@ export async function upsertLineMember(profile: LineProfile): Promise<User> {
       }).catch(() => profile.pictureUrl)
     : null;
   const phoneKey = `L${profile.userId.slice(-19)}`;
-  const existing = await queryOne<User>("SELECT * FROM users WHERE role='MEMBER' AND (lineUserId=? OR phone=?) ORDER BY lineUserId=? DESC LIMIT 1", [
-    profile.userId,
-    phoneKey,
-    profile.userId,
-  ]);
+  let existing = await queryOne<User>(
+    `SELECT *
+     FROM users
+     WHERE role='MEMBER'
+       AND (
+         lineUserId=?
+         OR phone=?
+         OR lineIdentityKey=?
+         OR (lineDisplayName=? AND linePictureUrl=?)
+       )
+     ORDER BY lineUserId=? DESC, lineIdentityKey=? DESC, createdAt ASC
+     LIMIT 1`,
+    [profile.userId, phoneKey, identityKey, profile.displayName, cloudinaryPictureUrl, profile.userId, identityKey]
+  );
+  if (!existing && profile.displayName) {
+    const sameNameMembers = await query<User>(
+      "SELECT * FROM users WHERE role='MEMBER' AND lineDisplayName=? ORDER BY createdAt ASC LIMIT 2",
+      [profile.displayName]
+    );
+    if (sameNameMembers.length === 1) {
+      existing = sameNameMembers[0];
+    }
+  }
   if (existing) {
-    await execute("UPDATE users SET name=COALESCE(NULLIF(name,''), ?), lineUserId=?, lineDisplayName=?, linePictureUrl=?, status='ACTIVE' WHERE id=?", [
+    await execute("UPDATE users SET name=COALESCE(NULLIF(name,''), ?), lineUserId=?, lineDisplayName=?, linePictureUrl=?, lineIdentityKey=?, status='ACTIVE' WHERE id=?", [
       profile.displayName || "LINE Member",
       profile.userId,
       profile.displayName,
       cloudinaryPictureUrl,
+      identityKey,
       existing.id,
     ]);
     return (await queryOne<User>("SELECT * FROM users WHERE id=?", [existing.id]))!;
@@ -105,8 +134,8 @@ export async function upsertLineMember(profile: LineProfile): Promise<User> {
   const id = uid();
   const memberCode = await nextMemberCode();
   await execute(
-    "INSERT INTO users (id, memberCode, name, phone, lineUserId, lineDisplayName, linePictureUrl, role, status) VALUES (?,?,?,?,?,?,?,?, 'ACTIVE')",
-    [id, memberCode, profile.displayName || "LINE Member", phoneKey, profile.userId, profile.displayName, cloudinaryPictureUrl, "MEMBER"]
+    "INSERT INTO users (id, memberCode, name, phone, lineUserId, lineDisplayName, linePictureUrl, lineIdentityKey, role, status) VALUES (?,?,?,?,?,?,?,?,?, 'ACTIVE')",
+    [id, memberCode, profile.displayName || "LINE Member", phoneKey, profile.userId, profile.displayName, cloudinaryPictureUrl, identityKey, "MEMBER"]
   );
   await execute(
     "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('lineUserId', ?, 'displayName', ?))",

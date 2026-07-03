@@ -23,14 +23,21 @@ export default async function MembersPage() {
     ORDER BY createdAt DESC
     LIMIT 200
   `);
-  const duplicateStats = await query<{ duplicateLine: number; duplicatePhone: number }>(`
+  const duplicateStats = await query<{ duplicateLine: number; duplicatePhone: number; duplicateProfile: number }>(`
     SELECT
       (SELECT COUNT(*) FROM (
         SELECT lineUserId FROM users WHERE role='MEMBER' AND lineUserId IS NOT NULL GROUP BY lineUserId HAVING COUNT(*) > 1
       ) d) duplicateLine,
       (SELECT COUNT(*) FROM (
         SELECT phone FROM users WHERE role='MEMBER' GROUP BY phone HAVING COUNT(*) > 1
-      ) p) duplicatePhone
+      ) p) duplicatePhone,
+      (SELECT COUNT(*) FROM (
+        SELECT COALESCE(lineDisplayName, name) profileName
+        FROM users
+        WHERE role='MEMBER'
+        GROUP BY COALESCE(lineDisplayName, name)
+        HAVING COUNT(*) > 1
+      ) n) duplicateProfile
   `);
 
   return (
@@ -68,7 +75,7 @@ export default async function MembersPage() {
           </div>
         </header>
         <div className="px-4 py-6 sm:px-6 lg:px-8">
-          <MemberManager members={members} isAdmin={user.role === "ADMIN"} duplicateStats={duplicateStats[0] || { duplicateLine: 0, duplicatePhone: 0 }} />
+          <MemberManager members={members} isAdmin={user.role === "ADMIN"} duplicateStats={duplicateStats[0] || { duplicateLine: 0, duplicatePhone: 0, duplicateProfile: 0 }} />
         </div>
       </section>
     </main>

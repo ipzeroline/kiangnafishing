@@ -47,7 +47,7 @@ export default function MemberManager({
 }: {
   members: Member[];
   isAdmin: boolean;
-  duplicateStats: { duplicateLine: number; duplicatePhone: number };
+  duplicateStats: { duplicateLine: number; duplicatePhone: number; duplicateProfile: number };
 }) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(emptyForm);
@@ -56,8 +56,10 @@ export default function MemberManager({
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
   const [clearText, setClearText] = useState("");
+  const [mergeSource, setMergeSource] = useState<Member | null>(null);
+  const [mergeTargetId, setMergeTargetId] = useState("");
   const editing = Boolean(form.memberId);
-  const hasDuplicate = Number(duplicateStats.duplicateLine || 0) > 0 || Number(duplicateStats.duplicatePhone || 0) > 0;
+  const hasDuplicate = Number(duplicateStats.duplicateLine || 0) > 0 || Number(duplicateStats.duplicatePhone || 0) > 0 || Number(duplicateStats.duplicateProfile || 0) > 0;
 
   function edit(member: Member) {
     setForm({
@@ -118,6 +120,35 @@ export default function MemberManager({
     router.refresh();
   }
 
+  function openMerge(member: Member) {
+    const normalized = (member.lineDisplayName || member.name).trim().toLowerCase();
+    const suggested = members.find((item) => item.id !== member.id && (item.lineDisplayName || item.name).trim().toLowerCase() === normalized);
+    setMergeSource(member);
+    setMergeTargetId(suggested?.id || members.find((item) => item.id !== member.id)?.id || "");
+    setMessage("");
+  }
+
+  async function mergeMember() {
+    if (!mergeSource || !mergeTargetId) return;
+    setBusy(true);
+    setMessage("");
+    const res = await fetch("/api/admin/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "merge", sourceId: mergeSource.id, targetId: mergeTargetId }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) {
+      setMessage(data.error || "รวมสมาชิกไม่สำเร็จ");
+      return;
+    }
+    setMergeSource(null);
+    setMergeTargetId("");
+    setMessage(`รวมสมาชิก ${data.sourceMemberCode} เข้ากับ ${data.targetMemberCode} แล้ว`);
+    router.refresh();
+  }
+
   return (
     <section className="space-y-4">
       {message && <p className="rounded-lg bg-mist px-3 py-2 text-sm text-deep">{message}</p>}
@@ -132,7 +163,7 @@ export default function MemberManager({
             <span className={hasDuplicate
               ? "w-fit rounded-full bg-buoy/10 px-3 py-1 text-sm font-semibold text-buoy"
               : "w-fit rounded-full bg-pond/10 px-3 py-1 text-sm font-semibold text-pond"}>
-              {hasDuplicate ? `พบข้อมูลซ้ำ LINE ${duplicateStats.duplicateLine} / เบอร์ ${duplicateStats.duplicatePhone}` : "ตรวจซ้ำแล้ว ไม่พบข้อมูลซ้ำ"}
+              {hasDuplicate ? `พบข้อมูลซ้ำ LINE ${duplicateStats.duplicateLine} / เบอร์ ${duplicateStats.duplicatePhone} / โปรไฟล์ ${duplicateStats.duplicateProfile}` : "ตรวจซ้ำแล้ว ไม่พบข้อมูลซ้ำ"}
             </span>
             <span className="w-fit rounded-full bg-mist px-3 py-1 text-sm font-semibold text-deep">{members.length} บัญชีล่าสุด</span>
             {isAdmin && (
@@ -181,7 +212,12 @@ export default function MemberManager({
                     </span>
                   </td>
                   <td className="px-5 py-4 text-right">
-                    <button onClick={() => edit(member)} className="rounded-lg bg-deep px-3 py-1.5 text-xs font-semibold text-white">แก้ไข</button>
+                    <div className="flex justify-end gap-2">
+                      {isAdmin && members.length > 1 && (
+                        <button onClick={() => openMerge(member)} className="rounded-lg bg-mist px-3 py-1.5 text-xs font-semibold text-deep">รวม</button>
+                      )}
+                      <button onClick={() => edit(member)} className="rounded-lg bg-deep px-3 py-1.5 text-xs font-semibold text-white">แก้ไข</button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -262,6 +298,36 @@ export default function MemberManager({
               <button disabled={busy || clearText !== "CLEAR MEMBERS"} onClick={clearMembers}
                 className="rounded-lg bg-buoy px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
                 {busy ? "กำลังล้างข้อมูล..." : "ล้างข้อมูลสมาชิก"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mergeSource && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-deep/60 px-4 py-6 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg rounded-lg bg-white p-5 shadow-xl ring-1 ring-line">
+            <h3 className="font-display text-xl font-semibold text-deep">รวมสมาชิกซ้ำ</h3>
+            <p className="mt-2 text-sm leading-relaxed text-dim">
+              ระบบจะย้ายยอดเงิน แต้ม เช็คอิน เติมเงิน คูปอง และผลงานปลาของ <b>{mergeSource.memberCode}</b> ไปยังสมาชิกหลัก
+              จากนั้นลบรายการซ้ำออกโดยเก็บ audit log ไว้ตรวจสอบย้อนหลัง
+            </p>
+            <label className="mt-4 block">
+              <span className="mb-1 block text-sm font-medium text-ink">เลือกสมาชิกหลักที่จะเก็บไว้</span>
+              <select value={mergeTargetId} onChange={(event) => setMergeTargetId(event.target.value)}
+                className="w-full rounded-lg border border-line bg-white px-3 py-2.5 outline-none focus:border-pond focus:ring-2 focus:ring-pond/15">
+                {members.filter((member) => member.id !== mergeSource.id).map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.memberCode} · {member.alias || member.name} · {member.lineDisplayName || "ยังไม่เชื่อม LINE"}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => { setMergeSource(null); setMergeTargetId(""); }} className="rounded-lg bg-mist px-4 py-2.5 text-sm font-semibold text-deep">ยกเลิก</button>
+              <button disabled={busy || !mergeTargetId} onClick={mergeMember}
+                className="rounded-lg bg-pond px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+                {busy ? "กำลังรวม..." : "รวมสมาชิก"}
               </button>
             </div>
           </div>

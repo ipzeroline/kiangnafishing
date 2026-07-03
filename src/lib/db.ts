@@ -4,7 +4,7 @@ import { dateKeyBKK, monthKeyBKK } from "./date";
 import { hashPassword } from "./password";
 
 type DbClient = Pool | PoolConnection;
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 
 declare global {
   // eslint-disable-next-line no-var
@@ -26,6 +26,7 @@ export type User = {
   lineUserId: string | null;
   lineDisplayName: string | null;
   linePictureUrl: string | null;
+  lineIdentityKey: string | null;
   profileNote: string | null;
   username: string | null;
   passwordHash: string | null;
@@ -160,6 +161,7 @@ async function initSchema(client: DbClient) {
       lineUserId VARCHAR(80) UNIQUE NULL,
       lineDisplayName VARCHAR(160) NULL,
       linePictureUrl VARCHAR(500) NULL,
+      lineIdentityKey VARCHAR(64) UNIQUE NULL,
       profileNote TEXT NULL,
       username VARCHAR(80) UNIQUE NULL,
       passwordHash VARCHAR(255) NULL,
@@ -176,6 +178,7 @@ async function initSchema(client: DbClient) {
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS lineUserId VARCHAR(80) NULL");
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS lineDisplayName VARCHAR(160) NULL");
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS linePictureUrl VARCHAR(500) NULL");
+  await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS lineIdentityKey VARCHAR(64) NULL");
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profileNote TEXT NULL");
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(80) NULL");
   await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS passwordHash VARCHAR(255) NULL");
@@ -186,6 +189,9 @@ async function initSchema(client: DbClient) {
   } catch {}
   try {
     await client.query("CREATE UNIQUE INDEX uniq_users_line_user ON users (lineUserId)");
+  } catch {}
+  try {
+    await client.query("CREATE UNIQUE INDEX uniq_users_line_identity ON users (lineIdentityKey)");
   } catch {}
 
   await client.query(`
