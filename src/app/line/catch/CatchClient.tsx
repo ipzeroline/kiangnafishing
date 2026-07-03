@@ -67,9 +67,11 @@ export default function CatchClient({ species }: { species: string[] }) {
             </label>
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-ink">รูปภาพผลงานปลา</span>
-              <input type="file" accept="image/*" capture="environment" onChange={(e) => readImage(e.target.files?.[0])}
+              <input type="file" accept="image/*" onChange={(e) => readImage(e.target.files?.[0])}
                 className="w-full rounded-lg border border-line px-3 py-3 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-mist file:px-3 file:py-2 file:font-semibold file:text-deep focus:border-pond" />
-              {form.imageData && <span className="mt-2 block text-xs font-medium text-pond">เลือกรูปภาพแล้ว ระบบจะบันทึกไว้ที่ Cloudinary</span>}
+              {form.imageData
+                ? <span className="mt-2 block text-xs font-medium text-pond">เลือกรูปภาพ 1 รูปแล้ว ระบบจะบันทึกไว้ที่ Cloudinary</span>
+                : <span className="mt-2 block text-xs text-dim">เลือกได้ 1 รูปจากอัลบั้ม หรือถ่ายใหม่จากตัวเลือกของเครื่อง</span>}
             </label>
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-ink">แคปชั่นโดนๆ</span>

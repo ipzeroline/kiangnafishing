@@ -147,19 +147,19 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                 <span>{user.memberCode}</span>
               </div>
             </div>
+            <div className="ranking-my-level">
+              <p>Level ของฉัน</p>
+              <strong>{myLevel?.name || "-"}</strong>
+              <span>{myLevel ? `${myLevel.symbol} · คะแนน ${nf.format(myScore)}` : "ยังไม่มีระดับ"}</span>
+              {myLevel && <RankingLevelBadge level={myLevel} size="md" />}
+            </div>
             <div className="ranking-my-stats">
               <div>
                 <p>อันดับกระดานนี้</p>
                 <strong>{myIndex >= 0 ? `#${(myIndex + 1).toLocaleString("th-TH")}` : "ยังไม่มีอันดับ"}</strong>
                 <span>{myRow ? `${nf.format(Number(myRow.value))} ${unit}` : "ยังไม่มีผลงานในเดือนนี้"}</span>
               </div>
-              <div>
-                <p>Level ของฉัน</p>
-                <strong>{myLevel?.name || "-"}</strong>
-                <span>{myLevel ? `${myLevel.symbol} · คะแนน ${nf.format(myScore)}` : "ยังไม่มีระดับ"}</span>
-              </div>
             </div>
-            {myLevel && <RankingLevelBadge level={myLevel} size="md" />}
           </section>
         )}
 
@@ -207,7 +207,7 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                   <p className="ranking-eyebrow">Leaderboard</p>
                   <h2>{boardMeta.label} · Top 50</h2>
                 </div>
-                <p>Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100 รีเซ็ตทุกวันที่ 1</p>
+                <p>เลื่อนดูตรงนี้เพื่อดูลำดับคนอื่นในกระดาน Top 50 · Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100</p>
               </div>
               <ol className="ranking-list">
                 {restRows.map((r, offset) => {
