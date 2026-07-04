@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export type Locale = "th" | "en";
-export type SitePage = "home" | "news" | "articles" | "gallery" | "about" | "contact" | "privacy" | "terms";
+export type SitePage = "home" | "news" | "articles" | "fishStocking" | "gallery" | "about" | "contact" | "privacy" | "terms";
 
 export const siteUrl = "https://kiangnafishinglake.com";
 export const siteContact = {
@@ -24,6 +24,7 @@ export const pagePaths: Record<SitePage, Record<Locale, string>> = {
   home: { th: "/", en: "/en" },
   news: { th: "/news", en: "/en/news" },
   articles: { th: "/articles", en: "/en/articles" },
+  fishStocking: { th: "/fish-stocking-schedule", en: "/en/fish-stocking-schedule" },
   gallery: { th: "/gallery", en: "/en/gallery" },
   about: { th: "/about", en: "/en/about" },
   contact: { th: "/contact", en: "/en/contact" },
@@ -38,6 +39,7 @@ export const siteContent = {
       home: "หน้าแรก",
       news: "ข่าวสาร/กิจกรรม",
       articles: "บทความ",
+      fishStocking: "ตารางการลงปลา",
       gallery: "แกลลอรี่",
       about: "เกี่ยวกับเรา",
       contact: "ติดต่อเรา",
@@ -58,6 +60,10 @@ export const siteContent = {
       articles: {
         title: "บทความตกปลา | เคียงนา Fishing Lake",
         description: "บทความความรู้ เทคนิคตกปลา การเตรียมตัวเข้าบ่อ การใช้งานเมนูบริการ และคำแนะนำสำหรับนักตกปลาที่เคียงนา Fishing Lake",
+      },
+      fishStocking: {
+        title: "ตารางการลงปลา | เคียงนา Fishing Lake พะเยา",
+        description: "ดูตารางการลงปลาล่าสุดของเคียงนา Fishing Lake พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา สำหรับวางแผนเข้าบ่อตกปลาพะเยาและดอกคำใต้",
       },
       gallery: {
         title: "แกลลอรี่ผลงานปลา | บ่อตกปลาเคียงนา Fishing Lake พะเยา",
@@ -111,6 +117,7 @@ export const siteContent = {
       home: "Home",
       news: "News & Events",
       articles: "Articles",
+      fishStocking: "Fish Releases",
       gallery: "Gallery",
       about: "About",
       contact: "Contact",
@@ -131,6 +138,10 @@ export const siteContent = {
       articles: {
         title: "Fishing Articles | Kiangna Fishing Lake",
         description: "Fishing tips, lake preparation guides, LINE usage, and practical articles for anglers at Kiangna Fishing Lake.",
+      },
+      fishStocking: {
+        title: "Fish Release Schedule | Kiangna Fishing Lake Phayao",
+        description: "View the latest Kiangna Fishing Lake fish release schedule with photos, species, fish count, total weight, release details, and dates for planning your fishing trip in Phayao.",
       },
       gallery: {
         title: "Verified Catch Gallery | Kiangna Fishing Lake Phayao",
@@ -209,6 +220,9 @@ export function buildPageMetadata(locale: Locale, page: SitePage): Metadata {
       "บ่อตกปลาพรีเมียม",
       "บ่อตกปลา LINE",
       "กิจกรรมลงปลา",
+      "ตารางการลงปลา",
+      "ตารางลงปลาเคียงนา",
+      "รอบลงปลา",
       "ranking นักตกปลา",
       "LINE",
       "ตกปลา",

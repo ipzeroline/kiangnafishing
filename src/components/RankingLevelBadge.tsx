@@ -3,9 +3,27 @@ import type { RankingLevel } from "@/lib/db";
 type Size = "sm" | "md" | "lg";
 
 const sizeClass: Record<Size, { wrap: string; emblem: string; icon: string; level: string; name: string }> = {
-  sm: { wrap: "gap-2 rounded-lg px-2 py-1.5", emblem: "h-7 w-7", icon: "h-6 w-6", level: "text-[9px]", name: "text-[10px]" },
-  md: { wrap: "gap-2.5 rounded-lg px-3 py-2", emblem: "h-9 w-9", icon: "h-8 w-8", level: "text-[10px]", name: "text-xs" },
-  lg: { wrap: "gap-3 rounded-lg px-4 py-3", emblem: "h-12 w-12", icon: "h-11 w-11", level: "text-xs", name: "text-sm" },
+  sm: {
+    wrap: "w-fit max-w-full gap-1.5 rounded-full px-2 py-1",
+    emblem: "h-6 w-6",
+    icon: "h-5 w-5",
+    level: "text-[9px]",
+    name: "text-[11px]",
+  },
+  md: {
+    wrap: "w-fit max-w-full gap-2 rounded-full px-2.5 py-1.5",
+    emblem: "h-7 w-7",
+    icon: "h-6 w-6",
+    level: "text-[10px]",
+    name: "text-[13px]",
+  },
+  lg: {
+    wrap: "w-fit max-w-full gap-2.5 rounded-full px-3 py-2",
+    emblem: "h-9 w-9",
+    icon: "h-8 w-8",
+    level: "text-xs",
+    name: "text-sm",
+  },
 };
 
 const palette = {
@@ -22,28 +40,28 @@ export default function RankingLevelBadge({ level, size = "sm" }: { level: Ranki
   const cls = sizeClass[size];
   return (
     <span
-      className={`relative inline-flex items-center ${cls.wrap} overflow-hidden font-semibold text-deep`}
+      className={`ranking-level-badge relative inline-flex items-center ${cls.wrap} overflow-hidden font-semibold text-deep`}
       style={{
-        background: "linear-gradient(135deg, #ffffff 0%, #f7faf9 54%, #eef5f2 100%)",
-        border: "1px solid rgba(16,51,59,.12)",
-        boxShadow: `0 10px 24px rgba(10,53,64,.12), 0 0 0 1px ${level.color}26 inset`,
+        background: "linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.055)), linear-gradient(135deg, #082f38 0%, #135a66 100%)",
+        border: `1px solid ${level.color}9c`,
+        boxShadow: `0 10px 22px rgba(10,53,64,.18), 0 0 0 1px rgba(255,255,255,.16) inset, 0 -2px 0 ${level.color} inset`,
       }}
       title={`Level ${level.levelNo}: ${level.name}`}
     >
-      <span className="absolute inset-x-0 bottom-0 h-1" style={{ backgroundColor: level.color }} />
-      <span className="absolute inset-y-0 left-0 w-10 opacity-12" style={{ backgroundColor: level.color }} />
+      <span className="absolute -right-3 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full opacity-20" style={{ backgroundColor: level.color }} />
+      <span className="absolute left-8 right-3 top-1/2 h-px opacity-25" style={{ backgroundColor: level.color }} />
       <span
-        className={`relative grid shrink-0 place-items-center rounded-lg ${cls.emblem}`}
+        className={`relative grid shrink-0 place-items-center rounded-full ${cls.emblem}`}
         style={{
-          background: `radial-gradient(circle at 35% 28%, #ffffff 0%, #ffffff 28%, ${level.color}20 64%, ${level.color}38 100%)`,
-          boxShadow: `0 0 0 1px ${level.color}55 inset, 0 6px 14px ${level.color}24`,
+          background: `radial-gradient(circle at 35% 28%, #ffffff 0%, #fff7d7 34%, ${level.color}78 100%)`,
+          boxShadow: `0 0 0 1px rgba(255,255,255,.72) inset, 0 5px 12px rgba(0,0,0,.2)`,
         }}
       >
         <LevelIcon symbol={level.symbol} levelNo={level.levelNo} className={cls.icon} />
       </span>
       <span className="relative min-w-0 leading-tight">
-        <span className={`block font-black uppercase tracking-wide ${cls.level}`} style={{ color: level.color }}>LEVEL {level.levelNo}</span>
-        <span className={`block truncate font-bold text-deep ${cls.name}`}>{level.name}</span>
+        <span className={`block font-black uppercase tracking-wide ${cls.level}`} style={{ color: "#f3cf55" }}>LEVEL {level.levelNo}</span>
+        <span className={`block whitespace-normal break-words font-bold ${cls.name}`} style={{ color: "#f7fffb" }}>{level.name}</span>
       </span>
     </span>
   );

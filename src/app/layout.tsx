@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Thai } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -46,6 +47,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="th" className={`${inter.variable} ${notoSansThai.variable}`}>
       <body className="min-h-dvh bg-surface">
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-LL0CD6S5L4" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LL0CD6S5L4');
+          `}
+        </Script>
         <div className="min-h-dvh w-full bg-surface">
           {children}
         </div>

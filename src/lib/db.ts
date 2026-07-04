@@ -4,7 +4,7 @@ import { dateKeyBKK, monthKeyBKK } from "./date";
 import { hashPassword } from "./password";
 
 type DbClient = Pool | PoolConnection;
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 declare global {
   // eslint-disable-next-line no-var
@@ -62,6 +62,19 @@ export type FishCatch = {
   status: string;
   monthKey: string;
   createdAt: string;
+};
+
+export type FishStocking = {
+  id: string;
+  imagePath: string;
+  species: string;
+  fishCount: number;
+  totalWeightKg: number;
+  detail: string;
+  stockingDate: string;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Event = {
@@ -283,6 +296,24 @@ async function initSchema(client: DbClient) {
   `);
   await client.query("ALTER TABLE catches MODIFY imagePath VARCHAR(500) NOT NULL");
   await client.query("ALTER TABLE catches ADD COLUMN caption VARCHAR(180) NULL").catch(() => undefined);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS fish_stockings (
+      id VARCHAR(32) PRIMARY KEY,
+      imagePath VARCHAR(500) NOT NULL,
+      species VARCHAR(120) NOT NULL,
+      fishCount INT NOT NULL DEFAULT 0,
+      totalWeightKg DECIMAL(10,2) NOT NULL DEFAULT 0,
+      detail TEXT NOT NULL,
+      stockingDate DATE NOT NULL,
+      createdBy VARCHAR(32) NULL,
+      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_fish_stockings_date (stockingDate),
+      INDEX idx_fish_stockings_species (species),
+      CONSTRAINT fk_fish_stockings_creator FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
 
   await client.query(`
     CREATE TABLE IF NOT EXISTS topups (

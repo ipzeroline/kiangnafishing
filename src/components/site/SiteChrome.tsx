@@ -2,7 +2,7 @@ import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import { Locale, SitePage, pagePaths, siteContact, siteContent } from "@/lib/site";
 
-const navItems = ["home", "news", "articles", "gallery", "about", "contact"] as const;
+const navItems = ["home", "news", "articles", "fishStocking", "gallery", "about", "contact"] as const;
 
 export default function SiteChrome({
   locale,

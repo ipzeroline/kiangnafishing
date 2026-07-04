@@ -41,6 +41,17 @@ type HomeCatch = {
   createdAt: string;
 };
 
+type PublicFishStocking = {
+  id: string;
+  imagePath: string;
+  species: string;
+  fishCount: number;
+  totalWeightKg: number;
+  detail: string;
+  stockingDate: string;
+  createdAt: string;
+};
+
 async function getHomeRanking() {
   const mk = monthKeyBKK();
   return query<HomeRanking>(`
@@ -157,6 +168,15 @@ async function getPublicGallery() {
     WHERE c.status='VERIFIED' AND c.imagePath IS NOT NULL AND c.imagePath <> ''
     ORDER BY c.createdAt DESC
     LIMIT 36
+  `);
+}
+
+async function getPublicFishStockings() {
+  return query<PublicFishStocking>(`
+    SELECT id, imagePath, species, fishCount, totalWeightKg, detail, stockingDate, createdAt
+    FROM fish_stockings
+    ORDER BY stockingDate DESC, createdAt DESC
+    LIMIT 24
   `);
 }
 
@@ -369,7 +389,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
           <div className="cat-grid">
             {(locale === "th"
               ? [
-                  ["ลงปลา", "ติดตามข่าวลงปลา กิจกรรม และโปรโมชันบ่อตกปลาเคียงนา", pagePaths.news[locale]],
+                  ["ลงปลา", "ดูตารางการลงปลาพร้อมรูป ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่ล่าสุด", pagePaths.fishStocking[locale]],
                   ["เครดิต", "ดูวิธีเติมเครดิต ตรวจสอบยอด และใช้งานกระเป๋าเงินผ่าน LINE", pagePaths.articles[locale]],
                   ["อันดับ", "ดูอันดับนักตกปลา น้ำหนักปลาใหญ่ และผลงานล่าสุด", "/rankings"],
                   ["คูปอง", "ดูสิทธิพิเศษ แต้มสะสม และการแลกรางวัลสำหรับสมาชิก", pagePaths.news[locale]],
@@ -377,7 +397,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
                   ["ติดต่อ", "สอบถามข้อมูล จองหมาย และติดต่อเจ้าหน้าที่ผ่าน LINE", pagePaths.contact[locale]],
                 ]
               : [
-                  ["Fish release", "Read official fish release updates, events, and lake promotions", pagePaths.news[locale]],
+                  ["Fish release", "View official release records with photos, species, fish count, total weight, and dates", pagePaths.fishStocking[locale]],
                   ["Credits", "Check top-up guidance, balances, and LINE wallet usage", pagePaths.articles[locale]],
                   ["Ranking", "View angler rankings, biggest fish, and latest verified catches", "/rankings"],
                   ["Coupons", "Review member privileges, points, and reward redemption", pagePaths.news[locale]],
@@ -571,6 +591,191 @@ export function ArticlesSitePage({ locale }: { locale: Locale }) {
         ))}
       </div>
     </ContentPage>
+  );
+}
+
+export async function FishStockingSitePage({ locale }: { locale: Locale }) {
+  const content = siteContent[locale];
+  const rows = await getPublicFishStockings();
+  const nf = new Intl.NumberFormat(locale === "th" ? "th-TH" : "en-US");
+  const totalFish = rows.reduce((sum, item) => sum + Number(item.fishCount || 0), 0);
+  const totalWeight = rows.reduce((sum, item) => sum + Number(item.totalWeightKg || 0), 0);
+  const speciesCount = new Set(rows.map((item) => item.species)).size;
+  const faqs = locale === "th"
+    ? [
+        ["ตารางการลงปลาอัปเดตจากที่ไหน", "ข้อมูลมาจากระบบหลังบ้านของเคียงนา Fishing Lake เมื่อเจ้าหน้าที่บันทึกรายการลงปลา ระบบจะแสดงรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่บนหน้านี้"],
+        ["ควรใช้ตารางลงปลาเพื่อวางแผนอย่างไร", "ดูวันที่ลงปลา ชนิดปลา และน้ำหนักรวมประกอบกับข่าวสารกิจกรรม แล้วติดต่อ LINE @038gyaxo เพื่อสอบถามรอบที่เหมาะกับการเข้าบ่อ"],
+        ["จำนวนปลาและน้ำหนักรวมหมายถึงอะไร", "จำนวนตัวคือจำนวนปลาที่ลงในรอบนั้น ส่วนน้ำหนักรวมเป็นกิโลกรัมรวมของรอบลงปลา ใช้เป็นข้อมูลประกอบการวางแผนเท่านั้น"],
+      ]
+    : [
+        ["Where does the fish release schedule come from?", "The records are published from Kiangna Fishing Lake’s back office after staff add each release with photo, species, fish count, total weight, details, and date."],
+        ["How should anglers use this schedule?", "Review the release date, species, and total weight together with event news, then contact LINE @038gyaxo to plan the best visit."],
+        ["What do fish count and total weight mean?", "Fish count is the number of fish released in that round. Total weight is the combined release weight in kilograms."],
+      ];
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}${pagePaths.fishStocking[locale]}#webpage`,
+        name: content.pages.fishStocking.title,
+        description: content.pages.fishStocking.description,
+        url: `${siteUrl}${pagePaths.fishStocking[locale]}`,
+        inLanguage: locale === "th" ? "th-TH" : "en-US",
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        about: { "@id": `${siteUrl}/#business` },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${siteUrl}${pagePaths.fishStocking[locale]}#release-list`,
+        name: locale === "th" ? "รายการตารางการลงปลา" : "Fish release records",
+        itemListElement: rows.slice(0, 12).map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "Event",
+            name: `${item.species} ${dateText(item.stockingDate, locale)}`,
+            startDate: item.stockingDate,
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+            eventStatus: "https://schema.org/EventScheduled",
+            image: item.imagePath.startsWith("http") ? item.imagePath : `${siteUrl}${item.imagePath}`,
+            location: { "@type": "Place", name: content.brand },
+            description: item.detail || `${item.species} ${nf.format(Number(item.fishCount || 0))} fish, ${nf.format(Number(item.totalWeightKg || 0))} kg`,
+          },
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${siteUrl}${pagePaths.fishStocking[locale]}#faq`,
+        mainEntity: faqs.map(([question, answer]) => ({
+          "@type": "Question",
+          name: question,
+          acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
+      },
+    ],
+  };
+
+  return (
+    <SiteChrome locale={locale} page="fishStocking">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main className="fish-release-page">
+        <section className="fish-release-hero">
+          <div className="fish-release-hero-copy">
+            <p className="site-eyebrow">{locale === "th" ? "Official Fish Release Schedule" : "Official Fish Release Schedule"}</p>
+            <h1>{locale === "th" ? "ตารางการลงปลา เคียงนา Fishing Lake" : "Kiangna Fishing Lake Fish Release Schedule"}</h1>
+            <p>
+              {locale === "th"
+                ? "ตรวจสอบรอบลงปลาล่าสุดจากระบบหลังบ้าน พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา เพื่อวางแผนเข้าบ่ออย่างมั่นใจ"
+                : "Review official fish release records from the back office with photos, species, fish count, total weight, details, and release dates before planning your visit."}
+            </p>
+            <div className="site-hero-actions">
+              <Link href={siteContact.lineHref} className="site-primary-btn" target="_blank" rel="noopener noreferrer">{content.cta}</Link>
+              <Link href={pagePaths.contact[locale]} className="site-secondary-btn">{locale === "th" ? "สอบถามรอบลงปลา" : "Ask about releases"}</Link>
+            </div>
+            <div className="fish-release-hero-proof" aria-label={locale === "th" ? "ข้อมูลหลักของตารางลงปลา" : "Fish release highlights"}>
+              <span>{locale === "th" ? "ข้อมูลจากระบบหลังบ้าน" : "Back-office records"}</span>
+              <span>{locale === "th" ? "อัปเดตตามวันที่ลงปลา" : "Sorted by release date"}</span>
+              <span>{locale === "th" ? "รูปและน้ำหนักรวมครบ" : "Photos and total weight"}</span>
+            </div>
+          </div>
+          <section className="fish-release-stats" aria-label={locale === "th" ? "สรุปตารางการลงปลา" : "Fish release summary"}>
+            <article>
+              <span>{locale === "th" ? "รายการเผยแพร่" : "Published rounds"}</span>
+              <strong>{nf.format(rows.length)}</strong>
+            </article>
+            <article>
+              <span>{locale === "th" ? "จำนวนปลารวม" : "Total fish"}</span>
+              <strong>{nf.format(totalFish)}</strong>
+            </article>
+            <article>
+              <span>{locale === "th" ? "น้ำหนักรวม" : "Total weight"}</span>
+              <strong>{nf.format(totalWeight)} kg</strong>
+            </article>
+            <article>
+              <span>{locale === "th" ? "ชนิดปลา" : "Species"}</span>
+              <strong>{nf.format(speciesCount)}</strong>
+            </article>
+          </section>
+        </section>
+
+        <section className="site-section fish-release-section">
+          <div className="section-head">
+            <p className="site-eyebrow">{locale === "th" ? "Release Records" : "Release Records"}</p>
+            <h2 className="h2">{locale === "th" ? "รายการลงปลาล่าสุด" : "Latest fish releases"}</h2>
+          </div>
+          {rows.length > 0 ? (
+            <div className="fish-release-grid">
+              {rows.map((item, index) => (
+                <article key={item.id} className={index === 0 ? "fish-release-card is-featured" : "fish-release-card"}>
+                  <div className="fish-release-card-image">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.imagePath} alt={locale === "th" ? `ตารางการลงปลา ${item.species}` : `Fish release ${item.species}`} loading={index < 3 ? "eager" : "lazy"} />
+                  </div>
+                  <div className="fish-release-card-body">
+                    <div className="fish-release-card-top">
+                      <span>{dateText(item.stockingDate, locale)}</span>
+                      <b>{String(index + 1).padStart(2, "0")}</b>
+                    </div>
+                    <h2>{item.species}</h2>
+                    <p>{item.detail || (locale === "th" ? "รายละเอียดรอบลงปลาจะอัปเดตจากเจ้าหน้าที่" : "Release details will be updated by staff.")}</p>
+                    <dl>
+                      <div>
+                        <dt>{locale === "th" ? "จำนวนตัว" : "Fish count"}</dt>
+                        <dd>{item.fishCount ? nf.format(Number(item.fishCount)) : "-"}</dd>
+                      </div>
+                      <div>
+                        <dt>{locale === "th" ? "น้ำหนักรวม" : "Total weight"}</dt>
+                        <dd>{item.totalWeightKg ? `${nf.format(Number(item.totalWeightKg))} kg` : "-"}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="fish-release-empty">
+              <p className="site-eyebrow">{locale === "th" ? "ยังไม่มีข้อมูลจากหลังบ้าน" : "No back-office records yet"}</p>
+              <h2>{locale === "th" ? "เมื่อเจ้าหน้าที่บันทึกรายการลงปลา รูปและข้อมูลปลาจะแสดงที่นี่" : "Fish photos and release records will appear here after staff publish them."}</h2>
+              <p>{locale === "th" ? "หน้านี้จะแสดงเฉพาะข้อมูลปลาที่เพิ่มจากระบบหลังบ้านเท่านั้น" : "This page only displays fish release data added from the staff back office."}</p>
+            </div>
+          )}
+        </section>
+
+        <section className="site-section fish-release-seo-panel">
+          <div>
+            <p className="site-eyebrow">{locale === "th" ? "Planning Guide" : "Planning Guide"}</p>
+            <h2>{locale === "th" ? "ใช้ตารางการลงปลาเพื่อวางแผนเข้าบ่ออย่างมืออาชีพ" : "Use the fish release schedule to plan a better visit"}</h2>
+            <p>
+              {locale === "th"
+                ? "ตารางการลงปลาเป็นข้อมูลสำคัญสำหรับนักตกปลาที่ต้องการติดตามรอบปล่อยปลาใหญ่ กิจกรรมลงปลา และช่วงเวลาที่เหมาะกับการเข้าบ่อ ข้อมูลทุกแถวถูกบันทึกจากระบบหลังบ้านเพื่อให้ตรวจสอบง่ายและสื่อสารกับลูกค้าได้ชัดเจน"
+                : "The fish release schedule helps anglers follow release rounds, fish species, total release weight, and relevant lake activity details before visiting Kiangna Fishing Lake."}
+            </p>
+          </div>
+          <ul>
+            {(locale === "th"
+              ? ["ดูวันที่ลงปลาก่อนวางแผนเดินทาง", "เทียบชนิดปลาและน้ำหนักรวมของแต่ละรอบ", "ติดต่อ LINE เพื่อสอบถามช่วงเวลาที่เหมาะสม", "ติดตามข่าวสารและกิจกรรมประกอบรอบลงปลา"]
+              : ["Check release dates before planning a trip", "Compare species and total release weight", "Contact LINE for suitable sessions", "Follow news and activities around release rounds"]
+            ).map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </section>
+
+        <section className="site-section site-section-tight">
+          <div className="section-head">
+            <p className="site-eyebrow">FAQ</p>
+            <h2 className="h2">{locale === "th" ? "คำถามที่พบบ่อยเกี่ยวกับตารางการลงปลา" : "Fish release schedule FAQ"}</h2>
+          </div>
+          <div className="home-faq-list">
+            {faqs.map(([question, answer]) => (
+              <details key={question} className="home-faq-item">
+                <summary>{question}</summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      </main>
+    </SiteChrome>
   );
 }
 

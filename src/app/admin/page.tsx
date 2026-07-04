@@ -152,15 +152,16 @@ export default async function AdminPage() {
         </div>
         <nav className="space-y-1 text-sm">
           <Link href="/admin" className="block rounded-lg bg-white/12 px-3 py-2.5 font-semibold text-white">Dashboard</Link>
+          <Link href="/admin/scan" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">รับสมาชิกเข้าบ่อ</Link>
           <Link href="/admin/members" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">สมาชิก</Link>
           <Link href="/admin/credits" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">เครดิต / แต้ม</Link>
-          <Link href="/admin/fish-species" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ชนิดปลา</Link>
+          <Link href="/admin/fish-stockings" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ตารางลงปลา</Link>
           <Link href="/admin/fish" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ผลงานปลา</Link>
+          <Link href="/admin/fish-species" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ชนิดปลา</Link>
           <Link href="/admin/member-ranking" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Ranking สมาชิก</Link>
           {user.role === "ADMIN" && <Link href="/admin/ranking-levels" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Level Ranking</Link>}
           <Link href="/admin/events" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">Event</Link>
           <Link href="/admin/rewards" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">คูปอง / รางวัล</Link>
-          <Link href="/admin/scan" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">รับสมาชิกเข้าบ่อ</Link>
           <Link href="/admin/reports" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">รายงาน</Link>
           <Link href="/admin/employees" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">ผู้ใช้งานระบบ</Link>
           <Link href="/ranking" className="block rounded-lg px-3 py-2.5 text-white/72 hover:bg-white/10 hover:text-white">กระดานอันดับ</Link>
@@ -225,6 +226,11 @@ export default async function AdminPage() {
               <p className="text-sm text-dim">ชนิดปลา</p>
               <p className="mt-2 font-display text-xl font-semibold text-deep">แคตตาล็อกปลา</p>
               <p className="mt-2 text-sm text-dim">กำหนดชื่อปลา หมวดหมู่ แต้ม และเงื่อนไขน้ำหนัก</p>
+            </Link>
+            <Link href="/admin/fish-stockings" className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-line">
+              <p className="text-sm text-dim">ตารางลงปลา</p>
+              <p className="mt-2 font-display text-xl font-semibold text-deep">บันทึกปลาลงบ่อ</p>
+              <p className="mt-2 text-sm text-dim">รูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา</p>
             </Link>
             <Link href="/admin/member-ranking" className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-line">
               <p className="text-sm text-dim">Ranking สมาชิก</p>
