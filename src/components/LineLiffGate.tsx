@@ -63,10 +63,29 @@ export default function LineLiffGate({ children }: { children: React.ReactNode }
     <>
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" strategy="afterInteractive" onLoad={() => void boot()} />
       {!ready && (
-        <main className="grid min-h-dvh place-items-center bg-[#f5f8f7] px-4 text-center">
-          <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-line">
-            <h1 className="font-display text-2xl font-semibold text-deep">เคียงนา Fishing Lake</h1>
-            <p className="mt-2 text-sm text-dim">{error || "กำลังเชื่อมต่อ LINE..."}</p>
+        <main className="line-liff-loading">
+          <div className="line-liff-card">
+            <div className="line-liff-image">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/site/kiangna-lake-aerial-01.jpg" alt="เคียงนา Fishing Lake" width={1200} height={899} />
+              <div className="line-liff-water" aria-hidden="true">
+                <span />
+                <span />
+              </div>
+              <div className="line-liff-fish" aria-hidden="true">
+                <svg viewBox="0 0 64 32">
+                  <path d="M8 16c10-9 25-9 38 0-13 9-28 9-38 0Z" />
+                  <path d="M46 16l11-8v16l-11-8Z" />
+                  <circle cx="21" cy="14" r="2.1" />
+                </svg>
+              </div>
+            </div>
+            <div className="line-liff-copy">
+              <p>Kiangna Fishing Lake</p>
+              <h1>เคียงนา Fishing Lake</h1>
+              <div className="line-liff-progress" aria-hidden="true"><span /></div>
+              <p className={error ? "line-liff-error" : ""}>{error || "กำลังเชื่อมต่อ LINE..."}</p>
+            </div>
           </div>
         </main>
       )}
