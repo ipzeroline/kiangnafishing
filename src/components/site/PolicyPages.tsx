@@ -55,11 +55,14 @@ const terms = {
 
 export function PolicyPage({ locale, type }: { locale: Locale; type: "privacy" | "terms" }) {
   const data = type === "privacy" ? privacy[locale] : terms[locale];
+  const eyebrow = type === "privacy"
+    ? locale === "th" ? "ความเป็นส่วนตัว" : "Privacy"
+    : locale === "th" ? "ข้อกำหนด" : "Terms";
   return (
     <SiteChrome locale={locale} page={type}>
       <main className="site-content-page legal-page">
         <header className="site-page-head">
-          <p className="site-eyebrow">{type === "privacy" ? "Privacy" : "Terms"}</p>
+          <p className="site-eyebrow">{eyebrow}</p>
           <h1>{data.title}</h1>
           <p>{data.intro}</p>
         </header>

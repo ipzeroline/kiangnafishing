@@ -4,7 +4,7 @@ import { dateKeyBKK, monthKeyBKK } from "./date";
 import { hashPassword } from "./password";
 
 type DbClient = Pool | PoolConnection;
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 
 declare global {
   // eslint-disable-next-line no-var
@@ -424,6 +424,25 @@ async function initSchema(client: DbClient) {
       createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       INDEX idx_ranking_levels_active_score (status, minScore)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS article_views (
+      slug VARCHAR(160) PRIMARY KEY,
+      viewCount INT NOT NULL DEFAULT 0,
+      updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS article_view_events (
+      id VARCHAR(32) PRIMARY KEY,
+      slug VARCHAR(160) NOT NULL,
+      visitorId VARCHAR(64) NOT NULL,
+      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uniq_article_view_visitor (slug, visitorId),
+      INDEX idx_article_view_events_slug_created (slug, createdAt)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
 }

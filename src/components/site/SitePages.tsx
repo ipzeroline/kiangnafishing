@@ -1,7 +1,9 @@
 import Link from "next/link";
 import SiteChrome from "./SiteChrome";
-import { Locale, SitePage, articleItems, galleryItems, homeSeoContent, newsItems, pagePaths, siteContact, siteContent, siteUrl } from "@/lib/site";
-import { query, type RankingLevel } from "@/lib/db";
+import ArticleBrowser from "./ArticleBrowser";
+import ArticleViewTracker from "./ArticleViewTracker";
+import { Locale, SitePage, articleItems, articlePath, galleryItems, homeSeoContent, latestArticleItems, newsItems, pagePaths, siteContact, siteContent, siteUrl, type ArticleItem, type ArticleViewMap } from "@/lib/site";
+import { query, queryOne, type RankingLevel } from "@/lib/db";
 import { dateKeyBKK, monthKeyBKK } from "@/lib/date";
 import { levelForScore } from "@/lib/ranking";
 import RankingLevelBadge from "@/components/RankingLevelBadge";
@@ -51,6 +53,28 @@ type PublicFishStocking = {
   stockingDate: string;
   createdAt: string;
 };
+
+function ArticleCover({ article, index, locale, large = false }: { article: ArticleItem; index: number; locale: Locale; large?: boolean }) {
+  const coverNumber = String((index % 10) + 1);
+  const label = locale === "th" ? "คู่มือตกปลา" : "Fishing Guide";
+
+  return (
+    <div className={large ? "article-cover article-cover-large" : "article-cover"} data-cover={coverNumber} aria-label={article.alt}>
+      <div className="article-cover-mark" aria-hidden="true">
+        <svg viewBox="0 0 28 28">
+          <path d="M4 15.5c5.4-5.5 11.6-5.5 18 0-6.4 5.5-12.6 5.5-18 0Z" />
+          <path d="M21.5 15.5 25 12v7l-3.5-3.5Z" />
+          <circle cx="9.2" cy="14.5" r="1.15" />
+        </svg>
+      </div>
+      <div>
+        <p>{label}</p>
+        <strong>{article.keywords[0]}</strong>
+        <span>{article.keywords.slice(1).join(" / ")}</span>
+      </div>
+    </div>
+  );
+}
 
 async function getHomeRanking() {
   const mk = monthKeyBKK();
@@ -178,6 +202,16 @@ async function getPublicFishStockings() {
     ORDER BY stockingDate DESC, createdAt DESC
     LIMIT 24
   `);
+}
+
+async function getArticleViews(): Promise<ArticleViewMap> {
+  const rows = await query<{ slug: string; viewCount: number }>("SELECT slug, viewCount FROM article_views");
+  return Object.fromEntries(rows.map((row) => [row.slug, Number(row.viewCount || 0)]));
+}
+
+async function getArticleViewCount(slug: string) {
+  const row = await queryOne<{ viewCount: number }>("SELECT viewCount FROM article_views WHERE slug=? LIMIT 1", [slug]);
+  return Number(row?.viewCount || 0);
 }
 
 function dateText(value: string, locale: Locale) {
@@ -324,6 +358,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
   }));
   const displayGallery = gallery.length ? gallery : fallbackGallery;
   const seo = homeSeoContent[locale];
+  const latestArticles = latestArticleItems(locale).slice(0, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -401,7 +436,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "Live Lake Dashboard" : "Live Lake Dashboard"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "แดชบอร์ดหน้าบ่อ" : "Live Lake Dashboard"}</p>
             <h2 className="h2">{locale === "th" ? "ข้อมูลสรุปล่าสุดจากบ่อตกปลา" : "Latest operational highlights"}</h2>
           </div>
           <div className="home-live-stats">
@@ -434,7 +469,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "Service Highlights" : "Service Highlights"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "จุดเด่นบริการ" : "Service Highlights"}</p>
             <h2 className="h2">{locale === "th" ? "บริการสำคัญสำหรับนักตกปลา" : "Key services for anglers"}</h2>
           </div>
           <div className="cat-grid">
@@ -469,7 +504,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "Ranking" : "Ranking"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "อันดับนักตกปลา" : "Ranking"}</p>
             <h2 className="h2">{locale === "th" ? "อันดับนักตกปลาล่าสุด" : "Latest angler ranking"}</h2>
           </div>
           <div className="home-ranking">
@@ -509,7 +544,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "News & Events" : "News & Events"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "ข่าวสารและกิจกรรม" : "News & Events"}</p>
             <h2 className="h2">{locale === "th" ? "ข่าวสารและกิจกรรมล่าสุด" : "Latest news and events"}</h2>
           </div>
           <div className="site-list-grid">
@@ -528,7 +563,33 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "Gallery" : "Gallery"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "บทความล่าสุด" : "Latest Articles"}</p>
+            <h2 className="h2">{locale === "th" ? "ความรู้ตกปลาล่าสุด" : "Latest fishing knowledge"}</h2>
+          </div>
+          <div className="article-grid article-grid-featured">
+            {latestArticles.map((article, index) => (
+              <Link key={article.slug} href={articlePath(locale, article.slug)} className="article-card" aria-label={article.title}>
+                <ArticleCover article={article} index={index} locale={locale} />
+                <div className="article-card-body">
+                  <p>{String(index + 1).padStart(2, "0")}</p>
+                  <h2>{article.title}</h2>
+                  <span>{article.detail}</span>
+                  <div className="article-tags" aria-label={locale === "th" ? "คีย์เวิร์ดบทความ" : "Article keywords"}>
+                    {article.keywords.map((keyword) => <b key={keyword}>{keyword}</b>)}
+                  </div>
+                </div>
+                <span className="article-readmore">{locale === "th" ? "อ่านบทความ" : "Read article"}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="center mt-lg">
+            <Link href={pagePaths.articles[locale]} className="site-secondary-btn">{locale === "th" ? "ดูบทความทั้งหมด" : "View all articles"}</Link>
+          </div>
+        </section>
+
+        <section className="site-section site-section-tight">
+          <div className="section-head">
+            <p className="site-eyebrow">{locale === "th" ? "แกลลอรี่" : "Gallery"}</p>
             <h2 className="h2">{locale === "th" ? "แกลลอรี่ล่าสุด" : "Latest gallery"}</h2>
           </div>
           <div className="home-gallery-grid">
@@ -600,7 +661,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">FAQ</p>
+            <p className="site-eyebrow">{locale === "th" ? "คำถามที่พบบ่อย" : "FAQ"}</p>
             <h2 className="h2">{seo.faqTitle}</h2>
           </div>
           <div className="home-faq-list">
@@ -620,7 +681,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 export function NewsSitePage({ locale }: { locale: Locale }) {
   const content = siteContent[locale];
   return (
-    <ContentPage locale={locale} page="news" eyebrow="Updates" title={content.sections.newsTitle}>
+    <ContentPage locale={locale} page="news" eyebrow={locale === "th" ? "ข่าวสาร" : "Updates"} title={content.sections.newsTitle}>
       <div className="site-list-grid">
         {newsItems[locale].map(([title, detail], index) => (
           <article key={title} className="site-news-card">
@@ -634,26 +695,185 @@ export function NewsSitePage({ locale }: { locale: Locale }) {
   );
 }
 
-export function ArticlesSitePage({ locale }: { locale: Locale }) {
-  const title = locale === "th" ? "บทความตกปลาและคู่มือบริการ" : "Fishing Articles and Service Guides";
+export async function ArticlesSitePage({ locale }: { locale: Locale }) {
+  const content = siteContent[locale];
+  const articles = latestArticleItems(locale);
+  const viewCounts = await getArticleViews();
+  const title = locale === "th"
+    ? "บทความบ่อตกปลาในพะเยา ดอกคำใต้ และเทคนิคตกปลาใหญ่"
+    : "Fishing Lake Articles, Phayao Guides, and Trophy Fishing Tips";
   const intro = locale === "th"
-    ? "รวมบทความสำหรับการเตรียมตัวก่อนเข้าใช้บริการ การใช้งานเมนูบริการ ระบบอันดับ เครดิต และแนวทางทำรายการอย่างปลอดภัย"
-    : "Guides for lake preparation, LINE usage, rankings, credits, and secure customer transactions.";
+    ? "รวมบทความสำหรับคนที่กำลังค้นหาบ่อตกปลาในพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา เทคนิคตกปลา ตารางลงปลา ระบบ LINE และการส่งผลงานปลาที่เคียงนา Fishing Lake"
+    : "Guides for anglers searching for a fishing lake in Phayao, Dok Kham Tai trophy fishing, LINE service, fish release schedules, and verified catch records at Kiangna Fishing Lake.";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${siteUrl}${pagePaths.articles[locale]}#articles`,
+    name: title,
+    description: content.pages.articles.description,
+    url: `${siteUrl}${pagePaths.articles[locale]}`,
+    inLanguage: locale === "th" ? "th-TH" : "en-US",
+    itemListElement: articles.map((article, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Article",
+        headline: article.title,
+        description: article.detail,
+        image: `${siteUrl}${article.image}`,
+        mainEntityOfPage: `${siteUrl}${articlePath(locale, article.slug)}`,
+        interactionStatistic: {
+          "@type": "InteractionCounter",
+          interactionType: "https://schema.org/ReadAction",
+          userInteractionCount: viewCounts[article.slug] || 0,
+        },
+        author: { "@type": "Organization", name: content.brand },
+        publisher: { "@type": "Organization", name: content.brand },
+        keywords: article.keywords.join(", "),
+      },
+    })),
+  };
 
   return (
-    <ContentPage locale={locale} page="articles" eyebrow="Articles" title={title}>
+    <ContentPage locale={locale} page="articles" eyebrow={locale === "th" ? "บทความ" : "Articles"} title={title}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <p className="site-page-intro">{intro}</p>
-      <div className="article-grid">
-        {articleItems[locale].map(([articleTitle, detail], index) => (
-          <article key={articleTitle} className="article-card">
-            <p>{String(index + 1).padStart(2, "0")}</p>
-            <h2>{articleTitle}</h2>
-            <span>{detail}</span>
-            <Link href={pagePaths.contact[locale]}>{locale === "th" ? "ติดต่อสอบถาม" : "Contact for details"}</Link>
-          </article>
-        ))}
-      </div>
+      <ArticleBrowser locale={locale} articles={articles} viewCounts={viewCounts} />
     </ContentPage>
+  );
+}
+
+function buildArticleSections(locale: Locale, article: ArticleItem) {
+  const mainKeyword = article.keywords[0];
+  const secondaryKeyword = article.keywords[1] || article.keywords[0];
+  const localKeyword = article.keywords[2] || "Kiangna Fishing Lake";
+
+  return locale === "th"
+    ? [
+        {
+          heading: `ภาพรวมของ${mainKeyword}`,
+          paragraphs: [
+            `${article.detail} สิ่งสำคัญไม่ใช่แค่มีบ่อให้ตกปลา แต่ต้องดูทั้งบรรยากาศ ความสะดวก ข้อมูลรอบลงปลา การติดต่อทีมงาน และความชัดเจนของระบบบริการก่อนเดินทาง`,
+            `เคียงนา Fishing Lake ช่วยให้นักตกปลาวางแผนง่ายขึ้น เพราะมีข้อมูลหน้าเว็บไซต์ ช่องทาง LINE ${siteContact.lineId} และระบบที่ช่วยจัดการ QR เข้าบ่อ เครดิต ผลงานปลา และอันดับอย่างเป็นระเบียบ`,
+          ],
+        },
+        {
+          heading: `ก่อนเลือก${secondaryKeyword}ควรตรวจอะไรบ้าง`,
+          paragraphs: [
+            "นักตกปลาควรดูเส้นทาง เวลาเปิดให้บริการ สภาพอากาศ ชนิดปลาที่ต้องการตก และข้อมูลตารางลงปลา หากต้องการลุ้นปลาใหญ่ ควรดูวันที่ลงปลา น้ำหนักรวม และผลงานที่ผ่านการตรวจสอบ",
+            "อีกจุดที่ควรให้ความสำคัญคือช่องทางติดต่อที่รวดเร็ว บ่อที่มี LINE หรือระบบแจ้งข้อมูลชัดเจนจะช่วยลดความผิดพลาด เช่น การสอบถามรอบลงปลา การเช็กเครดิต และการส่งผลงานปลา",
+          ],
+        },
+        {
+          heading: `ทำไมระบบ LINE ช่วยให้${localKeyword}ใช้งานง่ายขึ้น`,
+          paragraphs: [
+            "การใช้ LINE เป็นศูนย์กลางทำให้ลูกค้าไม่ต้องจำรหัสผ่านบนเว็บไซต์ และลดขั้นตอนซ้ำซ้อน เมื่อต้องเข้าใช้บริการสามารถเปิด QR ให้เจ้าหน้าที่สแกน",
+            "สำหรับบ่อตกปลายุคใหม่ ความโปร่งใสของข้อมูลมีผลต่อความเชื่อมั่น ระบบที่ตรวจสอบย้อนหลังได้ช่วยให้ทั้งลูกค้าและทีมงานดูรายการได้ชัดเจน",
+          ],
+        },
+        {
+          heading: "สรุปสำหรับนักตกปลาที่กำลังวางแผนมาเคียงนา",
+          paragraphs: [
+            `ถ้าคุณกำลังมองหา${mainKeyword} หรือเปรียบเทียบบ่อตกปลาในพื้นที่พะเยาและดอกคำใต้ ให้เริ่มจากดูข้อมูลบทความ ตารางลงปลา แกลลอรี่ผลงาน และติดต่อทีมงานผ่าน LINE ก่อนเดินทาง`,
+            "เคียงนา Fishing Lake เหมาะกับคนที่อยากได้ประสบการณ์ตกปลาที่เป็นระบบ มีข้อมูลให้ตรวจสอบ และต้องการลุ้นผลงานปลาในบรรยากาศริมบ่อที่เดินทางสะดวก",
+          ],
+        },
+      ]
+    : [
+        {
+          heading: `Overview: ${mainKeyword}`,
+          paragraphs: [
+            `${article.detail} A good fishing lake experience depends on more than the water itself. Anglers should review the atmosphere, release updates, service channels, safety, and how clearly the lake communicates before visiting.`,
+            `Kiangna Fishing Lake helps anglers plan with website information, LINE ${siteContact.lineId}, entry QR, credits, catch submissions, and ranking records organized in one practical workflow.`,
+          ],
+        },
+        {
+          heading: `What to Check Before Choosing ${secondaryKeyword}`,
+          paragraphs: [
+            "Review travel time, weather, target species, fish release dates, total release weight, and verified catch records. If your goal is trophy fishing, timing and verified release information matter.",
+            "Fast contact also matters. A LINE-based service flow helps with release questions, credits, catch submissions, ranking updates, and special event information.",
+          ],
+        },
+        {
+          heading: `Why LINE Makes ${localKeyword} Easier`,
+          paragraphs: [
+            "LINE keeps customer actions simple. Anglers can show an entry QR, check credits, submit catches, and follow rankings without creating a separate website login.",
+            "For a modern fishing lake, auditable records build trust. Verified catch submissions and clear ranking data help both anglers and staff keep activities fair and transparent.",
+          ],
+        },
+        {
+          heading: "Final Planning Tip",
+          paragraphs: [
+            "If you are comparing fishing lakes in Phayao or Dok Kham Tai, review the articles, fish release schedule, gallery, and contact the Kiangna team before your trip.",
+            "Kiangna Fishing Lake is built for anglers who want a calm lake atmosphere, organized service, transparent records, and a better chance to plan serious fishing sessions.",
+          ],
+        },
+      ];
+}
+
+export async function ArticleDetailPage({ locale, article }: { locale: Locale; article: ArticleItem }) {
+  const content = siteContent[locale];
+  const sections = buildArticleSections(locale, article);
+  const articleIndex = articleItems[locale].findIndex((item) => item.slug === article.slug);
+  const viewCount = await getArticleViewCount(article.slug);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${siteUrl}${articlePath(locale, article.slug)}#article`,
+    headline: article.title,
+    description: article.detail,
+    image: `${siteUrl}${article.image}`,
+    author: { "@type": "Organization", name: content.brand },
+    publisher: { "@type": "Organization", name: content.brand },
+    mainEntityOfPage: `${siteUrl}${articlePath(locale, article.slug)}`,
+    inLanguage: locale === "th" ? "th-TH" : "en-US",
+    keywords: article.keywords.join(", "),
+    interactionStatistic: {
+      "@type": "InteractionCounter",
+      interactionType: "https://schema.org/ReadAction",
+      userInteractionCount: viewCount,
+    },
+  };
+
+  return (
+    <SiteChrome locale={locale} page="articles" alternateHref={articlePath(locale === "th" ? "en" : "th", article.slug)}>
+      <main className="site-content-page article-detail-page">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <nav className="article-breadcrumb" aria-label={locale === "th" ? "เส้นทางหน้าเว็บ" : "Breadcrumb"}>
+          <Link href={pagePaths.articles[locale]}>{locale === "th" ? "บทความ" : "Articles"}</Link>
+          <span>{article.title}</span>
+        </nav>
+        <header className="site-page-head article-detail-head">
+          <p className="site-eyebrow">{locale === "th" ? "คู่มือตกปลา" : "Fishing Guide"}</p>
+          <h1>{article.title}</h1>
+          <p>{article.detail}</p>
+        </header>
+        <ArticleCover article={article} index={articleIndex >= 0 ? articleIndex : 0} locale={locale} large />
+        <div className="article-tags article-detail-tags" aria-label={locale === "th" ? "คีย์เวิร์ดบทความ" : "Article keywords"}>
+          {article.keywords.map((keyword) => <b key={keyword}>{keyword}</b>)}
+        </div>
+        <ArticleViewTracker slug={article.slug} initialCount={viewCount} locale={locale} />
+        <article className="article-detail-content">
+          {sections.map((section) => (
+            <section key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </section>
+          ))}
+        </article>
+        <section className="article-detail-cta">
+          <div>
+            <h2>{locale === "th" ? "สอบถามรอบลงปลาและวางแผนเข้าบ่อ" : "Ask About Fish Releases and Plan Your Visit"}</h2>
+            <p>
+              {locale === "th"
+                ? `ติดต่อเคียงนา Fishing Lake ผ่าน LINE ${siteContact.lineId} หรือโทร ${siteContact.phone} เพื่อสอบถามรอบลงปลา เครดิต กิจกรรม และข้อมูลก่อนเดินทาง`
+                : `Contact Kiangna Fishing Lake via LINE ${siteContact.lineId} or phone ${siteContact.phone} for release rounds, credits, events, and visit planning.`}
+            </p>
+          </div>
+          <Link href={pagePaths.contact[locale]}>{locale === "th" ? "ติดต่อเรา" : "Contact us"}</Link>
+        </section>
+      </main>
+    </SiteChrome>
   );
 }
 
@@ -725,7 +945,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
       <main className="fish-release-page">
         <section className="fish-release-hero">
           <div className="fish-release-hero-copy">
-            <p className="site-eyebrow">{locale === "th" ? "Official Fish Release Schedule" : "Official Fish Release Schedule"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "ตารางลงปลาอย่างเป็นทางการ" : "Official Fish Release Schedule"}</p>
             <h1>{locale === "th" ? "ตารางการลงปลา เคียงนา Fishing Lake" : "Kiangna Fishing Lake Fish Release Schedule"}</h1>
             <p>
               {locale === "th"
@@ -764,7 +984,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section fish-release-section">
           <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "Release Records" : "Release Records"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "ประวัติการลงปลา" : "Release Records"}</p>
             <h2 className="h2">{locale === "th" ? "รายการลงปลาล่าสุด" : "Latest fish releases"}</h2>
           </div>
           {rows.length > 0 ? (
@@ -815,7 +1035,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section fish-release-seo-panel">
           <div>
-            <p className="site-eyebrow">{locale === "th" ? "Planning Guide" : "Planning Guide"}</p>
+            <p className="site-eyebrow">{locale === "th" ? "คู่มือวางแผน" : "Planning Guide"}</p>
             <h2>{locale === "th" ? "ใช้ตารางการลงปลาเพื่อวางแผนเข้าบ่ออย่างมืออาชีพ" : "Use the fish release schedule to plan a better visit"}</h2>
             <p>
               {locale === "th"
@@ -833,7 +1053,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
 
         <section className="site-section site-section-tight">
           <div className="section-head">
-            <p className="site-eyebrow">FAQ</p>
+            <p className="site-eyebrow">{locale === "th" ? "คำถามที่พบบ่อย" : "FAQ"}</p>
             <h2 className="h2">{locale === "th" ? "คำถามที่พบบ่อยเกี่ยวกับตารางการลงปลา" : "Fish release schedule FAQ"}</h2>
           </div>
           <div className="home-faq-list">
@@ -872,7 +1092,7 @@ export async function GallerySitePage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <ContentPage locale={locale} page="gallery" eyebrow="Gallery" title={content.sections.galleryTitle}>
+    <ContentPage locale={locale} page="gallery" eyebrow={locale === "th" ? "แกลลอรี่" : "Gallery"} title={content.sections.galleryTitle}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <section className="site-gallery-intro" aria-label={locale === "th" ? "สรุปแกลลอรี่ผลงานปลา" : "Catch gallery summary"}>
         <div>
@@ -1027,7 +1247,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <ContentPage locale={locale} page="about" eyebrow="About" title={content.sections.aboutTitle}>
+    <ContentPage locale={locale} page="about" eyebrow={locale === "th" ? "เกี่ยวกับเรา" : "About"} title={content.sections.aboutTitle}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="site-about-layout">
         <LakeVisual locale={locale} />
@@ -1052,7 +1272,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
       </section>
       <section className="about-system-panel">
         <div>
-          <p className="site-eyebrow">{locale === "th" ? "Modern Service" : "Modern Service"}</p>
+          <p className="site-eyebrow">{locale === "th" ? "บริการสมัยใหม่" : "Modern Service"}</p>
           <h2>{locale === "th" ? "ระบบบริการที่ทันสมัยและเข้าใจง่าย" : "Structured LINE customer workflow"}</h2>
           <p>
             {locale === "th"
@@ -1172,11 +1392,11 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
     ],
   };
   return (
-    <ContentPage locale={locale} page="contact" eyebrow="Contact" title={content.sections.contactTitle}>
+    <ContentPage locale={locale} page="contact" eyebrow={locale === "th" ? "ติดต่อเรา" : "Contact"} title={content.sections.contactTitle}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
       <section className="contact-hero-panel">
         <div>
-          <p className="site-eyebrow">{locale === "th" ? "Kiangna Fishing Lake Contact" : "Kiangna Fishing Lake Contact"}</p>
+          <p className="site-eyebrow">{locale === "th" ? "ช่องทางติดต่อเคียงนา Fishing Lake" : "Kiangna Fishing Lake Contact"}</p>
           <h2>{locale === "th" ? "สอบถามรอบลงปลา จองหมาย และเส้นทางมาบ่อตกปลาเคียงนา" : "Ask about fish releases, reservations, and directions to Kiangna Fishing Lake"}</h2>
           <p>
             {locale === "th"
@@ -1225,7 +1445,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
 
       <section className="site-map-panel">
         <div className="site-map-copy">
-          <p className="site-eyebrow">{locale === "th" ? "Location" : "Location"}</p>
+          <p className="site-eyebrow">{locale === "th" ? "ที่ตั้ง" : "Location"}</p>
           <h2>{locale === "th" ? "แผนที่ เคียงนา Fishing Lake พะเยา" : "Kiangna Fishing Lake Map"}</h2>
           <p>
             {locale === "th"
@@ -1247,7 +1467,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
 
       <section className="site-section contact-faq-section">
         <div className="section-head">
-          <p className="site-eyebrow">FAQ</p>
+          <p className="site-eyebrow">{locale === "th" ? "คำถามที่พบบ่อย" : "FAQ"}</p>
           <h2 className="h2">{locale === "th" ? "คำถามที่พบบ่อยก่อนติดต่อ" : "Contact FAQ"}</h2>
         </div>
         <div className="home-faq-list">

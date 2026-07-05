@@ -300,22 +300,483 @@ export const galleryItems = {
 
 export const articleItems = {
   th: [
-    ["เตรียมตัวก่อนเข้าบ่ออย่างมืออาชีพ", "เช็กลิสต์อุปกรณ์ เหยื่อ เวลาเข้าใช้บริการ และรายการที่ควรดำเนินการผ่าน LINE ก่อนเดินทาง"],
-    ["วิธีใช้เมนูบริการของเคียงนา", "แนะนำ QR เข้าบ่อ การเติมเครดิต การส่งผลงานปลา การดูอันดับ และการติดต่อเจ้าหน้าที่ผ่าน LINE"],
-    ["เทคนิคอ่านหมายริมน้ำ", "แนวคิดการเลือกตำแหน่ง การดูทิศลม แสงแดด และพฤติกรรมปลาในช่วงเวลาต่าง ๆ"],
-    ["ทำไมต้องส่งผลงานปลาผ่าน LINE", "การส่งรายการผ่าน LINE ช่วยลดความผิดพลาด ผูกข้อมูลกับบัญชีจริง และรองรับการตรวจสอบย้อนหลัง"],
-    ["ระบบ Ranking คำนวณจากอะไร", "อธิบายหลักเกณฑ์ปลาใหญ่ น้ำหนักรวม จำนวนปลา จำนวนวันเข้าใช้บริการ และแต้มสะสม"],
-    ["ดูแลเครดิตและคูปองให้ปลอดภัย", "คำแนะนำเพื่อป้องกันการสวมสิทธิ์ การใช้ QR ผิดบัญชี และการทำรายการซ้ำซ้อน"],
+    {
+      slug: "fishing-lake-phayao-guide",
+      title: "บ่อตกปลาในพะเยาเลือกอย่างไรให้คุ้มเวลาและได้ประสบการณ์ดี",
+      detail: "คู่มือสำหรับนักตกปลาที่กำลังมองหาบ่อตกปลาในพะเยา ทั้งเรื่องบรรยากาศ ความสะดวก รอบลงปลา ความปลอดภัย และช่องทางติดต่อก่อนเดินทาง",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "ภาพมุมสูงเคียงนา Fishing Lake บ่อตกปลาในพะเยา",
+      keywords: ["บ่อตกปลาในพะเยา", "บ่อตกปลาพะเยา", "เคียงนา Fishing Lake"],
+    },
+    {
+      slug: "dok-kham-tai-fishing-lake",
+      title: "บ่อตกปลาดอกคำใต้ จุดหมายสำหรับคนอยากพักผ่อนและลุ้นปลาใหญ่",
+      detail: "ดอกคำใต้เป็นพื้นที่ที่เดินทางสะดวกและเหมาะกับการตกปลาแบบจริงจัง บทความนี้สรุปสิ่งที่ควรดูเมื่อเลือกบ่อ ตั้งแต่สภาพหมายไปจนถึงบริการผ่าน LINE",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "บรรยากาศบ่อตกปลาดอกคำใต้พร้อมพื้นที่ริมน้ำ",
+      keywords: ["บ่อตกปลาดอกคำใต้", "ตกปลาดอกคำใต้", "บ่อตกปลาใหญ่ดอกคำใต้"],
+    },
+    {
+      slug: "big-fish-lake-phayao",
+      title: "บ่อตกปลาใหญ่พะเยา ต้องดูอะไรบ้างก่อนวางแผนเข้าบ่อ",
+      detail: "ถ้าเป้าหมายคือปลาไซซ์ใหญ่ ควรดูข้อมูลรอบลงปลา ชนิดปลา น้ำหนักรวม สถิติผลงาน และช่วงเวลาที่เหมาะสม เพื่อวางแผนได้แม่นยำขึ้น",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "วิวบ่อตกปลาใหญ่พะเยาและบรรยากาศริมน้ำ",
+      keywords: ["บ่อตกปลาใหญ่พะเยา", "ปลาใหญ่พะเยา", "ตารางลงปลา"],
+    },
+    {
+      slug: "prepare-for-phayao-fishing-lake",
+      title: "เตรียมตัวก่อนมาบ่อตกปลาพะเยา เช็กลิสต์ที่นักตกปลาไม่ควรมองข้าม",
+      detail: "เช็กอุปกรณ์ เหยื่อ เวลาเดินทาง สภาพอากาศ เอกสารหรือ QR เข้าบ่อ และการติดต่อทีมงานล่วงหน้า เพื่อให้วันตกปลาไหลลื่นตั้งแต่เริ่มต้น",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "พื้นที่บ่อตกปลาพะเยาสำหรับเตรียมตัวก่อนเข้าใช้บริการ",
+      keywords: ["บ่อตกปลาพะเยา", "เตรียมตัวตกปลา", "QR เข้าบ่อ"],
+    },
+    {
+      slug: "kiangna-line-service-guide",
+      title: "วิธีใช้ LINE ของเคียงนา Fishing Lake สำหรับเข้าบ่อ เครดิต และส่งผลงานปลา",
+      detail: "ลูกค้าสามารถใช้ LINE เพื่อแสดง QR เข้าบ่อ ตรวจเครดิต ส่งผลงานปลา ดูอันดับ และติดต่อเจ้าหน้าที่ ช่วยให้ข้อมูลเป็นระบบและตรวจสอบย้อนหลังได้",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยาที่ให้บริการผ่าน LINE",
+      keywords: ["บ่อตกปลา LINE", "ส่งผลงานปลาผ่าน LINE", "เครดิตบ่อตกปลา"],
+    },
+    {
+      slug: "read-big-fishing-lake-spots",
+      title: "อ่านหมายบ่อตกปลาใหญ่ให้เป็น ดูลม แสงแดด และพฤติกรรมปลา",
+      detail: "เทคนิคพื้นฐานในการเลือกตำแหน่งริมบ่อ ดูทิศลม จุดน้ำลึก เงาแดด และจังหวะปลากิน เพื่อเพิ่มโอกาสเจอปลาไซซ์ดีในบ่อตกปลาใหญ่",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "หมายริมน้ำสำหรับตกปลาใหญ่ในพะเยา",
+      keywords: ["เทคนิคตกปลาใหญ่", "หมายตกปลา", "บ่อตกปลาใหญ่"],
+    },
+    {
+      slug: "fish-release-schedule-phayao",
+      title: "ตารางลงปลาสำคัญแค่ไหนสำหรับคนหาบ่อตกปลาใหญ่พะเยา",
+      detail: "การดูตารางลงปลาช่วยให้รู้ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่ลงปลา เหมาะสำหรับนักตกปลาที่ต้องการวางแผนรอบเข้าใช้บริการอย่างจริงจัง",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "ตารางลงปลาและบรรยากาศบ่อตกปลาใหญ่พะเยา",
+      keywords: ["ตารางลงปลา", "รอบลงปลา", "บ่อตกปลาใหญ่พะเยา"],
+    },
+    {
+      slug: "angler-ranking-system",
+      title: "Ranking นักตกปลาคืออะไร ทำไมบ่อตกปลายุคใหม่ควรมีระบบตรวจสอบ",
+      detail: "ระบบอันดับช่วยให้ผลงานปลา น้ำหนักรวม จำนวนปลา การเข้าใช้บริการ และแต้มสะสมมีความชัดเจน เหมาะกับบ่อที่ต้องการความโปร่งใสและกิจกรรมต่อเนื่อง",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "บ่อตกปลาพะเยาพร้อมระบบ ranking นักตกปลา",
+      keywords: ["ranking นักตกปลา", "ผลงานปลา", "บ่อตกปลาพะเยา"],
+    },
+    {
+      slug: "phayao-fishing-trip-plan",
+      title: "เที่ยวตกปลาในพะเยาให้สนุก วางแผนครึ่งวันหรือเต็มวันอย่างไรดี",
+      detail: "แนวทางจัดทริปตกปลาในพะเยา ทั้งเวลาเดินทาง ช่วงแดด ช่วงเย็น การพักผ่อนริมบ่อ และการติดต่อสอบถามรอบบริการก่อนมา",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "ทริปตกปลาในพะเยาที่เคียงนา Fishing Lake",
+      keywords: ["เที่ยวตกปลาในพะเยา", "บ่อตกปลาในพะเยา", "ตกปลาพะเยา"],
+    },
+    {
+      slug: "why-kiangna-fishing-lake-phayao",
+      title: "ทำไมเคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาพะเยาและดอกคำใต้",
+      detail: "สรุปจุดเด่นของเคียงนา Fishing Lake ทั้งบรรยากาศบ่อ ระบบ LINE ตารางลงปลา แกลลอรี่ผลงาน ติดต่อสะดวก และการดูแลข้อมูลลูกค้าอย่างเป็นระบบ",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยาและบ่อตกปลาดอกคำใต้",
+      keywords: ["เคียงนา Fishing Lake", "บ่อตกปลาพะเยา", "บ่อตกปลาดอกคำใต้"],
+    },
+    {
+      slug: "bait-basics-for-lake-fishing",
+      title: "พื้นฐานการเลือกเหยื่อตกปลาในบ่อให้เหมาะกับปลาและสภาพน้ำ",
+      detail: "อธิบายหลักคิดเรื่องเหยื่อ กลิ่น สี ขนาด และความถี่ในการเปลี่ยนเหยื่อ เพื่อช่วยให้นักตกปลาวางแผนได้เหมาะกับบ่อตกปลาในพะเยา",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "คู่มือเลือกเหยื่อตกปลาในบ่อ",
+      keywords: ["เหยื่อตกปลา", "เทคนิคตกปลาในบ่อ", "บ่อตกปลาในพะเยา"],
+    },
+    {
+      slug: "rod-and-reel-setup-guide",
+      title: "เลือกคันเบ็ดและรอกสำหรับบ่อตกปลาใหญ่ ต้องดูอะไรบ้าง",
+      detail: "แนวทางเลือกคันเบ็ด รอก สาย และชุดปลายสายสำหรับคนที่ต้องการลุ้นปลาใหญ่ โดยไม่ทำให้อุปกรณ์หนักหรือใช้งานยากเกินไป",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "คู่มือเลือกคันเบ็ดและรอกสำหรับตกปลาใหญ่",
+      keywords: ["คันเบ็ดตกปลาใหญ่", "รอกตกปลา", "บ่อตกปลาใหญ่พะเยา"],
+    },
+    {
+      slug: "morning-vs-evening-fishing",
+      title: "ตกปลาช่วงเช้าหรือช่วงเย็น ช่วงไหนเหมาะกับบ่อตกปลาพะเยา",
+      detail: "เปรียบเทียบข้อดีของช่วงเช้าและช่วงเย็น ทั้งแสงแดด อุณหภูมิ พฤติกรรมปลา และความสบายของนักตกปลา",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "บรรยากาศตกปลาช่วงเช้าและช่วงเย็นในพะเยา",
+      keywords: ["เวลาตกปลา", "ตกปลาช่วงเย็น", "บ่อตกปลาพะเยา"],
+    },
+    {
+      slug: "weather-and-fish-activity",
+      title: "สภาพอากาศมีผลต่อปลากินเหยื่ออย่างไร",
+      detail: "สรุปผลของแดด ลม ฝน ความกดอากาศ และอุณหภูมิน้ำต่อพฤติกรรมปลา เพื่อใช้วางแผนวันเข้าบ่อให้มีโอกาสมากขึ้น",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "สภาพอากาศกับพฤติกรรมปลาในบ่อตกปลา",
+      keywords: ["สภาพอากาศตกปลา", "ปลากินเหยื่อ", "เทคนิคตกปลา"],
+    },
+    {
+      slug: "fish-fighting-technique",
+      title: "เทคนิคสู้ปลาใหญ่ให้ปลอดภัยและลดโอกาสสายขาด",
+      detail: "แนะนำการตั้งเบรก การคุมคัน การเดินตามปลา และการประคองแรงดึงเมื่อเจอปลาใหญ่ในบ่อ",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "เทคนิคสู้ปลาใหญ่ในบ่อตกปลา",
+      keywords: ["สู้ปลาใหญ่", "เทคนิคตกปลาใหญ่", "สายขาด"],
+    },
+    {
+      slug: "catch-photo-guide",
+      title: "ถ่ายรูปผลงานปลาอย่างไรให้สวยและใช้ส่งผลงานได้ชัดเจน",
+      detail: "วิธีจัดมุม ถ่ายน้ำหนัก ถ่ายชนิดปลา และเก็บภาพให้ทีมงานตรวจสอบง่าย เหมาะกับการส่งผลงานปลาและทำแกลลอรี่",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "คู่มือถ่ายรูปผลงานปลา",
+      keywords: ["ถ่ายรูปปลา", "ส่งผลงานปลา", "แกลลอรี่ผลงานปลา"],
+    },
+    {
+      slug: "catch-and-release-care",
+      title: "ดูแลปลาอย่างไรหลังตกได้ เพื่อความปลอดภัยของปลาและนักตกปลา",
+      detail: "แนวทางจับปลา วางปลา พักปลา และคืนปลาลงน้ำอย่างระมัดระวัง เพื่อรักษาคุณภาพปลาและประสบการณ์ของทุกคนในบ่อ",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "การดูแลปลาหลังตกได้ในบ่อตกปลา",
+      keywords: ["ดูแลปลา", "ปล่อยปลา", "บ่อตกปลา"],
+    },
+    {
+      slug: "lake-etiquette-guide",
+      title: "มารยาทในบ่อตกปลาที่นักตกปลาควรรู้ก่อนเข้าหมาย",
+      detail: "ข้อควรรู้เรื่องพื้นที่ตกปลา เสียงรบกวน การใช้ไฟ การเดินผ่านหมาย และการเคารพนักตกปลาคนอื่น",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "มารยาทและความปลอดภัยในบ่อตกปลา",
+      keywords: ["มารยาทตกปลา", "ความปลอดภัยบ่อตกปลา", "นักตกปลา"],
+    },
+    {
+      slug: "family-fishing-trip",
+      title: "พาครอบครัวมาตกปลาในพะเยา ควรเตรียมอะไรบ้าง",
+      detail: "คำแนะนำสำหรับทริปครอบครัว ทั้งเวลาเดินทาง อุปกรณ์กันแดด ของใช้จำเป็น การพักผ่อน และการติดต่อทีมงานก่อนมา",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "ทริปครอบครัวที่บ่อตกปลาในพะเยา",
+      keywords: ["ทริปครอบครัว", "ตกปลาในพะเยา", "บ่อตกปลาในพะเยา"],
+    },
+    {
+      slug: "beginner-fishing-mistakes",
+      title: "ข้อผิดพลาดที่มือใหม่มักเจอเมื่อตกปลาในบ่อ",
+      detail: "รวมปัญหาที่พบบ่อย เช่น ใช้สายไม่เหมาะ เปลี่ยนเหยื่อเร็วเกินไป ไม่อ่านลม หรือไม่เช็กข้อมูลบ่อก่อนเดินทาง",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "ข้อผิดพลาดของมือใหม่ตกปลาในบ่อ",
+      keywords: ["มือใหม่ตกปลา", "สอนตกปลา", "เทคนิคตกปลาในบ่อ"],
+    },
+    {
+      slug: "monthly-fishing-plan",
+      title: "วางแผนตกปลารายเดือนด้วยข่าวสาร ตารางลงปลา และอันดับ",
+      detail: "การติดตามข่าวสาร ตารางลงปลา และ ranking ช่วยให้นักตกปลาวางแผนรอบเข้าใช้บริการได้คุ้มกว่าเดิม",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "วางแผนตกปลารายเดือนด้วยตารางลงปลา",
+      keywords: ["วางแผนตกปลา", "ข่าวสารบ่อตกปลา", "ตารางลงปลา"],
+    },
+    {
+      slug: "line-credit-safety",
+      title: "ใช้เครดิตผ่าน LINE อย่างไรให้ปลอดภัยและตรวจสอบได้",
+      detail: "คำแนะนำเรื่องการดูยอดเครดิต ประวัติรายการ คูปอง และการป้องกันการใช้สิทธิ์ผิดบัญชีในระบบบ่อตกปลา",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "ความปลอดภัยของเครดิตผ่าน LINE",
+      keywords: ["เครดิตผ่าน LINE", "คูปองบ่อตกปลา", "ระบบบ่อตกปลา"],
+    },
+    {
+      slug: "big-fish-ranking-tips",
+      title: "อยากติดอันดับปลาใหญ่ ควรวางแผนอย่างไร",
+      detail: "แนวทางดูสถิติรอบลงปลา เลือกช่วงเวลา เตรียมอุปกรณ์ และส่งผลงานให้ครบเพื่อเพิ่มโอกาสใน ranking",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "เทคนิควางแผนติดอันดับปลาใหญ่",
+      keywords: ["อันดับปลาใหญ่", "ranking นักตกปลา", "ปลาใหญ่พะเยา"],
+    },
+    {
+      slug: "dok-kham-tai-travel-guide",
+      title: "วางแผนเดินทางมาบ่อตกปลาดอกคำใต้ให้สะดวกขึ้น",
+      detail: "สรุปวิธีเตรียมตัวก่อนเดินทางมาย่านดอกคำใต้ ทั้งการติดต่อบ่อ ดูแผนที่ เช็กเวลา และเตรียมอุปกรณ์สำหรับวันตกปลา",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "คู่มือเดินทางมาบ่อตกปลาดอกคำใต้",
+      keywords: ["บ่อตกปลาดอกคำใต้", "เดินทางดอกคำใต้", "ตกปลาพะเยา"],
+    },
   ],
   en: [
-    ["Before You Visit the Lake", "A practical checklist for gear, bait, timing, and LINE actions before arrival."],
-    ["How to Use the Kiangna Service Menu", "Entry QR, top-ups, catch submissions, ranking, and admin contact through the LINE account."],
-    ["Reading a Lakeside Spot", "How wind, sunlight, position, and fish behavior can shape a better fishing session."],
-    ["Why Catch Submissions Stay in LINE", "LINE-linked submissions reduce errors, preserve identity, and keep records auditable."],
-    ["How Ranking Scores Work", "A simple guide to biggest fish, total weight, fish count, visit count, and points."],
-    ["Keeping Credits and Coupons Safe", "Tips to prevent account misuse, wrong QR usage, and duplicate transactions."],
+    {
+      slug: "fishing-lake-phayao-guide",
+      title: "How to Choose a Fishing Lake in Phayao",
+      detail: "A practical guide to location, lake atmosphere, fish releases, safety, service channels, and what anglers should check before visiting a fishing lake in Phayao.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Aerial view of Kiangna Fishing Lake in Phayao",
+      keywords: ["fishing lake Phayao", "Kiangna Fishing Lake", "Phayao fishing"],
+    },
+    {
+      slug: "dok-kham-tai-fishing-lake",
+      title: "Fishing Lake in Dok Kham Tai for Relaxed Trophy Sessions",
+      detail: "What to look for when planning a fishing session in Dok Kham Tai, from lake conditions and fish activity to LINE-based customer service.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Dok Kham Tai fishing lake atmosphere",
+      keywords: ["fishing lake Dok Kham Tai", "trophy fishing Phayao", "Kiangna"],
+    },
+    {
+      slug: "big-fish-lake-phayao",
+      title: "Planning for Trophy Fish at a Phayao Fishing Lake",
+      detail: "Review fish release schedules, species, total release weight, catch records, and the best time windows before targeting bigger fish.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Trophy fishing lake view in Phayao",
+      keywords: ["trophy fishing Phayao", "fish release schedule", "big fish lake"],
+    },
+    {
+      slug: "prepare-for-phayao-fishing-lake",
+      title: "Before You Visit Kiangna Fishing Lake",
+      detail: "A checklist for gear, bait, travel timing, weather, entry QR, and how to contact the team before arriving at the lake.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Kiangna Fishing Lake preparation guide",
+      keywords: ["fishing checklist", "LINE entry QR", "Phayao fishing lake"],
+    },
+    {
+      slug: "kiangna-line-service-guide",
+      title: "How the Kiangna LINE Service Helps Anglers",
+      detail: "Use LINE for entry QR, credits, catch submissions, rankings, and staff contact so important records stay organized and auditable.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Kiangna Fishing Lake LINE service",
+      keywords: ["LINE fishing lake", "catch submission", "fishing credits"],
+    },
+    {
+      slug: "read-big-fishing-lake-spots",
+      title: "Reading Wind, Sunlight, and Fish Behavior",
+      detail: "Basic lakeside tactics for choosing a spot, watching wind direction, reading shade, and timing fish activity at a managed fishing lake.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Lakeside fishing spot in Phayao",
+      keywords: ["fishing tactics", "lakeside spot", "big fish technique"],
+    },
+    {
+      slug: "fish-release-schedule-phayao",
+      title: "Why Fish Release Schedules Matter",
+      detail: "Fish release updates help anglers understand species, fish count, total weight, and release dates before planning a serious session.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Fish release schedule at Kiangna Fishing Lake",
+      keywords: ["fish release schedule", "fishing lake planning", "Phayao"],
+    },
+    {
+      slug: "angler-ranking-system",
+      title: "How Angler Rankings Make Fishing Fairer",
+      detail: "Ranking systems make biggest fish, total weight, fish count, visits, and points clearer for anglers and easier for staff to verify.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Angler ranking system at a Phayao fishing lake",
+      keywords: ["angler ranking", "verified catches", "fishing records"],
+    },
+    {
+      slug: "phayao-fishing-trip-plan",
+      title: "Planning a Half-Day or Full-Day Fishing Trip in Phayao",
+      detail: "A simple trip plan covering travel time, sunlight, evening sessions, lakeside rest, and how to check service rounds before visiting.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Fishing trip at Kiangna Fishing Lake Phayao",
+      keywords: ["Phayao fishing trip", "fishing lake near me", "Kiangna Fishing Lake"],
+    },
+    {
+      slug: "why-kiangna-fishing-lake-phayao",
+      title: "Why Kiangna Fits Phayao and Dok Kham Tai Fishing Searches",
+      detail: "A summary of Kiangna Fishing Lake's lake atmosphere, LINE service, fish release updates, catch gallery, easy contact, and organized records.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Kiangna Fishing Lake for Phayao and Dok Kham Tai anglers",
+      keywords: ["Kiangna Fishing Lake", "fishing lake Phayao", "fishing lake Dok Kham Tai"],
+    },
+    {
+      slug: "bait-basics-for-lake-fishing",
+      title: "Bait Basics for Managed Lake Fishing",
+      detail: "A practical guide to bait scent, color, size, and when to change bait while fishing at a managed lake in Phayao.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Bait guide for managed lake fishing",
+      keywords: ["fishing bait", "lake fishing tips", "fishing lake Phayao"],
+    },
+    {
+      slug: "rod-and-reel-setup-guide",
+      title: "Rod and Reel Setup for Trophy Lake Fishing",
+      detail: "How to choose rods, reels, line, and terminal tackle for bigger fish without making the setup too heavy or difficult to use.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Rod and reel setup for trophy fish",
+      keywords: ["trophy fishing rod", "fishing reel", "big fish lake Phayao"],
+    },
+    {
+      slug: "morning-vs-evening-fishing",
+      title: "Morning or Evening Fishing: Which Session Works Better",
+      detail: "Compare morning and evening sessions by sunlight, temperature, fish behavior, and angler comfort before planning a visit.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Morning and evening fishing in Phayao",
+      keywords: ["best fishing time", "evening fishing", "Phayao fishing lake"],
+    },
+    {
+      slug: "weather-and-fish-activity",
+      title: "How Weather Changes Fish Activity",
+      detail: "Learn how sun, wind, rain, air pressure, and water temperature affect feeding behavior at a managed fishing lake.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Weather and fish activity at a lake",
+      keywords: ["fishing weather", "fish activity", "fishing tips"],
+    },
+    {
+      slug: "fish-fighting-technique",
+      title: "How to Fight Bigger Fish Without Breaking Line",
+      detail: "Tips for drag setting, rod angle, moving with the fish, and controlling pressure when a bigger fish runs hard.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Fighting bigger fish at a fishing lake",
+      keywords: ["fight big fish", "big fish technique", "line break"],
+    },
+    {
+      slug: "catch-photo-guide",
+      title: "How to Photograph Catches for Clear Submissions",
+      detail: "How to capture fish species, weight, and clean catch photos that staff can review easily for ranking and gallery records.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Catch photo guide for fishing records",
+      keywords: ["catch photo", "catch submission", "fishing gallery"],
+    },
+    {
+      slug: "catch-and-release-care",
+      title: "Fish Care After the Catch",
+      detail: "Basic handling, resting, and release guidance to protect fish quality and keep the lake experience good for every angler.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Fish care after catching at a lake",
+      keywords: ["fish care", "catch and release", "fishing lake"],
+    },
+    {
+      slug: "lake-etiquette-guide",
+      title: "Fishing Lake Etiquette Every Angler Should Know",
+      detail: "Simple etiquette around space, noise, lights, walking behind other anglers, and respecting everyone fishing around the lake.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Fishing lake etiquette and safety",
+      keywords: ["fishing etiquette", "lake safety", "anglers"],
+    },
+    {
+      slug: "family-fishing-trip",
+      title: "Planning a Family Fishing Trip in Phayao",
+      detail: "Prepare travel timing, sun protection, essentials, rest breaks, and staff contact before bringing family to a fishing lake.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "Family fishing trip in Phayao",
+      keywords: ["family fishing trip", "Phayao fishing", "fishing lake Phayao"],
+    },
+    {
+      slug: "beginner-fishing-mistakes",
+      title: "Common Beginner Mistakes at Fishing Lakes",
+      detail: "Frequent issues include using the wrong line, changing bait too fast, ignoring wind, or not checking lake information before arrival.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Beginner mistakes at managed fishing lakes",
+      keywords: ["beginner fishing", "learn fishing", "lake fishing tips"],
+    },
+    {
+      slug: "monthly-fishing-plan",
+      title: "Monthly Fishing Planning With News, Releases, and Rankings",
+      detail: "Following news, fish release updates, and rankings helps anglers choose better visit dates and plan more productive sessions.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Monthly fishing planning with release updates",
+      keywords: ["fishing plan", "fishing lake news", "fish release schedule"],
+    },
+    {
+      slug: "line-credit-safety",
+      title: "Using LINE Credits Safely at a Fishing Lake",
+      detail: "How to check credit balances, transaction history, coupons, and avoid using benefits under the wrong account.",
+      image: "/site/kiangna-lake-aerial-01.jpg",
+      alt: "LINE credit safety for fishing lake services",
+      keywords: ["LINE credits", "fishing coupons", "fishing lake system"],
+    },
+    {
+      slug: "big-fish-ranking-tips",
+      title: "How to Plan for Big Fish Rankings",
+      detail: "Use release records, timing, gear preparation, and complete catch submissions to improve your chance in angler rankings.",
+      image: "/site/kiangna-lake-aerial-02.jpg",
+      alt: "Planning for big fish rankings",
+      keywords: ["big fish ranking", "angler ranking", "trophy fish Phayao"],
+    },
+    {
+      slug: "dok-kham-tai-travel-guide",
+      title: "Travel Planning for a Dok Kham Tai Fishing Lake Visit",
+      detail: "Prepare contact details, map directions, timing, and gear before visiting a fishing lake in the Dok Kham Tai area.",
+      image: "/site/kiangna-lake-view-03.jpg",
+      alt: "Travel guide for Dok Kham Tai fishing lake",
+      keywords: ["fishing lake Dok Kham Tai", "Dok Kham Tai travel", "Phayao fishing"],
+    },
   ],
 } as const;
+
+export type ArticleItem = (typeof articleItems)[Locale][number];
+
+export function articlePath(locale: Locale, slug: string) {
+  return `${pagePaths.articles[locale]}/${slug}`;
+}
+
+export function latestArticleItems(locale: Locale) {
+  return [...articleItems[locale]].reverse();
+}
+
+export type ArticleViewMap = Record<string, number>;
+
+export function findArticle(locale: Locale, slug: string) {
+  return articleItems[locale].find((article) => article.slug === slug);
+}
+
+export function articleDetailMetadata(locale: Locale, slug: string): Metadata {
+  const article = findArticle(locale, slug);
+  const content = siteContent[locale];
+
+  if (!article) {
+    return buildPageMetadata(locale, "articles");
+  }
+
+  const url = `${siteUrl}${articlePath(locale, article.slug)}`;
+  const title = locale === "th"
+    ? `${article.title} | ${content.brand}`
+    : `${article.title} | ${content.brand}`;
+
+  return {
+    title,
+    description: article.detail,
+    applicationName: siteContent.th.brand,
+    authors: [{ name: content.brand }],
+    creator: siteContent.th.brand,
+    publisher: siteContent.th.brand,
+    category: "Fishing Lake",
+    keywords: [
+      ...article.keywords,
+      "เคียงนา Fishing Lake",
+      "Kiangna Fishing Lake",
+      "บ่อตกปลาพะเยา",
+      "บ่อตกปลาดอกคำใต้",
+      "บ่อตกปลาใหญ่พะเยา",
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+    alternates: {
+      canonical: url,
+      languages: {
+        th: `${siteUrl}${articlePath("th", article.slug)}`,
+        en: `${siteUrl}${articlePath("en", article.slug)}`,
+        "x-default": `${siteUrl}${articlePath("th", article.slug)}`,
+      },
+    },
+    openGraph: {
+      title,
+      description: article.detail,
+      url,
+      siteName: siteContent.th.brand,
+      locale: locale === "th" ? "th_TH" : "en_US",
+      type: "article",
+      images: [
+        {
+          url: `${siteUrl}${article.image}`,
+          width: 1200,
+          height: 900,
+          alt: article.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: article.detail,
+      images: [`${siteUrl}${article.image}`],
+    },
+  };
+}
 
 export const homeSeoContent = {
   th: {

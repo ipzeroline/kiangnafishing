@@ -35,10 +35,12 @@ function SocialIcon({ type }: { type: "facebook" | "instagram" | "tiktok" }) {
 export default function SiteChrome({
   locale,
   page,
+  alternateHref,
   children,
 }: {
   locale: Locale;
   page: SitePage;
+  alternateHref?: string;
   children: React.ReactNode;
 }) {
   const content = siteContent[locale];
@@ -74,9 +76,15 @@ export default function SiteChrome({
               </svg>
             </summary>
             <div className="mobile-menu-panel">
+              <div className="mobile-menu-heading">
+                <span>{locale === "th" ? "เมนูเว็บไซต์" : "Website Menu"}</span>
+                <small>{content.brand}</small>
+              </div>
               <div className="mobile-menu-section">
                 {navItems.map((item) => (
-                  <Link key={item} href={pagePaths[item][locale]}>{content.nav[item]}</Link>
+                  <Link key={item} href={pagePaths[item][locale]} className={item === page ? "active" : ""}>
+                    {content.nav[item]}
+                  </Link>
                 ))}
               </div>
               <div className="mobile-menu-section">
@@ -92,7 +100,7 @@ export default function SiteChrome({
           </details>
           <ThemeToggle label={locale === "th" ? "เปลี่ยนโหมดสี" : "Toggle color mode"} />
           <Link
-            href={pagePaths[page][otherLocale]}
+            href={alternateHref || pagePaths[page][otherLocale]}
             className="site-lang"
             aria-label={otherLocale === "en" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
             title={otherLocale === "en" ? "English" : "ภาษาไทย"}
