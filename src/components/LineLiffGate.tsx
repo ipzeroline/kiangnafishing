@@ -65,14 +65,10 @@ export default function LineLiffGate({ children }: { children: React.ReactNode }
       {!ready && (
         <main className="line-liff-loading">
           <div className="line-liff-card">
-            <div className="line-liff-image">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/site/kiangna-lake-aerial-01.jpg" alt="เคียงนา Fishing Lake" width={1200} height={899} />
-              <div className="line-liff-water" aria-hidden="true">
-                <span />
-                <span />
-              </div>
-              <div className="line-liff-fish" aria-hidden="true">
+            <div className="line-liff-mark" aria-hidden="true">
+              <span className="line-liff-ring" />
+              <span className="line-liff-ring" />
+              <div className="line-liff-fish">
                 <svg viewBox="0 0 64 32">
                   <path d="M8 16c10-9 25-9 38 0-13 9-28 9-38 0Z" />
                   <path d="M46 16l11-8v16l-11-8Z" />
