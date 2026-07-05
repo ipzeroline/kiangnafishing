@@ -45,10 +45,10 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
       <div className="ranking-shell mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <section className="ranking-hero">
           <div className="ranking-hero-copy">
-            <p className="ranking-eyebrow">Kiangna Fishing Lake Ranking</p>
-            <h1>กระดานอันดับ</h1>
+            <p className="ranking-eyebrow">Angler Leaderboard</p>
+            <h1>อันดับนักตกปลา</h1>
             <p>
-              ผลงานนักตกปลาเดือน {thaiMonthLabel(mk)} จากรายการที่ตรวจสอบแล้ว พร้อมระดับสมาชิกและสัญลักษณ์ ranking
+              ผลงานเดือน {thaiMonthLabel(mk)} จากรายการที่ตรวจสอบแล้ว พร้อมระดับสมาชิกและสถิตินักตกปลา
             </p>
           </div>
           <div className="ranking-hero-card">
@@ -69,25 +69,29 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
 
         {user?.role === "MEMBER" && (
           <section className="ranking-my-card" aria-label="อันดับและระดับของฉัน">
-            <div className="ranking-my-profile">
-              <PublicAvatar src={user.linePictureUrl} name={user.alias || user.name} className="ranking-my-avatar" />
-              <div className="min-w-0">
-                <p>ข้อมูลของฉัน</p>
-                <h2>{user.alias || user.name}</h2>
-                <span>{user.memberCode}</span>
+            <div className="ranking-my-main">
+              <div className="ranking-my-profile">
+                <PublicAvatar src={user.linePictureUrl} name={user.alias || user.name} className="ranking-my-avatar" />
+                <div className="min-w-0">
+                  <p>Angler Profile</p>
+                  <h2>{user.alias || user.name}</h2>
+                  <span>{user.memberCode}</span>
+                </div>
+              </div>
+              <div className="ranking-my-stats">
+                <div>
+                  <p>อันดับกระดานนี้</p>
+                  <strong>{myIndex >= 0 ? `#${(myIndex + 1).toLocaleString("th-TH")}` : "-"}</strong>
+                  <span>{myRow ? `${nf.format(Number(myRow.value))} ${unit}` : "ยังไม่มีผลงานในเดือนนี้"}</span>
+                </div>
               </div>
             </div>
             <div className="ranking-my-level">
               <p>Level ของฉัน</p>
               <strong>{myLevel?.name || "-"}</strong>
               <span>{myLevel ? `${myLevel.symbol} · คะแนน ${nf.format(myScore)}` : "ยังไม่มีระดับ"}</span>
-              {myLevel && <RankingLevelBadge level={myLevel} size="md" />}
-            </div>
-            <div className="ranking-my-stats">
-              <div>
-                <p>อันดับกระดานนี้</p>
-                <strong>{myIndex >= 0 ? `#${(myIndex + 1).toLocaleString("th-TH")}` : "ยังไม่มีอันดับ"}</strong>
-                <span>{myRow ? `${nf.format(Number(myRow.value))} ${unit}` : "ยังไม่มีผลงานในเดือนนี้"}</span>
+              <div className="ranking-my-level-badge">
+                {myLevel && <RankingLevelBadge level={myLevel} size="sm" />}
               </div>
             </div>
           </section>
@@ -135,9 +139,9 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
               <div className="ranking-board-head">
                 <div>
                   <p className="ranking-eyebrow">Leaderboard</p>
-                  <h2>{boardMeta.label} · Top 50</h2>
+                  <h2>{boardMeta.label}</h2>
                 </div>
-                <p>เลื่อนดูตรงนี้เพื่อดูลำดับคนอื่นในกระดาน Top 50 · Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100</p>
+                <p>Top 50 ประจำเดือน · Top 3 สิ้นเดือนรับเครดิตกระเป๋าฟรี ฿300 / ฿200 / ฿100</p>
               </div>
               <ol className="ranking-list">
                 {restRows.map((r, offset) => {

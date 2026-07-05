@@ -19,6 +19,318 @@
   --radius-card: .5rem;
 }
 
+/* Premium LINE ranking page refresh */
+.ranking-page {
+  background:
+    radial-gradient(circle at 18% 4%, rgba(201,162,39,.12), transparent 16rem),
+    radial-gradient(circle at 88% 0%, rgba(13,127,119,.16), transparent 18rem),
+    linear-gradient(180deg, #f3faf7 0%, #edf6f2 48%, #f8fbfa 100%);
+}
+
+.ranking-shell {
+  display: grid;
+  gap: .9rem;
+  padding-top: 1rem;
+}
+
+.ranking-hero {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 12% 24%, rgba(87,221,209,.18), transparent 12rem),
+    radial-gradient(circle at 92% 12%, rgba(201,162,39,.22), transparent 9rem),
+    linear-gradient(135deg, #07333c, #115967);
+}
+
+.ranking-hero::after {
+  content: "";
+  position: absolute;
+  right: 1.1rem;
+  bottom: .8rem;
+  width: 7rem;
+  height: 3.5rem;
+  border-bottom: 2px solid rgba(255,255,255,.18);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ranking-hero-copy {
+  min-height: 6.8rem;
+}
+
+.ranking-eyebrow {
+  color: #48d8cc;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.ranking-hero h1 {
+  margin-top: .4rem;
+  font-size: clamp(2rem, 8.5vw, 3.2rem);
+  line-height: 1.02;
+}
+
+.ranking-hero-copy > p:not(.ranking-eyebrow) {
+  margin-top: .45rem;
+  font-size: .9rem;
+  line-height: 1.48;
+}
+
+.ranking-hero-card {
+  min-height: auto;
+  border-radius: 18px;
+  padding: .9rem;
+  align-content: center;
+}
+
+.ranking-hero-card::before {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.ranking-hero-card strong {
+  font-size: clamp(2.1rem, 9vw, 3rem);
+}
+
+.ranking-tabs {
+  display: flex;
+  gap: .5rem;
+  margin-top: 0;
+  overflow-x: auto;
+  padding: .4rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ranking-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ranking-tabs a {
+  flex: 0 0 max(7.2rem, calc((100% - 1.5rem) / 4));
+  min-height: 3rem;
+  scroll-snap-align: start;
+}
+
+.ranking-my-card {
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  gap: .75rem;
+  margin-top: 0;
+  padding: .9rem;
+  border-radius: 24px;
+}
+
+.ranking-my-main {
+  display: grid;
+  gap: .7rem;
+  min-width: 0;
+}
+
+.ranking-my-profile {
+  gap: .8rem;
+}
+
+.ranking-my-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 18px;
+}
+
+.ranking-my-profile p,
+.ranking-my-stats p,
+.ranking-my-level p {
+  font-size: .72rem;
+  letter-spacing: .08em;
+}
+
+.ranking-my-profile h2 {
+  font-size: clamp(1.35rem, 5vw, 1.8rem);
+  letter-spacing: .02em;
+}
+
+.ranking-my-stats > div {
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eef7f4, #f8fbfa);
+  padding: .9rem;
+}
+
+.ranking-my-stats strong {
+  font-size: clamp(1.7rem, 8vw, 2.35rem);
+}
+
+.ranking-my-level {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 92% 28%, rgba(201,162,39,.28), transparent 5.5rem),
+    linear-gradient(145deg, #07333c, #0f5a66);
+}
+
+.ranking-my-level strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: clamp(1.35rem, 6vw, 2rem);
+}
+
+.ranking-my-level-badge {
+  min-width: 0;
+  margin-top: .45rem;
+}
+
+.ranking-my-level .ranking-level-badge {
+  max-width: 100%;
+  border-radius: 18px !important;
+}
+
+.ranking-my-level .ranking-level-badge > span:last-child {
+  min-width: 0;
+}
+
+.ranking-summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 0;
+}
+
+.ranking-summary-grid article {
+  border-radius: 22px;
+  padding: 1rem;
+}
+
+.ranking-podium,
+.ranking-board {
+  margin-top: 0;
+}
+
+.ranking-board {
+  border-radius: 24px;
+}
+
+.ranking-board-head {
+  align-items: center;
+}
+
+.ranking-board-head h2 {
+  font-size: clamp(1.45rem, 5vw, 2.1rem);
+}
+
+.ranking-list li {
+  grid-template-columns: 2.7rem minmax(0, 1fr) auto;
+  padding: .85rem 1rem;
+}
+
+.ranking-member > strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .ranking-shell {
+    gap: .75rem;
+    padding: .85rem .85rem 1.2rem;
+  }
+
+  .ranking-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+
+  .ranking-hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: .35rem .75rem;
+  }
+
+  .ranking-hero-card p,
+  .ranking-hero-card span {
+    grid-column: 1;
+  }
+
+  .ranking-hero-card strong {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .ranking-hero-card::before {
+    display: none;
+  }
+
+  .ranking-tabs {
+    margin-inline: -.85rem;
+    padding-inline: .85rem;
+    border-radius: 0;
+    border-inline: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .ranking-tabs a {
+    flex-basis: 7.7rem;
+    background: rgba(255,255,255,.86);
+    box-shadow: 0 12px 30px -26px rgba(10,53,64,.5);
+  }
+
+  .ranking-tabs small {
+    display: block;
+    font-size: .68rem;
+    line-height: 1.15;
+  }
+
+  .ranking-my-card {
+    grid-template-columns: 1fr;
+    padding: .9rem;
+  }
+
+  .ranking-my-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-my-level {
+    min-height: 0;
+  }
+
+  .ranking-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-summary-grid article {
+    padding: .95rem 1rem;
+  }
+
+  .ranking-podium {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-board-head {
+    display: grid;
+    gap: .45rem;
+  }
+
+  .ranking-board-head > p {
+    max-width: none;
+    text-align: left;
+  }
+
+  .ranking-list li {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+    padding: .8rem .9rem;
+  }
+
+  .ranking-value {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
 .fish-release-page {
   overflow: hidden;
 }
@@ -4097,5 +4409,210 @@ h1, h2, h3, .font-display { font-family: var(--font-display); }
   .site-footer-bottom {
     display: grid;
     gap: .7rem;
+  }
+}
+
+/* Final ranking overrides: keep the LINE ranking page compact and premium. */
+.ranking-shell {
+  display: grid;
+  gap: .9rem;
+  padding-top: 1rem;
+}
+
+.ranking-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 12% 24%, rgba(87,221,209,.18), transparent 12rem),
+    radial-gradient(circle at 92% 12%, rgba(201,162,39,.22), transparent 9rem),
+    linear-gradient(135deg, #07333c, #115967);
+}
+
+.ranking-hero-copy {
+  min-height: 6.8rem;
+}
+
+.ranking-hero h1 {
+  font-size: clamp(2rem, 8.5vw, 3.2rem);
+  line-height: 1.02;
+}
+
+.ranking-hero-copy > p:not(.ranking-eyebrow) {
+  font-size: .9rem;
+  line-height: 1.48;
+}
+
+.ranking-hero-card {
+  min-height: auto;
+  border-radius: 18px;
+  padding: .9rem;
+}
+
+.ranking-tabs {
+  display: flex;
+  gap: .5rem;
+  margin-top: 0;
+  overflow-x: auto;
+  padding: .4rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ranking-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ranking-tabs a {
+  flex: 0 0 max(7.2rem, calc((100% - 1.5rem) / 4));
+  min-height: 3rem;
+  scroll-snap-align: start;
+}
+
+.ranking-my-card {
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  gap: .75rem;
+  margin-top: 0;
+  padding: .9rem;
+  border-radius: 24px;
+}
+
+.ranking-my-main {
+  display: grid;
+  gap: .7rem;
+  min-width: 0;
+}
+
+.ranking-my-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 18px;
+}
+
+.ranking-my-profile h2 {
+  font-size: clamp(1.35rem, 5vw, 1.8rem);
+}
+
+.ranking-my-stats > div {
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eef7f4, #f8fbfa);
+  padding: .9rem;
+}
+
+.ranking-my-stats strong {
+  font-size: clamp(1.7rem, 8vw, 2.35rem);
+}
+
+.ranking-my-level {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 92% 28%, rgba(201,162,39,.28), transparent 5.5rem),
+    linear-gradient(145deg, #07333c, #0f5a66);
+}
+
+.ranking-my-level strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: clamp(1.35rem, 6vw, 2rem);
+}
+
+.ranking-my-level-badge {
+  min-width: 0;
+  margin-top: .45rem;
+}
+
+.ranking-my-level .ranking-level-badge {
+  max-width: 100%;
+  border-radius: 18px !important;
+}
+
+.ranking-my-level .ranking-level-badge > span:last-child {
+  min-width: 0;
+}
+
+.ranking-summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 0;
+}
+
+.ranking-summary-grid article {
+  border-radius: 22px;
+  padding: 1rem;
+}
+
+.ranking-podium,
+.ranking-board {
+  margin-top: 0;
+}
+
+.ranking-board {
+  border-radius: 24px;
+}
+
+@media (max-width: 640px) {
+  .ranking-shell {
+    gap: .75rem;
+    padding: .85rem .85rem 1.2rem;
+  }
+
+  .ranking-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+
+  .ranking-hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: .35rem .75rem;
+  }
+
+  .ranking-hero-card::before {
+    display: none;
+  }
+
+  .ranking-tabs {
+    margin-inline: -.85rem;
+    padding-inline: .85rem;
+    border-radius: 0;
+    border-inline: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .ranking-tabs a {
+    flex-basis: 7.7rem;
+    background: rgba(255,255,255,.86);
+    box-shadow: 0 12px 30px -26px rgba(10,53,64,.5);
+  }
+
+  .ranking-tabs small {
+    display: block;
+    font-size: .68rem;
+    line-height: 1.15;
+  }
+
+  .ranking-my-card {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-summary-grid,
+  .ranking-podium {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-board-head {
+    display: grid;
+    gap: .45rem;
+  }
+
+  .ranking-board-head > p {
+    max-width: none;
+    text-align: left;
   }
 }
