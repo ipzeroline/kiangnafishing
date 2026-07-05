@@ -34,6 +34,7 @@ function clean(body: Record<string, unknown>) {
     species: String(body.species || "").trim(),
     fishCount: Math.max(0, Math.floor(Number(body.fishCount || 0))),
     totalWeightKg: Math.max(0, Number(body.totalWeightKg || 0)),
+    costAmount: Math.max(0, Math.floor(Number(body.costAmount || 0))),
     detail: String(body.detail || "").trim(),
     stockingDate: String(body.stockingDate || ""),
   };
@@ -61,12 +62,12 @@ export async function POST(req: Request) {
   const id = uid();
   const imagePath = await saveStockingImage(payload.imageData || payload.imagePath, id);
   await execute(
-    "INSERT INTO fish_stockings (id, imagePath, species, fishCount, totalWeightKg, detail, stockingDate, createdBy) VALUES (?,?,?,?,?,?,?,?)",
-    [id, imagePath, payload.species, payload.fishCount, payload.totalWeightKg, payload.detail, payload.stockingDate, staff.id]
+    "INSERT INTO fish_stockings (id, imagePath, species, fishCount, totalWeightKg, costAmount, detail, stockingDate, createdBy) VALUES (?,?,?,?,?,?,?,?,?)",
+    [id, imagePath, payload.species, payload.fishCount, payload.totalWeightKg, payload.costAmount, payload.detail, payload.stockingDate, staff.id]
   );
   await execute(
-    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'fishCount', ?, 'totalWeightKg', ?, 'stockingDate', ?))",
-    [uid(), staff.id, "FISH_STOCKING_CREATE", "fish_stockings", id, payload.species, payload.fishCount, payload.totalWeightKg, payload.stockingDate]
+    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'fishCount', ?, 'totalWeightKg', ?, 'costAmount', ?, 'stockingDate', ?))",
+    [uid(), staff.id, "FISH_STOCKING_CREATE", "fish_stockings", id, payload.species, payload.fishCount, payload.totalWeightKg, payload.costAmount, payload.stockingDate]
   );
   return NextResponse.json({ ok: true, id });
 }
@@ -85,12 +86,12 @@ export async function PUT(req: Request) {
 
   const imagePath = payload.imageData ? await saveStockingImage(payload.imageData, stocking.id) : payload.imagePath || stocking.imagePath;
   await execute(
-    "UPDATE fish_stockings SET imagePath=?, species=?, fishCount=?, totalWeightKg=?, detail=?, stockingDate=? WHERE id=?",
-    [imagePath, payload.species, payload.fishCount, payload.totalWeightKg, payload.detail, payload.stockingDate, stocking.id]
+    "UPDATE fish_stockings SET imagePath=?, species=?, fishCount=?, totalWeightKg=?, costAmount=?, detail=?, stockingDate=? WHERE id=?",
+    [imagePath, payload.species, payload.fishCount, payload.totalWeightKg, payload.costAmount, payload.detail, payload.stockingDate, stocking.id]
   );
   await execute(
-    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'fishCount', ?, 'totalWeightKg', ?, 'stockingDate', ?))",
-    [uid(), staff.id, "FISH_STOCKING_UPDATE", "fish_stockings", stocking.id, payload.species, payload.fishCount, payload.totalWeightKg, payload.stockingDate]
+    "INSERT INTO audit_logs (id, actorUserId, action, targetType, targetId, detail) VALUES (?,?,?,?,?,JSON_OBJECT('species', ?, 'fishCount', ?, 'totalWeightKg', ?, 'costAmount', ?, 'stockingDate', ?))",
+    [uid(), staff.id, "FISH_STOCKING_UPDATE", "fish_stockings", stocking.id, payload.species, payload.fishCount, payload.totalWeightKg, payload.costAmount, payload.stockingDate]
   );
   return NextResponse.json({ ok: true });
 }

@@ -603,12 +603,12 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
   const speciesCount = new Set(rows.map((item) => item.species)).size;
   const faqs = locale === "th"
     ? [
-        ["ตารางการลงปลาอัปเดตจากที่ไหน", "ข้อมูลมาจากระบบหลังบ้านของเคียงนา Fishing Lake เมื่อเจ้าหน้าที่บันทึกรายการลงปลา ระบบจะแสดงรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่บนหน้านี้"],
+        ["ตารางการลงปลาอัปเดตจากที่ไหน", "เคียงนา Fishing Lake อัปเดตรายการลงปลาจากข้อมูลที่ทีมงานตรวจสอบแล้ว พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่บนหน้านี้"],
         ["ควรใช้ตารางลงปลาเพื่อวางแผนอย่างไร", "ดูวันที่ลงปลา ชนิดปลา และน้ำหนักรวมประกอบกับข่าวสารกิจกรรม แล้วติดต่อ LINE @038gyaxo เพื่อสอบถามรอบที่เหมาะกับการเข้าบ่อ"],
         ["จำนวนปลาและน้ำหนักรวมหมายถึงอะไร", "จำนวนตัวคือจำนวนปลาที่ลงในรอบนั้น ส่วนน้ำหนักรวมเป็นกิโลกรัมรวมของรอบลงปลา ใช้เป็นข้อมูลประกอบการวางแผนเท่านั้น"],
       ]
     : [
-        ["Where does the fish release schedule come from?", "The records are published from Kiangna Fishing Lake’s back office after staff add each release with photo, species, fish count, total weight, details, and date."],
+        ["Where does the fish release schedule come from?", "Kiangna Fishing Lake publishes verified release updates with photos, species, fish count, total weight, details, and date."],
         ["How should anglers use this schedule?", "Review the release date, species, and total weight together with event news, then contact LINE @038gyaxo to plan the best visit."],
         ["What do fish count and total weight mean?", "Fish count is the number of fish released in that round. Total weight is the combined release weight in kilograms."],
       ];
@@ -666,15 +666,15 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             <h1>{locale === "th" ? "ตารางการลงปลา เคียงนา Fishing Lake" : "Kiangna Fishing Lake Fish Release Schedule"}</h1>
             <p>
               {locale === "th"
-                ? "ตรวจสอบรอบลงปลาล่าสุดจากระบบหลังบ้าน พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา เพื่อวางแผนเข้าบ่ออย่างมั่นใจ"
-                : "Review official fish release records from the back office with photos, species, fish count, total weight, details, and release dates before planning your visit."}
+                ? "ติดตามรอบลงปลาล่าสุด พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา เพื่อวางแผนเข้าบ่อได้อย่างมั่นใจ"
+                : "Review official fish release updates with photos, species, fish count, total weight, details, and release dates before planning your visit."}
             </p>
             <div className="site-hero-actions">
               <Link href={siteContact.lineHref} className="site-primary-btn" target="_blank" rel="noopener noreferrer">{content.cta}</Link>
               <Link href={pagePaths.contact[locale]} className="site-secondary-btn">{locale === "th" ? "สอบถามรอบลงปลา" : "Ask about releases"}</Link>
             </div>
             <div className="fish-release-hero-proof" aria-label={locale === "th" ? "ข้อมูลหลักของตารางลงปลา" : "Fish release highlights"}>
-              <span>{locale === "th" ? "ข้อมูลจากระบบหลังบ้าน" : "Back-office records"}</span>
+              <span>{locale === "th" ? "ข้อมูลอัปเดตจากทีมงาน" : "Verified lake updates"}</span>
               <span>{locale === "th" ? "อัปเดตตามวันที่ลงปลา" : "Sorted by release date"}</span>
               <span>{locale === "th" ? "รูปและน้ำหนักรวมครบ" : "Photos and total weight"}</span>
             </div>
@@ -735,9 +735,9 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             </div>
           ) : (
             <div className="fish-release-empty">
-              <p className="site-eyebrow">{locale === "th" ? "ยังไม่มีข้อมูลจากหลังบ้าน" : "No back-office records yet"}</p>
-              <h2>{locale === "th" ? "เมื่อเจ้าหน้าที่บันทึกรายการลงปลา รูปและข้อมูลปลาจะแสดงที่นี่" : "Fish photos and release records will appear here after staff publish them."}</h2>
-              <p>{locale === "th" ? "หน้านี้จะแสดงเฉพาะข้อมูลปลาที่เพิ่มจากระบบหลังบ้านเท่านั้น" : "This page only displays fish release data added from the staff back office."}</p>
+              <p className="site-eyebrow">{locale === "th" ? "ยังไม่มีรายการลงปลา" : "No release updates yet"}</p>
+              <h2>{locale === "th" ? "รอบลงปลาพร้อมรูปภาพและรายละเอียดจะแสดงที่นี่เมื่อมีการอัปเดต" : "Fish photos and release details will appear here when new updates are published."}</h2>
+              <p>{locale === "th" ? "ติดตามหน้านี้หรือสอบถามทีมงานทาง LINE เพื่อรับข้อมูลรอบลงปลาล่าสุด" : "Follow this page or contact the team on LINE for the latest fish release information."}</p>
             </div>
           )}
         </section>
@@ -748,7 +748,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             <h2>{locale === "th" ? "ใช้ตารางการลงปลาเพื่อวางแผนเข้าบ่ออย่างมืออาชีพ" : "Use the fish release schedule to plan a better visit"}</h2>
             <p>
               {locale === "th"
-                ? "ตารางการลงปลาเป็นข้อมูลสำคัญสำหรับนักตกปลาที่ต้องการติดตามรอบปล่อยปลาใหญ่ กิจกรรมลงปลา และช่วงเวลาที่เหมาะกับการเข้าบ่อ ข้อมูลทุกแถวถูกบันทึกจากระบบหลังบ้านเพื่อให้ตรวจสอบง่ายและสื่อสารกับลูกค้าได้ชัดเจน"
+                ? "ตารางการลงปลาเป็นข้อมูลสำคัญสำหรับนักตกปลาที่ต้องการติดตามรอบปล่อยปลาใหญ่ กิจกรรมลงปลา และช่วงเวลาที่เหมาะกับการเข้าบ่อ รายการแต่ละรอบแสดงข้อมูลที่จำเป็นต่อการวางแผนอย่างชัดเจน"
                 : "The fish release schedule helps anglers follow release rounds, fish species, total release weight, and relevant lake activity details before visiting Kiangna Fishing Lake."}
             </p>
           </div>

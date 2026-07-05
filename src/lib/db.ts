@@ -4,7 +4,7 @@ import { dateKeyBKK, monthKeyBKK } from "./date";
 import { hashPassword } from "./password";
 
 type DbClient = Pool | PoolConnection;
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7;
 
 declare global {
   // eslint-disable-next-line no-var
@@ -70,6 +70,7 @@ export type FishStocking = {
   species: string;
   fishCount: number;
   totalWeightKg: number;
+  costAmount: number;
   detail: string;
   stockingDate: string;
   createdBy: string | null;
@@ -304,6 +305,7 @@ async function initSchema(client: DbClient) {
       species VARCHAR(120) NOT NULL,
       fishCount INT NOT NULL DEFAULT 0,
       totalWeightKg DECIMAL(10,2) NOT NULL DEFAULT 0,
+      costAmount INT NOT NULL DEFAULT 0,
       detail TEXT NOT NULL,
       stockingDate DATE NOT NULL,
       createdBy VARCHAR(32) NULL,
@@ -314,6 +316,7 @@ async function initSchema(client: DbClient) {
       CONSTRAINT fk_fish_stockings_creator FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE SET NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
+  await client.query("ALTER TABLE fish_stockings ADD COLUMN IF NOT EXISTS costAmount INT NOT NULL DEFAULT 0");
 
   await client.query(`
     CREATE TABLE IF NOT EXISTS topups (

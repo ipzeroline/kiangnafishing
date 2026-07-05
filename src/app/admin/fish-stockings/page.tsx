@@ -73,11 +73,12 @@ export default async function FishStockingsPage({ searchParams }: { searchParams
   }
 
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
-  const [species, entryCount, fishCount, totalWeight, filteredCount] = await Promise.all([
+  const [species, entryCount, fishCount, totalWeight, totalCost, filteredCount] = await Promise.all([
     query<Pick<FishSpecies, "name">>("SELECT name FROM fish_species WHERE status='ACTIVE' ORDER BY name ASC"),
     stat("SELECT COUNT(*) value FROM fish_stockings"),
     stat("SELECT COALESCE(SUM(fishCount),0) value FROM fish_stockings"),
     stat("SELECT COALESCE(SUM(totalWeightKg),0) value FROM fish_stockings"),
+    stat("SELECT COALESCE(SUM(costAmount),0) value FROM fish_stockings"),
     stat(`SELECT COUNT(*) value FROM fish_stockings ${whereSql}`, values),
   ]);
   const totalPages = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
@@ -123,10 +124,11 @@ export default async function FishStockingsPage({ searchParams }: { searchParams
           </div>
         </header>
         <div className="space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Metric label="รายการลงปลา" value={entryCount.toLocaleString("th-TH")} detail="จำนวนรายการที่บันทึกทั้งหมด" />
             <Metric label="จำนวนปลารวม" value={`${fishCount.toLocaleString("th-TH")} ตัว`} detail="รวมทุกชนิดปลาที่ลงบ่อ" />
             <Metric label="น้ำหนักรวม" value={`${Number(totalWeight).toLocaleString("th-TH", { maximumFractionDigits: 2 })} กก.`} detail="จำนวนกิโลกรัมรวมทั้งหมด" />
+            <Metric label="ค่าใช้จ่ายรวม" value={`฿${Number(totalCost).toLocaleString("th-TH")}`} detail="รวมค่าใช้จ่ายจากตารางลงปลา" />
           </section>
           <section className="rounded-lg bg-white p-5 shadow-sm ring-1 ring-line">
             <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px_auto_auto] lg:items-end">

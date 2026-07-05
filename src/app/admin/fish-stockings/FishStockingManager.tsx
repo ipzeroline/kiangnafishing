@@ -11,20 +11,22 @@ type FormState = {
   species: string;
   fishCount: number;
   totalWeightKg: number;
+  costAmount: number;
   detail: string;
   stockingDate: string;
 };
 
 function emptyForm(today: string): FormState {
   return {
-  stockingId: "",
-  imagePath: "",
-  imageData: "",
-  species: "",
-  fishCount: 0,
-  totalWeightKg: 0,
-  detail: "",
-  stockingDate: today,
+    stockingId: "",
+    imagePath: "",
+    imageData: "",
+    species: "",
+    fishCount: 0,
+    totalWeightKg: 0,
+    costAmount: 0,
+    detail: "",
+    stockingDate: today,
   };
 }
 
@@ -67,6 +69,7 @@ export default function FishStockingManager({ stockings, species, today }: { sto
       species: stocking.species,
       fishCount: stocking.fishCount,
       totalWeightKg: Number(stocking.totalWeightKg),
+      costAmount: Number(stocking.costAmount || 0),
       detail: stocking.detail,
       stockingDate: stocking.stockingDate.slice(0, 10),
     });
@@ -134,20 +137,21 @@ export default function FishStockingManager({ stockings, species, today }: { sto
         <div className="flex flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="font-display text-lg font-semibold text-deep">ตารางลงปลา</h3>
-            <p className="text-sm text-dim">บันทึกประวัติการปล่อยปลาเข้าบ่อ พร้อมจำนวนตัว น้ำหนักรวม และรายละเอียด</p>
+            <p className="text-sm text-dim">บันทึกประวัติการปล่อยปลาเข้าบ่อ พร้อมจำนวนตัว น้ำหนักรวม ค่าใช้จ่าย และรายละเอียด</p>
           </div>
           <button onClick={openCreate} className="w-fit rounded-lg bg-pond px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-pond/20">
             เพิ่มรายการลงปลา
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1080px] text-left text-sm">
+          <table className="w-full min-w-[1180px] text-left text-sm">
             <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
               <tr>
                 <th className="px-5 py-3">รูปภาพ</th>
                 <th className="px-5 py-3">ชนิดปลา</th>
                 <th className="px-5 py-3 text-right">จำนวนตัว</th>
                 <th className="px-5 py-3 text-right">จำนวนกิโลกรัมรวม</th>
+                <th className="px-5 py-3 text-right">ค่าใช้จ่าย</th>
                 <th className="px-5 py-3">รายละเอียด</th>
                 <th className="px-5 py-3">วันที่</th>
                 <th className="px-5 py-3 text-right">จัดการ</th>
@@ -167,6 +171,9 @@ export default function FishStockingManager({ stockings, species, today }: { sto
                   <td className="px-5 py-4 text-right font-semibold text-deep">
                     {Number(stocking.totalWeightKg).toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} กก.
                   </td>
+                  <td className="px-5 py-4 text-right font-semibold text-pond">
+                    {Number(stocking.costAmount || 0) > 0 ? `฿${Number(stocking.costAmount).toLocaleString("th-TH")}` : "-"}
+                  </td>
                   <td className="px-5 py-4">
                     <p className="max-w-sm whitespace-pre-line text-dim">{stocking.detail || "-"}</p>
                   </td>
@@ -179,7 +186,7 @@ export default function FishStockingManager({ stockings, species, today }: { sto
                   </td>
                 </tr>
               ))}
-              {stockings.length === 0 && <tr><td colSpan={7} className="px-5 py-8 text-center text-dim">ยังไม่มีรายการลงปลา</td></tr>}
+              {stockings.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-dim">ยังไม่มีรายการลงปลา</td></tr>}
             </tbody>
           </table>
         </div>
@@ -231,6 +238,11 @@ export default function FishStockingManager({ stockings, species, today }: { sto
                 <span className="mb-1 block text-sm font-medium text-ink">จำนวนกิโลกรัมรวม</span>
                 <input type="number" min={0.01} step="0.01" required value={form.totalWeightKg || ""} onChange={(e) => setForm((v) => ({ ...v, totalWeightKg: Number(e.target.value) }))}
                   className="w-full rounded-lg border border-line px-3 py-2.5 outline-none focus:border-pond" />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-ink">ค่าใช้จ่าย</span>
+                <input type="number" min={0} step={1} value={form.costAmount || ""} onChange={(e) => setForm((v) => ({ ...v, costAmount: Number(e.target.value) }))}
+                  className="w-full rounded-lg border border-line px-3 py-2.5 outline-none focus:border-pond" placeholder="0" />
               </label>
               <label className="block md:col-span-2">
                 <span className="mb-1 block text-sm font-medium text-ink">รายละเอียด</span>

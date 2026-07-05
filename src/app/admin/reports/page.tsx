@@ -15,6 +15,7 @@ const reportSections = [
   { id: "entry", label: "เข้าบ่อและรายได้" },
   { id: "topup", label: "เติมเงินและเครดิต" },
   { id: "fish", label: "ผลงานปลา" },
+  { id: "fishStockings", label: "ตารางการลงปลา" },
   { id: "activity", label: "กิจกรรมรายสมาชิก" },
   { id: "audit", label: "ธุรกรรมและ Audit" },
 ] as const;
@@ -46,6 +47,25 @@ type FishSpeciesRow = {
   count: number;
   totalWeight: number;
   maxWeight: number;
+};
+
+type FishStockingReportRow = {
+  id: string;
+  imagePath: string;
+  species: string;
+  fishCount: number;
+  totalWeightKg: number;
+  costAmount: number;
+  detail: string;
+  stockingDate: string;
+};
+
+type FishStockingSpeciesRow = {
+  species: string;
+  entries: number;
+  fishCount: number;
+  totalWeightKg: number;
+  costAmount: number;
 };
 
 type MemberReportRow = {
@@ -103,6 +123,12 @@ function number(value: number, digits = 0) {
   });
 }
 
+function thaiDate(value: string) {
+  const date = String(value || "").slice(0, 10);
+  if (!date) return "-";
+  return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(`${date}T00:00:00`));
+}
+
 export default async function ReportsPage({ searchParams }: { searchParams: SearchParams }) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
@@ -128,6 +154,12 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
     topups,
     fishStatus,
     fishSpecies,
+    stockingEntryCount,
+    stockingFishCount,
+    totalStockingWeight,
+    totalStockingCost,
+    stockingRows,
+    stockingSpecies,
     memberRows,
     transactions,
     audits,
@@ -170,6 +202,25 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
       ORDER BY totalWeight DESC, maxWeight DESC
       LIMIT 10
     `, [mk]),
+    stat("SELECT COUNT(*) value FROM fish_stockings WHERE stockingDate BETWEEN ? AND ?", [start, end]),
+    stat("SELECT COALESCE(SUM(fishCount),0) value FROM fish_stockings WHERE stockingDate BETWEEN ? AND ?", [start, end]),
+    stat("SELECT COALESCE(SUM(totalWeightKg),0) value FROM fish_stockings WHERE stockingDate BETWEEN ? AND ?", [start, end]),
+    stat("SELECT COALESCE(SUM(costAmount),0) value FROM fish_stockings WHERE stockingDate BETWEEN ? AND ?", [start, end]),
+    query<FishStockingReportRow>(`
+      SELECT id, imagePath, species, fishCount, totalWeightKg, costAmount, detail, stockingDate
+      FROM fish_stockings
+      WHERE stockingDate BETWEEN ? AND ?
+      ORDER BY stockingDate DESC, id DESC
+      LIMIT 200
+    `, [start, end]),
+    query<FishStockingSpeciesRow>(`
+      SELECT species, COUNT(*) entries, COALESCE(SUM(fishCount),0) fishCount, COALESCE(SUM(totalWeightKg),0) totalWeightKg, COALESCE(SUM(costAmount),0) costAmount
+      FROM fish_stockings
+      WHERE stockingDate BETWEEN ? AND ?
+      GROUP BY species
+      ORDER BY totalWeightKg DESC, fishCount DESC
+      LIMIT 20
+    `, [start, end]),
     query<MemberReportRow>(`
       SELECT u.memberCode, u.name, u.alias, u.walletBalance, u.points,
         COALESCE(k.visits,0) visits,
@@ -234,6 +285,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
   const averageFishWeight = verifiedFish > 0 ? totalFishWeight / verifiedFish : 0;
   const fishPending = fishStatus.find((row) => row.status === "PENDING")?.count || 0;
   const fishRejected = fishStatus.find((row) => row.status === "REJECTED")?.count || 0;
+  const averageStockingCost = stockingEntryCount > 0 ? totalStockingCost / stockingEntryCount : 0;
 
   return (
     <main className="admin-shell min-h-dvh bg-[#f5f8f7] text-ink">
@@ -431,6 +483,84 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
                       </tr>
                     ))}
                     {fishSpecies.length === 0 && <EmptyRow colSpan={4} label="ยังไม่มีปลาที่ยืนยันแล้วในเดือนนี้" />}
+                  </tbody>
+                </table>
+              </ReportTable>
+            </section>
+          </ReportSection>
+          )}
+
+          {currentSection === "fishStockings" && (
+          <ReportSection
+            eyebrow="Fish Stocking"
+            title="รายงานตารางการลงปลา"
+            subtitle="สรุปรอบลงปลา จำนวนตัว น้ำหนักรวม ค่าใช้จ่าย และรายละเอียดจากข้อมูลที่บันทึกในหลังบ้าน"
+          >
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <DetailMetric label="รอบลงปลา" value={number(stockingEntryCount)} detail={`รายการใน ${thaiMonthLabel(mk)}`} />
+              <DetailMetric label="จำนวนปลารวม" value={`${number(stockingFishCount)} ตัว`} detail="รวมทุกชนิดปลาที่ลงในเดือนนี้" />
+              <DetailMetric label="น้ำหนักรวม" value={`${number(totalStockingWeight, 2)} กก.`} detail="น้ำหนักรวมจากรายการลงปลา" />
+              <DetailMetric label="ค่าใช้จ่ายรวม" value={money(totalStockingCost)} detail={`เฉลี่ย ${money(averageStockingCost)} ต่อรอบลงปลา`} />
+            </section>
+
+            <section className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(420px,0.65fr)]">
+              <ReportTable title="รายการลงปลา" subtitle="แสดงสูงสุด 200 รายการในเดือนที่เลือก">
+                <table className="w-full min-w-[1180px] text-left text-sm">
+                  <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
+                    <tr>
+                      <th className="px-5 py-3">วันที่</th>
+                      <th className="px-5 py-3">รูปภาพ</th>
+                      <th className="px-5 py-3">ชนิดปลา</th>
+                      <th className="px-5 py-3 text-right">จำนวนตัว</th>
+                      <th className="px-5 py-3 text-right">น้ำหนักรวม</th>
+                      <th className="px-5 py-3 text-right">ค่าใช้จ่าย</th>
+                      <th className="px-5 py-3">รายละเอียด</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line/70">
+                    {stockingRows.map((row) => (
+                      <tr key={row.id}>
+                        <td className="px-5 py-4 whitespace-nowrap font-semibold text-ink">{thaiDate(row.stockingDate)}</td>
+                        <td className="px-5 py-4">
+                          <a href={row.imagePath} target="_blank" rel="noreferrer" className="block h-14 w-14">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={row.imagePath} alt={row.species} className="h-14 w-14 rounded-lg bg-mist object-cover ring-1 ring-line" />
+                          </a>
+                        </td>
+                        <td className="px-5 py-4 font-semibold text-ink">{row.species}</td>
+                        <td className="px-5 py-4 text-right">{number(row.fishCount)} ตัว</td>
+                        <td className="px-5 py-4 text-right">{number(row.totalWeightKg, 2)} กก.</td>
+                        <td className="px-5 py-4 text-right font-semibold text-pond">{money(row.costAmount)}</td>
+                        <td className="px-5 py-4"><p className="max-w-sm whitespace-pre-line text-dim">{row.detail || "-"}</p></td>
+                      </tr>
+                    ))}
+                    {stockingRows.length === 0 && <EmptyRow colSpan={7} label="ยังไม่มีรายการลงปลาในเดือนนี้" />}
+                  </tbody>
+                </table>
+              </ReportTable>
+
+              <ReportTable title="สรุปตามชนิดปลา" subtitle="รวมจำนวนตัว น้ำหนัก และค่าใช้จ่าย">
+                <table className="w-full min-w-[640px] text-left text-sm">
+                  <thead className="bg-mist/60 text-xs uppercase tracking-wide text-dim">
+                    <tr>
+                      <th className="px-5 py-3">ชนิดปลา</th>
+                      <th className="px-5 py-3">รอบ</th>
+                      <th className="px-5 py-3 text-right">จำนวนตัว</th>
+                      <th className="px-5 py-3 text-right">น้ำหนัก</th>
+                      <th className="px-5 py-3 text-right">ค่าใช้จ่าย</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line/70">
+                    {stockingSpecies.map((row) => (
+                      <tr key={row.species}>
+                        <td className="px-5 py-4 font-semibold text-ink">{row.species}</td>
+                        <td className="px-5 py-4">{number(row.entries)}</td>
+                        <td className="px-5 py-4 text-right">{number(row.fishCount)}</td>
+                        <td className="px-5 py-4 text-right">{number(row.totalWeightKg, 2)} กก.</td>
+                        <td className="px-5 py-4 text-right font-semibold text-pond">{money(row.costAmount)}</td>
+                      </tr>
+                    ))}
+                    {stockingSpecies.length === 0 && <EmptyRow colSpan={5} label="ยังไม่มีข้อมูลสรุปชนิดปลาในเดือนนี้" />}
                   </tbody>
                 </table>
               </ReportTable>
