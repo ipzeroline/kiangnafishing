@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteChrome from "./SiteChrome";
 import ArticleBrowser from "./ArticleBrowser";
 import ArticleViewTracker from "./ArticleViewTracker";
+import ArticleCover from "./ArticleCover";
 import { Locale, SitePage, articleItems, articlePath, galleryItems, homeSeoContent, latestArticleItems, newsItems, pagePaths, siteContact, siteContent, siteUrl, type ArticleItem, type ArticleViewMap } from "@/lib/site";
 import { query, queryOne, type RankingLevel } from "@/lib/db";
 import { dateKeyBKK, monthKeyBKK } from "@/lib/date";
@@ -53,28 +54,6 @@ type PublicFishStocking = {
   stockingDate: string;
   createdAt: string;
 };
-
-function ArticleCover({ article, index, locale, large = false }: { article: ArticleItem; index: number; locale: Locale; large?: boolean }) {
-  const coverNumber = String((index % 10) + 1);
-  const label = locale === "th" ? "คู่มือตกปลา" : "Fishing Guide";
-
-  return (
-    <div className={large ? "article-cover article-cover-large" : "article-cover"} data-cover={coverNumber} aria-label={article.alt}>
-      <div className="article-cover-mark" aria-hidden="true">
-        <svg viewBox="0 0 28 28">
-          <path d="M4 15.5c5.4-5.5 11.6-5.5 18 0-6.4 5.5-12.6 5.5-18 0Z" />
-          <path d="M21.5 15.5 25 12v7l-3.5-3.5Z" />
-          <circle cx="9.2" cy="14.5" r="1.15" />
-        </svg>
-      </div>
-      <div>
-        <p>{label}</p>
-        <strong>{article.keywords[0]}</strong>
-        <span>{article.keywords.slice(1).join(" / ")}</span>
-      </div>
-    </div>
-  );
-}
 
 async function getHomeRanking() {
   const mk = monthKeyBKK();
@@ -366,6 +345,9 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
         "@type": "LocalBusiness",
         "@id": `${siteUrl}/#business`,
         name: content.brand,
+        alternateName: locale === "th"
+          ? ["เคียงนาฟิชชิ่งเลค", "เคียงนาfishinglake", "เคียงนาฟิชชิ่งเลคพะเยา", "เคียงนาfishinglakeพะเยา", "Kiangna Fishing Lake"]
+          : ["Kiangna Fishing Lake", "เคียงนา Fishing Lake", "เคียงนาฟิชชิ่งเลค"],
         url: `${siteUrl}${pagePaths.home[locale]}`,
         telephone: siteContact.phone,
         email: siteContact.email,
@@ -376,7 +358,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
         ],
         sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
         description: content.pages.home.description,
-        areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
+        areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "อำเภอดอกคำใต้", "บ่อตกปลาใกล้ฉัน", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
         address: {
           "@type": "PostalAddress",
           addressLocality: locale === "th" ? "ดอกคำใต้" : "Dok Kham Tai",
@@ -388,6 +370,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
         name: content.brand,
+        alternateName: locale === "th" ? "เคียงนาฟิชชิ่งเลคพะเยา" : "Kiangna Fishing Lake Phayao",
         url: siteUrl,
         inLanguage: locale,
         potentialAction: {
@@ -502,44 +485,44 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        <section className="site-section">
-          <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "อันดับนักตกปลา" : "Ranking"}</p>
-            <h2 className="h2">{locale === "th" ? "อันดับนักตกปลาล่าสุด" : "Latest angler ranking"}</h2>
+        <section className="site-section home-ranking-compact">
+          <div className="home-ranking-compact-head">
+            <div>
+              <p className="site-eyebrow">{locale === "th" ? "อันดับนักตกปลา" : "Ranking"}</p>
+              <h2>{locale === "th" ? "ผลงานเด่นประจำเดือน" : "Monthly highlights"}</h2>
+            </div>
+            <Link href="/rankings">{locale === "th" ? "ดูทั้งหมด" : "View all"}</Link>
           </div>
-          <div className="home-ranking">
-            {ranking.length === 0 ? (
-              <div className="home-empty-card">
-                <h3>{locale === "th" ? "ยังไม่มีข้อมูลอันดับในเดือนนี้" : "No ranking data yet this month"}</h3>
-                <p>{locale === "th" ? "เมื่อมีผลงานปลาที่ผ่านการตรวจสอบ ระบบจะแสดงอันดับล่าสุดในส่วนนี้" : "Verified catches will appear here automatically."}</p>
-              </div>
-            ) : ranking.map((row, index) => {
-              const level = levelForScore(Number(row.score), levels);
-              const weightText = Number(row.value).toLocaleString(locale === "th" ? "th-TH" : "en-US");
-              return (
-              <article key={row.memberCode} className={index === 0 ? "rank-card rank-card-leader" : "rank-card"}>
-                <span className="rank-medal">{index + 1}</span>
-                <div className="rank-profile">
-                  {row.linePictureUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={row.linePictureUrl} alt={row.name} className="rank-avatar" loading="lazy" decoding="async" />
-                  ) : (
-                    <span className="rank-avatar rank-avatar-fallback">{row.name.slice(0, 1)}</span>
-                  )}
-                  <div className="rank-member-copy">
-                    <h3>{row.name}</h3>
-                    <p>{row.detail || row.memberCode}</p>
-                    {level && <RankingLevelBadge level={level} size={index === 0 ? "md" : "sm"} />}
-                  </div>
-                </div>
-                <strong><span>{weightText}</span> kg</strong>
-              </article>
-              );
-            })}
-          </div>
-          <div className="center mt-lg">
-            <Link href="/rankings" className="site-secondary-btn">{locale === "th" ? "ดูอันดับทั้งหมด" : "View full ranking"}</Link>
-          </div>
+
+          {ranking.length === 0 ? (
+            <div className="home-ranking-compact-empty">
+              <h3>{locale === "th" ? "ยังไม่มีข้อมูลอันดับในเดือนนี้" : "No ranking data yet this month"}</h3>
+              <p>{locale === "th" ? "เมื่อมีข้อมูลในระบบอันดับของบ่อ รายชื่อผลงานเด่นจะแสดงในส่วนนี้" : "Monthly ranking records will appear here."}</p>
+            </div>
+          ) : (
+            <div className="home-ranking-compact-list" aria-label={locale === "th" ? "ผลงานเด่นประจำเดือน" : "Monthly ranking highlights"}>
+              {ranking.slice(0, 4).map((row, index) => {
+                const level = levelForScore(Number(row.score), levels);
+                const weightText = Number(row.value).toLocaleString(locale === "th" ? "th-TH" : "en-US");
+                return (
+                  <article key={row.memberCode} className={index === 0 ? "home-ranking-compact-item is-first" : "home-ranking-compact-item"}>
+                    <span className="home-ranking-compact-no">{index + 1}</span>
+                    {row.linePictureUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={row.linePictureUrl} alt={row.name} loading="lazy" decoding="async" />
+                    ) : (
+                      <b>{row.name.slice(0, 1)}</b>
+                    )}
+                    <div className="home-ranking-compact-person">
+                      <h3>{row.name}</h3>
+                      <p>{level ? `${level.symbol} ${level.name}` : row.detail || row.memberCode}</p>
+                    </div>
+                    <strong>{weightText}<small>{locale === "th" ? "กก." : "kg"}</small></strong>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         <section className="site-section site-section-tight">
@@ -680,18 +663,93 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
 
 export function NewsSitePage({ locale }: { locale: Locale }) {
   const content = siteContent[locale];
+  const updates = newsItems[locale].map(([title, detail], index) => ({
+    title,
+    detail,
+    index,
+    tag: locale === "th"
+      ? ["ประกาศ", "สิทธิสมาชิก", "กิจกรรม"][index] || "ข่าวสาร"
+      : ["Update", "Member Benefit", "Event"][index] || "News",
+  }));
+  const highlights = locale === "th"
+    ? [
+        ["อัปเดตรอบลงปลา", "ติดตามรอบปลาใหญ่และช่วงเวลาที่เหมาะกับการเข้าบ่อ"],
+        ["ข่าวกิจกรรม", "ประกาศแมตช์พิเศษ คูปอง และสิทธิสมาชิก"],
+        ["วางแผนก่อนเดินทาง", "เชื่อมต่อข้อมูลข่าว ตารางลงปลา และช่องทาง LINE"],
+      ]
+    : [
+        ["Release updates", "Follow trophy fish rounds and suitable visit windows"],
+        ["Event news", "Special matches, coupons, and member privileges"],
+        ["Plan before visiting", "Connect news, release schedule, and LINE contact"],
+      ];
+
   return (
-    <ContentPage locale={locale} page="news" eyebrow={locale === "th" ? "ข่าวสาร" : "Updates"} title={content.sections.newsTitle}>
-      <div className="site-list-grid">
-        {newsItems[locale].map(([title, detail], index) => (
-          <article key={title} className="site-news-card">
-            <p>{String(index + 1).padStart(2, "0")}</p>
-            <h2>{title}</h2>
-            <span>{detail}</span>
-          </article>
-        ))}
-      </div>
-    </ContentPage>
+    <SiteChrome locale={locale} page="news">
+      <main className="site-content-page site-news-page">
+        <section className="site-news-hero">
+          <div>
+            <p className="site-eyebrow">{locale === "th" ? "ข่าวสารและกิจกรรม" : "News & Events"}</p>
+            <h1>{content.sections.newsTitle}</h1>
+            <p>
+              {locale === "th"
+                ? "รวมประกาศสำคัญ รอบลงปลา กิจกรรมสะสมแต้ม และแมตช์พิเศษของเคียงนา Fishing Lake เพื่อให้นักตกปลาวางแผนเข้าบ่อได้ชัดเจนขึ้น"
+                : "Follow important announcements, fish release rounds, points campaigns, and special matches from Kiangna Fishing Lake before planning your visit."}
+            </p>
+            <div className="site-news-actions">
+              <Link href={pagePaths.fishStocking[locale]} className="site-primary-btn">
+                {locale === "th" ? "ดูตารางลงปลา" : "View fish releases"}
+              </Link>
+              <Link href={pagePaths.contact[locale]} className="site-secondary-btn">
+                {locale === "th" ? "สอบถามกิจกรรม" : "Ask about events"}
+              </Link>
+            </div>
+          </div>
+          <div className="site-news-hero-panel" aria-label={locale === "th" ? "สรุปข่าวสาร" : "News summary"}>
+            {highlights.map(([title, detail], index) => (
+              <article key={title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{title}</strong>
+                <p>{detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="site-section site-section-tight site-news-updates">
+          <div className="section-head">
+            <p className="site-eyebrow">{locale === "th" ? "รายการล่าสุด" : "Latest Updates"}</p>
+            <h2 className="h2">{locale === "th" ? "ข่าวสารที่ควรติดตามก่อนเข้าบ่อ" : "Updates to check before visiting"}</h2>
+          </div>
+          <div className="site-news-grid">
+            {updates.map((item) => (
+              <article key={item.title} className={item.index === 0 ? "site-news-card is-featured" : "site-news-card"}>
+                <div className="site-news-card-top">
+                  <span>{item.tag}</span>
+                  <b>{String(item.index + 1).padStart(2, "0")}</b>
+                </div>
+                <h2>{item.title}</h2>
+                <p>{item.detail}</p>
+                <Link href={item.index === 0 ? pagePaths.fishStocking[locale] : pagePaths.contact[locale]}>
+                  {locale === "th" ? "ดูรายละเอียด" : "View details"}
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="site-section site-section-tight site-news-seo">
+          <div>
+            <p className="site-eyebrow">{locale === "th" ? "วางแผนเข้าบ่อ" : "Visit Planning"}</p>
+            <h2>{locale === "th" ? "ใช้ข่าวสารร่วมกับตารางลงปลาเพื่อเลือกวันที่เหมาะสม" : "Use news with release schedules to choose better visit dates"}</h2>
+          </div>
+          <p>
+            {locale === "th"
+              ? "ข่าวสารและกิจกรรมช่วยให้นักตกปลาติดตามรอบปลาใหญ่ สิทธิสมาชิก และประกาศสำคัญของบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ได้ครบในที่เดียว"
+              : "News and event updates help anglers follow trophy fish releases, member benefits, and important announcements from this fishing lake in Dok Kham Tai, Phayao."}
+          </p>
+        </section>
+      </main>
+    </SiteChrome>
   );
 }
 
@@ -735,11 +793,24 @@ export async function ArticlesSitePage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <ContentPage locale={locale} page="articles" eyebrow={locale === "th" ? "บทความ" : "Articles"} title={title}>
+    <SiteChrome locale={locale} page="articles">
+      <main className="site-content-page site-articles-page">
+        <header className="site-page-head site-articles-head">
+          <div className="site-articles-head-copy">
+            <p className="site-eyebrow">{locale === "th" ? "บทความ" : "Articles"}</p>
+            <h1>{title}</h1>
+            <p className="site-page-intro">{intro}</p>
+          </div>
+          <div className="site-articles-head-meta" aria-label={locale === "th" ? "สรุปบทความ" : "Article summary"}>
+            <span><strong>{articles.length.toLocaleString(locale === "th" ? "th-TH" : "en-US")}</strong>{locale === "th" ? " บทความ" : " articles"}</span>
+            <span><strong>{locale === "th" ? "เทคนิค" : "Tips"}</strong>{locale === "th" ? " ตกปลาใหญ่" : " trophy fishing"}</span>
+            <span><strong>{locale === "th" ? "LINE" : "LINE"}</strong>{locale === "th" ? " บริการหน้าบ่อ" : " lake service"}</span>
+          </div>
+        </header>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <p className="site-page-intro">{intro}</p>
       <ArticleBrowser locale={locale} articles={articles} viewCounts={viewCounts} />
-    </ContentPage>
+      </main>
+    </SiteChrome>
   );
 }
 
@@ -774,7 +845,7 @@ function buildArticleSections(locale: Locale, article: ArticleItem) {
         {
           heading: "สรุปสำหรับนักตกปลาที่กำลังวางแผนมาเคียงนา",
           paragraphs: [
-            `ถ้าคุณกำลังมองหา${mainKeyword} หรือเปรียบเทียบบ่อตกปลาในพื้นที่พะเยาและดอกคำใต้ ให้เริ่มจากดูข้อมูลบทความ ตารางลงปลา แกลลอรี่ผลงาน และติดต่อทีมงานผ่าน LINE ก่อนเดินทาง`,
+            `ถ้าคุณกำลังมองหา${mainKeyword} หรือเปรียบเทียบบ่อตกปลาในพื้นที่พะเยา ในอำเภอดอกคำใต้ ให้เริ่มจากดูข้อมูลบทความ ตารางลงปลา แกลลอรี่ผลงาน และติดต่อทีมงานผ่าน LINE ก่อนเดินทาง`,
             "เคียงนา Fishing Lake เหมาะกับคนที่อยากได้ประสบการณ์ตกปลาที่เป็นระบบ มีข้อมูลให้ตรวจสอบ และต้องการลุ้นผลงานปลาในบรรยากาศริมบ่อที่เดินทางสะดวก",
           ],
         },
@@ -1073,41 +1144,171 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
 export async function GallerySitePage({ locale }: { locale: Locale }) {
   const content = siteContent[locale];
   const catches = await getPublicGallery();
+  const numberLocale = locale === "th" ? "th-TH" : "en-US";
   const totalWeight = catches.reduce((sum, item) => sum + Number(item.weightKg || 0), 0);
   const speciesCount = new Set(catches.map((item) => item.species)).size;
+  const heaviestCatch = catches.reduce<(typeof catches)[number] | null>((best, item) => {
+    if (!best) return item;
+    return Number(item.weightKg) > Number(best.weightKg) ? item : best;
+  }, null);
+  const latestCatch = catches[0] || null;
+  const title = locale === "th"
+    ? "แกลลอรี่ผลงานปลา บ่อตกปลาพะเยา เคียงนาฟิชชิ่งเลคพะเยา"
+    : "Verified Catch Gallery at Kiangna Fishing Lake Phayao";
+  const intro = locale === "th"
+    ? "รวมรูปผลงานปลาจริงจากเคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาในพะเยา ในอำเภอดอกคำใต้ พร้อมชนิดปลา น้ำหนัก วันที่ และชื่อผู้ตก เพื่อช่วยให้นักตกปลาประเมินบรรยากาศ ผลงานปลาใหญ่ และความน่าเชื่อถือก่อนวางแผนเข้าบ่อ"
+    : "Browse verified catch photos from Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, with fish species, real weights, dates, and angler records for better trip planning.";
+  const proofPoints = locale === "th"
+    ? [
+        ["ตรวจสอบก่อนเผยแพร่", "รูปผลงานปลาต้องผ่านการยืนยันจากเจ้าหน้าที่ก่อนแสดงบนหน้าแกลลอรี่"],
+        ["มีน้ำหนักและชนิดปลา", "แต่ละรายการแสดงข้อมูลที่นักตกปลาใช้ประเมินไซซ์ปลาและโอกาสทำผลงานได้จริง"],
+        ["เชื่อมกับระบบ LINE", "ลูกค้าส่งผลงานปลาและติดตามข้อมูลสำคัญผ่าน LINE เพื่อให้ข้อมูลเป็นระบบ"],
+      ]
+    : [
+        ["Staff verified", "Catch photos are reviewed by staff before appearing on the public gallery."],
+        ["Species and weight", "Each record helps anglers compare fish size, species, and recent lake performance."],
+        ["LINE connected", "Customers submit catches and follow important records through the LINE service flow."],
+      ];
+  const keywords = locale === "th"
+    ? ["บ่อตกปลาพะเยา", "บ่อตกปลาดอกคำใต้", "บ่อตกปลาใหญ่พะเยา", "บ่อตกปลาใหญ่ดอกคำใต้", "บ่อตกปลาใกล้ฉัน", "เคียงนาฟิชชิ่งเลคพะเยา", "เคียงนาfishinglakeพะเยา", "รูปปลาตกได้", "ผลงานปลาเคียงนา", "แกลลอรี่บ่อตกปลา"]
+    : ["fishing lake Phayao", "Dok Kham Tai fishing lake", "trophy fish Phayao", "catch gallery", "verified catches", "Kiangna Fishing Lake"];
+  const faqs = locale === "th"
+    ? [
+        ["รูปในแกลลอรี่เป็นผลงานจริงหรือไม่", "เป็นรูปผลงานปลาที่ผ่านการตรวจสอบจากเจ้าหน้าที่ก่อนเผยแพร่บนเว็บไซต์"],
+        ["ข้อมูลน้ำหนักปลาใช้วางแผนเข้าบ่อได้ไหม", "ข้อมูลช่วยให้เห็นแนวโน้มผลงานปลา ชนิดปลา และไซซ์ปลาที่พบล่าสุด แต่ผลลัพธ์จริงขึ้นอยู่กับรอบลงปลา เวลา อุปกรณ์ และเทคนิคของผู้ตก"],
+        ["อยากส่งผลงานปลาต้องทำอย่างไร", "ลูกค้าใช้เมนูบริการผ่าน LINE ของเคียงนา Fishing Lake เพื่อส่งผลงานปลาให้เจ้าหน้าที่ตรวจสอบ"],
+        ["ดูตารางลงปลาก่อนมาบ่อได้ที่ไหน", "สามารถดูหน้าตารางการลงปลาและติดต่อทีมงานผ่าน LINE เพื่อสอบถามข้อมูลล่าสุดก่อนเดินทาง"],
+      ]
+    : [
+        ["Are the gallery photos real catches?", "Yes. Public gallery photos are verified by staff before being published."],
+        ["Can I use the catch data to plan a visit?", "The gallery helps anglers review recent species and fish size, while actual results depend on release rounds, timing, gear, and technique."],
+        ["How can customers submit a catch?", "Customers submit catch records through the Kiangna Fishing Lake LINE service flow for staff review."],
+        ["Where can I check fish release updates?", "Use the fish release schedule page and contact the team through LINE for the latest visit planning details."],
+      ];
+  const imageObjects = catches.slice(0, 12).map((item) => ({
+    "@type": "ImageObject",
+    url: item.imagePath.startsWith("http") ? item.imagePath : `${siteUrl}${item.imagePath}`,
+    caption: item.caption || `${item.species} ${Number(item.weightKg).toLocaleString(numberLocale)} kg by ${item.name}`,
+    name: `${item.species} ${Number(item.weightKg).toLocaleString(numberLocale)} kg`,
+    datePublished: item.createdAt,
+    creator: { "@type": "Person", name: item.name },
+  }));
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ImageGallery",
-    name: locale === "th" ? "แกลลอรี่ผลงานปลา เคียงนา Fishing Lake" : "Kiangna Fishing Lake Catch Gallery",
-    description: content.pages.gallery.description,
-    url: `${siteUrl}${pagePaths.gallery[locale]}`,
-    image: catches.slice(0, 12).map((item) => ({
-      "@type": "ImageObject",
-      url: item.imagePath.startsWith("http") ? item.imagePath : `${siteUrl}${item.imagePath}`,
-      caption: item.caption || `${item.species} ${Number(item.weightKg).toLocaleString(locale === "th" ? "th-TH" : "en-US")} kg by ${item.name}`,
-      name: `${item.species} ${Number(item.weightKg).toLocaleString(locale === "th" ? "th-TH" : "en-US")} kg`,
-      datePublished: item.createdAt,
-      creator: { "@type": "Person", name: item.name },
-    })),
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${siteUrl}${pagePaths.gallery[locale]}#webpage`,
+        name: title,
+        description: content.pages.gallery.description,
+        url: `${siteUrl}${pagePaths.gallery[locale]}`,
+        inLanguage: locale === "th" ? "th-TH" : "en-US",
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        about: { "@id": `${siteUrl}/#business` },
+      },
+      {
+        "@type": "ImageGallery",
+        "@id": `${siteUrl}${pagePaths.gallery[locale]}#gallery`,
+        name: title,
+        description: intro,
+        url: `${siteUrl}${pagePaths.gallery[locale]}`,
+        image: imageObjects.length ? imageObjects : [`${siteUrl}/site/kiangna-lake-aerial-01.jpg`],
+        keywords: keywords.join(", "),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: locale === "th" ? "หน้าแรก" : "Home", item: `${siteUrl}${pagePaths.home[locale]}` },
+          { "@type": "ListItem", position: 2, name: locale === "th" ? "แกลลอรี่ผลงานปลา" : "Gallery", item: `${siteUrl}${pagePaths.gallery[locale]}` },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map(([question, answer]) => ({
+          "@type": "Question",
+          name: question,
+          acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
+      },
+    ],
   };
 
   return (
-    <ContentPage locale={locale} page="gallery" eyebrow={locale === "th" ? "แกลลอรี่" : "Gallery"} title={content.sections.galleryTitle}>
+    <SiteChrome locale={locale} page="gallery">
+      <main className="site-content-page site-gallery-page">
+        <header className="site-page-head site-gallery-head">
+          <div className="site-gallery-head-copy">
+            <p className="site-eyebrow">{locale === "th" ? "แกลลอรี่ผลงานปลา" : "Catch Gallery"}</p>
+            <h1>{title}</h1>
+          </div>
+          <div className="site-gallery-head-meta" aria-label={locale === "th" ? "สรุปแกลลอรี่" : "Gallery summary"}>
+            <span><strong>{catches.length.toLocaleString(numberLocale)}</strong>{locale === "th" ? " ผลงาน" : " catches"}</span>
+            <span><strong>{speciesCount.toLocaleString(numberLocale)}</strong>{locale === "th" ? " ชนิดปลา" : " species"}</span>
+            <span><strong>{heaviestCatch ? Number(heaviestCatch.weightKg).toLocaleString(numberLocale, { maximumFractionDigits: 0 }) : "0"}</strong>{locale === "th" ? " กก. สูงสุด" : " kg max"}</span>
+          </div>
+        </header>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <section className="site-gallery-intro" aria-label={locale === "th" ? "สรุปแกลลอรี่ผลงานปลา" : "Catch gallery summary"}>
-        <div>
-          <p>{locale === "th" ? "รวมรูปผลงานปลาที่ผ่านการตรวจสอบจากเจ้าหน้าที่ พร้อมน้ำหนักจริงและข้อมูลสมาชิก" : "Verified catch photos reviewed by staff with real weights and member records."}</p>
+      <section className="site-gallery-hero" aria-label={locale === "th" ? "สรุปแกลลอรี่ผลงานปลา" : "Catch gallery summary"}>
+        <div className="site-gallery-hero-copy">
+          <p>{intro}</p>
+          <div className="site-gallery-keywords" aria-label={locale === "th" ? "คำค้นที่เกี่ยวข้อง" : "Related search topics"}>
+            {keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
+          </div>
+          <div className="site-gallery-actions">
+            <Link href={pagePaths.fishStocking[locale]} className="site-secondary-btn">{locale === "th" ? "ดูตารางลงปลา" : "Fish release schedule"}</Link>
+            <Link href={pagePaths.contact[locale]} className="site-primary-btn">{locale === "th" ? "ติดต่อผ่าน LINE" : "Contact via LINE"}</Link>
+          </div>
         </div>
         <div className="site-gallery-stats">
-          <span><strong>{catches.length.toLocaleString(locale === "th" ? "th-TH" : "en-US")}</strong>{locale === "th" ? " ผลงาน" : " catches"}</span>
-          <span><strong>{speciesCount.toLocaleString(locale === "th" ? "th-TH" : "en-US")}</strong>{locale === "th" ? " ชนิดปลา" : " species"}</span>
-          <span><strong>{totalWeight.toLocaleString(locale === "th" ? "th-TH" : "en-US", { maximumFractionDigits: 2 })}</strong>{locale === "th" ? " กก. รวม" : " kg total"}</span>
+          <span><strong>{catches.length.toLocaleString(numberLocale)}</strong>{locale === "th" ? " ผลงานที่เผยแพร่" : " published catches"}</span>
+          <span><strong>{speciesCount.toLocaleString(numberLocale)}</strong>{locale === "th" ? " ชนิดปลา" : " species"}</span>
+          <span><strong>{totalWeight.toLocaleString(numberLocale, { maximumFractionDigits: 2 })}</strong>{locale === "th" ? " กก. น้ำหนักรวม" : " kg total weight"}</span>
+          <span><strong>{heaviestCatch ? Number(heaviestCatch.weightKg).toLocaleString(numberLocale, { maximumFractionDigits: 2 }) : "0"}</strong>{locale === "th" ? " กก. สูงสุดในหน้านี้" : " kg heaviest here"}</span>
         </div>
       </section>
 
+      <section className="site-gallery-proof-grid" aria-label={locale === "th" ? "เหตุผลที่แกลลอรี่น่าเชื่อถือ" : "Gallery trust signals"}>
+        {proofPoints.map(([pointTitle, detail]) => (
+          <article key={pointTitle}>
+            <h2>{pointTitle}</h2>
+            <p>{detail}</p>
+          </article>
+        ))}
+      </section>
+
       {catches.length > 0 ? (
-        <div className="site-catch-gallery-grid">
-          {catches.map((item, index) => (
+        <>
+          {latestCatch && (
+            <section className="site-gallery-featured-catch" aria-label={locale === "th" ? "ผลงานปลาล่าสุด" : "Latest featured catch"}>
+              <div className="site-gallery-featured-media">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={latestCatch.imagePath}
+                  alt={locale === "th"
+                    ? `${latestCatch.species} ผลงานล่าสุดน้ำหนัก ${Number(latestCatch.weightKg).toLocaleString("th-TH")} กิโลกรัม ที่เคียงนา Fishing Lake พะเยา`
+                    : `Latest ${latestCatch.species} catch weighing ${Number(latestCatch.weightKg).toLocaleString("en-US")} kg at Kiangna Fishing Lake Phayao`}
+                  width={960}
+                  height={620}
+                  loading="eager"
+                  decoding="sync"
+                />
+              </div>
+              <div className="site-gallery-featured-copy">
+                <p className="site-eyebrow">{locale === "th" ? "ผลงานล่าสุด" : "Latest Verified Catch"}</p>
+                <h2>{latestCatch.species}</h2>
+                <strong>{Number(latestCatch.weightKg).toLocaleString(numberLocale, { maximumFractionDigits: 2 })} {locale === "th" ? "กก." : "kg"}</strong>
+                <p>{latestCatch.caption || (locale === "th" ? "ผลงานปลาที่ผ่านการตรวจสอบจากทีมงานและแสดงเป็นข้อมูลอ้างอิงสำหรับนักตกปลา" : "A staff verified catch record used as a practical reference for visiting anglers.")}</p>
+                <span>{locale === "th" ? "โดย" : "by"} {latestCatch.name} · {dateText(latestCatch.createdAt, locale)}</span>
+              </div>
+            </section>
+          )}
+
+          <div className="section-head gallery-grid-head">
+            <p className="site-eyebrow">{locale === "th" ? "รูปผลงานปลา" : "Catch Photos"}</p>
+            <h2 className="h2">{locale === "th" ? "ผลงานปลาที่ผ่านการตรวจสอบล่าสุด" : "Latest verified catch records"}</h2>
+          </div>
+          <div className="site-catch-gallery-grid">
+            {catches.map((item, index) => (
             <figure key={item.id} className={`site-catch-gallery-card ${index < 2 ? "featured" : ""}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -1129,15 +1330,44 @@ export async function GallerySitePage({ locale }: { locale: Locale }) {
                 <span>{locale === "th" ? "โดย" : "by"} {item.name} · {dateText(item.createdAt, locale)}</span>
               </figcaption>
             </figure>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       ) : (
         <div className="site-gallery-empty">
           <h2>{locale === "th" ? "ยังไม่มีผลงานปลาที่เผยแพร่" : "No published catches yet"}</h2>
           <p>{locale === "th" ? "เมื่อเจ้าหน้าที่ยืนยันผลงานปลา รูปจะถูกนำมาแสดงในแกลลอรี่นี้โดยอัตโนมัติ" : "Verified catches will appear here automatically after staff review."}</p>
         </div>
       )}
-    </ContentPage>
+
+      <section className="site-gallery-seo-panel">
+        <div>
+          <p className="site-eyebrow">{locale === "th" ? "วางแผนก่อนเข้าบ่อ" : "Plan Your Visit"}</p>
+          <h2>{locale === "th" ? "ใช้แกลลอรี่ดูแนวโน้มปลาใหญ่และบรรยากาศบ่อตกปลาพะเยา" : "Use the gallery to review trophy trends and lake atmosphere"}</h2>
+          <p>
+            {locale === "th"
+              ? "หน้าแกลลอรี่นี้ช่วยให้นักตกปลาที่ค้นหาบ่อตกปลาในพะเยา บ่อตกปลาดอกคำใต้ หรือบ่อตกปลาใหญ่พะเยา เห็นหลักฐานผลงานปลา บรรยากาศหน้าบ่อ และข้อมูลที่ควรใช้ร่วมกับตารางลงปลา ก่อนตัดสินใจเดินทาง"
+              : "This gallery helps anglers searching for a fishing lake in Phayao, Dok Kham Tai fishing lake, or trophy fish records compare real catch evidence, lake atmosphere, and release schedule context before visiting."}
+          </p>
+        </div>
+        <ul>
+          {(locale === "th"
+            ? ["ดูชนิดปลาและน้ำหนักที่เจอล่าสุด", "เช็คตารางลงปลาเพื่อวางแผนเวลา", "ติดต่อทีมงานผ่าน LINE ก่อนเดินทาง"]
+            : ["Review recent fish species and weights", "Check the release schedule before planning a session", "Contact the team through LINE before visiting"]
+          ).map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      </section>
+
+      <section className="home-faq-list gallery-faq" aria-label={locale === "th" ? "คำถามที่พบบ่อยเกี่ยวกับแกลลอรี่" : "Gallery FAQ"}>
+        {faqs.map(([question, answer]) => (
+          <details key={question} className="home-faq-item">
+            <summary>{question}</summary>
+            <p>{answer}</p>
+          </details>
+        ))}
+      </section>
+      </main>
+    </SiteChrome>
   );
 }
 
@@ -1172,13 +1402,13 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
     : ["Add the LINE account @038gyaxo", "Use the service menu for entry, credits, or catch submissions", "Staff review important records before approval", "Approved records appear in rankings, gallery, or member history"];
   const faqs = locale === "th"
     ? [
-        ["เคียงนา Fishing Lake อยู่ที่ไหน", "เคียงนา Fishing Lake ให้บริการในพื้นที่พะเยาและดอกคำใต้ ลูกค้าสามารถเปิดแผนที่จากหน้า Contact หรือสอบถามทาง LINE @038gyaxo"],
+        ["เคียงนา Fishing Lake อยู่ที่ไหน", "เคียงนา Fishing Lake เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ ลูกค้าสามารถเปิดแผนที่จากหน้า Contact หรือสอบถามทาง LINE @038gyaxo"],
         ["ระบบบริการใช้งานยากไหม", "ไม่ยาก ระบบถูกออกแบบให้เปิดเมนูแล้วเลือกบริการที่ต้องการได้เลย เช่น QR เข้าบ่อ เติมเครดิต ตรวจสอบยอด ส่งผลงานปลา และดูอันดับ"],
         ["อันดับนักตกปลาน่าเชื่อถืออย่างไร", "ผลงานปลาต้องผ่านการตรวจสอบจากเจ้าหน้าที่ก่อนนำไปคำนวณอันดับหรือแสดงในแกลลอรี่สาธารณะ"],
         ["ข้อมูลเครดิตและแต้มตรวจสอบได้หรือไม่", "รายการเครดิต แต้ม เติมเงิน และกิจกรรมสำคัญถูกบันทึกเป็นประวัติ จึงตรวจสอบย้อนหลังได้เมื่อจำเป็น"],
       ]
     : [
-        ["Where is Kiangna Fishing Lake located?", "Kiangna Fishing Lake serves anglers in Phayao and Dok Kham Tai. Customers can open the map on the contact page or ask through the LINE account."],
+        ["Where is Kiangna Fishing Lake located?", "Kiangna Fishing Lake is in Phayao, in Dok Kham Tai District. Customers can open the map on the contact page or ask through the LINE account."],
         ["Do customers need LINE?", "Core customer services are designed around the LINE account, including entry QR, credits, balances, catch submissions, and rankings."],
         ["How are rankings verified?", "Catch records are reviewed by staff before they are used in rankings or public gallery pages."],
         ["Are credits and points auditable?", "Credits, points, top-ups, and important actions are recorded for team review when customers need support."],
@@ -1204,6 +1434,9 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
         "@type": "LocalBusiness",
         "@id": `${siteUrl}/#business`,
         name: content.brand,
+        alternateName: locale === "th"
+          ? ["เคียงนาฟิชชิ่งเลค", "เคียงนาfishinglake", "เคียงนาฟิชชิ่งเลคพะเยา", "เคียงนาfishinglakeพะเยา", "Kiangna Fishing Lake"]
+          : ["Kiangna Fishing Lake", "เคียงนา Fishing Lake", "เคียงนาฟิชชิ่งเลค"],
         url: siteUrl,
         telephone: siteContact.phone,
         email: siteContact.email,
@@ -1213,7 +1446,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
           `${siteUrl}/site/kiangna-lake-view-03.jpg`,
         ],
         sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
-        areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
+        areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "อำเภอดอกคำใต้", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
         address: {
           "@type": "PostalAddress",
           addressLocality: locale === "th" ? "ดอกคำใต้" : "Dok Kham Tai",
@@ -1247,7 +1480,19 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <ContentPage locale={locale} page="about" eyebrow={locale === "th" ? "เกี่ยวกับเรา" : "About"} title={content.sections.aboutTitle}>
+    <SiteChrome locale={locale} page="about">
+      <main className="site-content-page site-about-page">
+        <header className="site-page-head site-about-head">
+          <div className="site-about-head-copy">
+            <p className="site-eyebrow">{locale === "th" ? "เกี่ยวกับเรา" : "About"}</p>
+            <h1>{content.sections.aboutTitle}</h1>
+          </div>
+          <div className="site-about-head-meta" aria-label={locale === "th" ? "สรุปเกี่ยวกับเรา" : "About summary"}>
+            <span><strong>{locale === "th" ? "พะเยา" : "Phayao"}</strong>{locale === "th" ? " อำเภอดอกคำใต้" : " Dok Kham Tai"}</span>
+            <span><strong>LINE</strong>{locale === "th" ? " บริการหน้าบ่อ" : " lake service"}</span>
+            <span><strong>{locale === "th" ? "ตรวจสอบ" : "Verified"}</strong>{locale === "th" ? " ผลงานปลา" : " catches"}</span>
+          </div>
+        </header>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="site-about-layout">
         <LakeVisual locale={locale} />
@@ -1255,7 +1500,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
           <p>
             {locale === "th"
               ? "เคียงนา Fishing Lake คือบ่อตกปลาพะเยาในพื้นที่ดอกคำใต้ที่วางระบบบริการให้ทันสมัย ใช้งานง่าย และตรวจสอบได้ ลูกค้าทำรายการสำคัญได้จากเมนูบริการเดียว ทั้ง QR เข้าบ่อ เครดิต แต้ม คูปอง ผลงานปลา และอันดับนักตกปลา"
-              : "Kiangna Fishing Lake is a modern fishing lake in Phayao and Dok Kham Tai, built around a LINE-first customer journey and a controlled staff backend for clearer, faster, and auditable operations."}
+              : "Kiangna Fishing Lake is a modern fishing lake in Phayao, in Dok Kham Tai District, built around a LINE-first customer journey and a controlled staff backend for clearer, faster, and auditable operations."}
           </p>
           <ul>
             {points.map((point) => <li key={point}>{point}</li>)}
@@ -1313,7 +1558,8 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
           </details>
         ))}
       </section>
-    </ContentPage>
+      </main>
+    </SiteChrome>
   );
 }
 
@@ -1337,17 +1583,17 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
         ["TikTok", "@kiangnafishinglake", "Watch lake moments, activities, and catch highlights.", siteContact.tiktokHref, "Open TikTok"],
       ];
   const serviceList = locale === "th"
-    ? ["บ่อตกปลาพะเยาและดอกคำใต้", "รอบลงปลาและกิจกรรมหน้าบ่อ", "QR เข้าบ่อ เครดิต แต้ม และคูปอง", "ส่งผลงานปลาและตรวจสอบอันดับ", "แผนที่และเส้นทางไปเคียงนา Fishing Lake"]
-    : ["Fishing lake in Phayao and Dok Kham Tai", "Fish release schedules and lake events", "Entry QR, credits, points, and coupons", "Catch submissions and ranking verification", "Map and directions to Kiangna Fishing Lake"];
+    ? ["บ่อตกปลาพะเยา ในอำเภอดอกคำใต้", "บ่อตกปลาใหญ่พะเยาและบ่อตกปลาใหญ่ดอกคำใต้", "บ่อตกปลาใกล้ฉัน พร้อมแผนที่นำทาง", "เคียงนาฟิชชิ่งเลค / เคียงนาfishinglakeพะเยา", "รอบลงปลาและกิจกรรมหน้าบ่อ", "QR เข้าบ่อ เครดิต แต้ม และคูปอง", "ส่งผลงานปลาและตรวจสอบอันดับ"]
+    : ["Fishing lake in Phayao, in Dok Kham Tai District", "Fish release schedules and lake events", "Entry QR, credits, points, and coupons", "Catch submissions and ranking verification", "Map and directions to Kiangna Fishing Lake"];
   const faqs = locale === "th"
     ? [
         ["ติดต่อเคียงนา Fishing Lake ทางไหนเร็วที่สุด", "แนะนำให้เพิ่มเพื่อน LINE @038gyaxo เพื่อสอบถามรอบลงปลา เครดิต QR เข้าบ่อ การส่งผลงานปลา และติดต่อเจ้าหน้าที่"],
-        ["บ่ออยู่พื้นที่ไหน", "เคียงนา Fishing Lake ให้บริการในพื้นที่พะเยาและดอกคำใต้ สามารถเปิดเส้นทางจาก Google Maps ในหน้านี้ได้ทันที"],
+        ["บ่ออยู่พื้นที่ไหน", "เคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ เหมาะกับคนค้นหาบ่อตกปลาใกล้ฉัน และสามารถเปิดเส้นทางจาก Google Maps ในหน้านี้ได้ทันที"],
         ["ต้องเตรียมข้อมูลอะไรก่อนสอบถาม", "หากเป็นสมาชิกให้แจ้งชื่อหรือบัญชี LINE ที่ใช้บริการ หากสอบถามจองหมายหรือกิจกรรมให้แจ้งวันที่ต้องการเข้าใช้บริการ"],
       ]
     : [
         ["What is the fastest way to contact Kiangna Fishing Lake?", "Add LINE @038gyaxo for fish releases, credits, entry QR, catch submissions, and staff support."],
-        ["Where is the lake located?", "Kiangna Fishing Lake serves anglers in Phayao and Dok Kham Tai. Use the Google Maps link on this page for directions."],
+        ["Where is the lake located?", "Kiangna Fishing Lake is in Phayao, in Dok Kham Tai District. Use the Google Maps link on this page for directions."],
         ["What should I prepare before contacting staff?", "Members can share their name or LINE account. For visits or events, include the date you plan to come."],
       ];
   const contactJsonLd = {
@@ -1365,11 +1611,11 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
         "@type": "LocalBusiness",
         "@id": `${siteUrl}#localbusiness`,
         name: "เคียงนา Fishing Lake",
-        alternateName: "Kiangna Fishing Lake",
+        alternateName: ["Kiangna Fishing Lake", "เคียงนาฟิชชิ่งเลค", "เคียงนาfishinglake", "เคียงนาฟิชชิ่งเลคพะเยา", "เคียงนาfishinglakeพะเยา"],
         url: siteUrl,
         telephone: siteContact.phone,
         email: siteContact.email,
-        areaServed: ["Phayao", "Dok Kham Tai"],
+        areaServed: ["Phayao", "Dok Kham Tai", "พะเยา", "ดอกคำใต้", "อำเภอดอกคำใต้"],
         contactPoint: [
           {
             "@type": "ContactPoint",
@@ -1400,8 +1646,8 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
           <h2>{locale === "th" ? "สอบถามรอบลงปลา จองหมาย และเส้นทางมาบ่อตกปลาเคียงนา" : "Ask about fish releases, reservations, and directions to Kiangna Fishing Lake"}</h2>
           <p>
             {locale === "th"
-              ? "ติดต่อเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ ผ่าน LINE โทรศัพท์ อีเมล หรือเปิดแผนที่ Google Maps เพื่อวางแผนเข้าบ่อได้สะดวก"
-              : "Contact Kiangna Fishing Lake in Phayao and Dok Kham Tai through LINE, phone, email, or Google Maps before your visit."}
+              ? "ติดต่อเคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ ผ่าน LINE โทรศัพท์ อีเมล หรือเปิดแผนที่ Google Maps เพื่อวางแผนเข้าบ่อตกปลาใหญ่พะเยาได้สะดวก"
+              : "Contact Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, through LINE, phone, email, or Google Maps before your visit."}
           </p>
         </div>
         <div className="contact-hero-actions">
@@ -1434,7 +1680,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
           <h2>{locale === "th" ? "รวมช่องทางสำหรับนักตกปลาที่ต้องการมาใช้บริการ" : "Helpful contact topics for anglers"}</h2>
           <p>
             {locale === "th"
-              ? "หน้านี้ออกแบบให้ค้นหาและติดต่อได้ง่าย ทั้งคำค้นบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ รอบลงปลา ผลงานปลา อันดับนักตกปลา และเส้นทางไปบ่อ"
+              ? "หน้านี้ออกแบบให้ค้นหาและติดต่อได้ง่าย ทั้งคำค้นบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ บ่อตกปลาใกล้ฉัน รอบลงปลา ผลงานปลา อันดับนักตกปลา และเส้นทางไปบ่อ"
               : "This page is structured for anglers looking for a fishing lake in Phayao, fish releases, catch rankings, gallery records, and directions."}
           </p>
         </div>

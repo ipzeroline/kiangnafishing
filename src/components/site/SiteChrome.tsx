@@ -153,11 +153,6 @@ export default function SiteChrome({
             <Link href={pagePaths.privacy[locale]}>{locale === "th" ? "นโยบายความเป็นส่วนตัว" : "Privacy Policy"}</Link>
             <Link href={pagePaths.terms[locale]}>{locale === "th" ? "ข้อกำหนดและเงื่อนไข" : "Terms and Conditions"}</Link>
             <Link href={pagePaths.contact[locale]}>{content.nav.contact}</Link>
-            <a href={siteContact.phoneHref}>{siteContact.phone}</a>
-            <a href={siteContact.emailHref}>{siteContact.email}</a>
-            <a href={siteContact.facebookHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="facebook" />Facebook</a>
-            <a href={siteContact.instagramHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="instagram" />Instagram</a>
-            <a href={siteContact.tiktokHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="tiktok" />TikTok</a>
           </div>
         </div>
         <div className="site-footer-bottom">

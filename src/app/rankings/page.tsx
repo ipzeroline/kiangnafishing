@@ -26,7 +26,12 @@ export const metadata: Metadata = {
     "อันดับปลาใหญ่",
     "บ่อตกปลาพะเยา",
     "บ่อตกปลาดอกคำใต้",
+    "บ่อตกปลาใหญ่พะเยา",
+    "บ่อตกปลาใหญ่ดอกคำใต้",
     "เคียงนา Fishing Lake",
+    "เคียงนาฟิชชิ่งเลค",
+    "เคียงนาฟิชชิ่งเลคพะเยา",
+    "เคียงนาfishinglakeพะเยา",
     "Kiangna Fishing Lake",
     "ผลงานปลา",
     "นักตกปลาพะเยา",
@@ -89,13 +94,12 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
   const { rows, unit } = boardResult;
   const [champion, runnerUp, thirdPlace] = rows;
   const podium = [runnerUp, champion, thirdPlace].filter(Boolean);
-  const restRows = rows.slice(3);
   const totalValue = rows.reduce((sum, row) => sum + Number(row.value || 0), 0);
   const totalScore = rows.reduce((sum, row) => sum + Number(row.score || 0), 0);
   const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 1 });
 
   const pageTitle = `อันดับนักตกปลา ${boardMeta.label} เดือน ${thaiMonthLabel(mk)} | เคียงนา Fishing Lake`;
-  const pageDescription = `กระดานอันดับ ${boardMeta.label} เดือน ${thaiMonthLabel(mk)} ของเคียงนา Fishing Lake จากข้อมูลผลงานปลาที่เจ้าหน้าที่ยืนยันแล้ว`;
+  const pageDescription = `กระดานอันดับ ${boardMeta.label} เดือน ${thaiMonthLabel(mk)} ของเคียงนา Fishing Lake อัปเดตจากระบบอันดับของบ่อ`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -194,7 +198,7 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
             name: "อันดับนักตกปลาคำนวณจากอะไร",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "อันดับในหน้านี้คำนวณจากผลงานปลาที่เจ้าหน้าที่ยืนยันแล้ว โดยแยกเป็นปลาใหญ่สุด จำนวนตัว น้ำหนักรวม และจำนวนวันเข้าใช้บริการ",
+              text: "อันดับในหน้านี้คำนวณจากข้อมูลในระบบอันดับของบ่อ โดยแยกเป็นปลาใหญ่สุด จำนวนตัว น้ำหนักรวม และจำนวนวันเข้าใช้บริการ",
             },
           },
           {
@@ -202,7 +206,7 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
             name: "ข้อมูลอันดับนี้เกี่ยวกับข้อมูลส่วนตัวใน LINE หรือไม่",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "หน้าอันดับสาธารณะนี้แสดงเฉพาะข้อมูลผลงานและอันดับที่ยืนยันแล้ว ไม่แสดงยอดเครดิต รายการธุรกรรม หรือข้อมูลส่วนตัวใน LINE",
+              text: "หน้าอันดับสาธารณะนี้แสดงเฉพาะข้อมูลผลงานและอันดับประจำเดือน ไม่แสดงยอดเครดิต รายการธุรกรรม หรือข้อมูลส่วนตัวใน LINE",
             },
           },
         ],
@@ -238,10 +242,10 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
           </section>
 
           <section className="ranking-seo-intro" aria-label="รายละเอียดกระดานอันดับนักตกปลา">
-            <h2>Ranking นักตกปลาบ่อตกปลาพะเยา จากผลงานที่ตรวจสอบแล้ว</h2>
+            <h2>Ranking นักตกปลาบ่อตกปลาพะเยา อัปเดตจากระบบอันดับประจำเดือน</h2>
             <p>
               หน้านี้รวบรวมอันดับนักตกปลาของเคียงนา Fishing Lake สำหรับผู้ที่ต้องการดูผลงานปลาใหญ่ จำนวนตัว น้ำหนักรวม และสถิติขาประจำแบบโปร่งใส
-              โดยอ้างอิงเฉพาะรายการที่เจ้าหน้าที่ตรวจสอบแล้ว เพื่อให้ข้อมูลบนกระดานอันดับน่าเชื่อถือและเหมาะสำหรับการติดตามผลกิจกรรมหน้าบ่อ
+              โดยเรียงข้อมูลจากระบบอันดับของบ่อ เพื่อให้ติดตามผลงานประจำเดือนและบรรยากาศการแข่งขันหน้าบ่อได้ง่าย
             </p>
           </section>
 
@@ -249,7 +253,7 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
             <article>
               <p>ผู้มีผลงาน</p>
               <strong>{rows.length.toLocaleString("th-TH")}</strong>
-              <span>รายการที่ผ่านการตรวจสอบแล้ว</span>
+              <span>รายชื่อในกระดานเดือนนี้</span>
             </article>
             <article>
               <p>คะแนนรวม</p>
@@ -283,37 +287,59 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
                 })}
               </section>
 
-              <section className="ranking-board">
+              <section className="ranking-board ranking-board-table-section">
                 <div className="ranking-board-head">
                   <div>
                     <p className="ranking-eyebrow">Leaderboard</p>
-                    <h2>{boardMeta.label} · ทั้งหมด</h2>
+                    <h2>{boardMeta.label} · ตารางอันดับทั้งหมด</h2>
                   </div>
-                  <p>รายการนี้เป็นข้อมูลอันดับสาธารณะจากผลงานที่เจ้าหน้าที่ยืนยันแล้วเท่านั้น ไม่มีการแสดงยอดเครดิตหรือข้อมูลส่วนตัวใน LINE</p>
+                  <p>ตารางนี้แสดงอันดับสาธารณะสำหรับติดตามผลงานประจำเดือน ไม่มีการแสดงยอดเครดิตหรือข้อมูลส่วนตัวใน LINE</p>
                 </div>
-                <ol className="ranking-list">
-                  {restRows.map((row, offset) => {
-                    const index = offset + 3;
-                    const level = levelForScore(Number(row.score), levels);
-                    return (
-                      <li key={row.memberCode}>
-                        <span className="ranking-no">{index + 1}</span>
-                        <div className="ranking-member ranking-member-with-avatar">
-                          <PublicAvatar src={row.linePictureUrl} name={row.name} className="ranking-avatar" />
-                          <div className="min-w-0">
-                            <strong>{row.name}</strong>
-                            <p>{row.detail ? `${row.detail} · ` : ""}{row.memberCode}</p>
-                            {level && <RankingLevelBadge level={level} size="sm" />}
-                          </div>
-                        </div>
-                        <div className="ranking-value">
-                          <strong>{nf.format(Number(row.value))}</strong>
-                          <span>{unit}</span>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ol>
+                <div className="ranking-table-wrap">
+                  <table className="ranking-table">
+                    <caption>ตารางอันดับนักตกปลา {boardMeta.label} ประจำเดือน {thaiMonthLabel(mk)}</caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">อันดับ</th>
+                        <th scope="col">นักตกปลา</th>
+                        <th scope="col">ระดับ</th>
+                        <th scope="col">รายละเอียด</th>
+                        <th scope="col" className="ranking-table-number">{boardMeta.metric}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, index) => {
+                        const level = levelForScore(Number(row.score), levels);
+                        return (
+                          <tr key={row.memberCode} className={index < 3 ? "is-top-rank" : ""}>
+                            <td data-label="อันดับ">
+                              <span className="ranking-table-rank">{index + 1}</span>
+                            </td>
+                            <td data-label="นักตกปลา">
+                              <div className="ranking-table-angler">
+                                <PublicAvatar src={row.linePictureUrl} name={row.name} className="ranking-table-avatar" />
+                                <div>
+                                  <strong>{row.name}</strong>
+                                  <span>{row.memberCode}</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td data-label="ระดับ">
+                              {level ? <RankingLevelBadge level={level} size="sm" /> : <span className="ranking-table-muted">-</span>}
+                            </td>
+                            <td data-label="รายละเอียด">
+                              <span className="ranking-table-detail">{row.detail || "ข้อมูลอันดับประจำเดือน"}</span>
+                            </td>
+                            <td data-label={boardMeta.metric} className="ranking-table-number">
+                              <strong>{nf.format(Number(row.value))}</strong>
+                              <span>{unit}</span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </section>
             </>
           ) : (

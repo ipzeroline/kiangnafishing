@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { AboutSitePage } from "@/components/site/SitePages";
 import { siteContact, siteUrl } from "@/lib/site";
 
-const title = "เกี่ยวกับเคียงนา Fishing Lake | บ่อตกปลาพะเยา ระบบทันสมัยใช้งานง่าย";
-const description = "รู้จักเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ที่ออกแบบบริการให้ใช้งานง่ายและทันสมัย ครบทั้ง QR เข้าบ่อ เครดิต แต้ม ส่งผลงานปลา แกลลอรี่ และอันดับนักตกปลา";
+const title = "เกี่ยวกับเคียงนา Fishing Lake | บ่อตกปลาพะเยา ในอำเภอดอกคำใต้";
+const description = "รู้จักเคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ สำหรับคนค้นหาบ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ และบ่อตกปลาใกล้ฉัน";
 const image = `${siteUrl}/site/kiangna-lake-aerial-02.jpg`;
 
 export const metadata: Metadata = {
@@ -13,9 +13,15 @@ export const metadata: Metadata = {
   keywords: [
     "เกี่ยวกับเคียงนา Fishing Lake",
     "เคียงนา Fishing Lake",
+    "เคียงนาฟิชชิ่งเลค",
+    "เคียงนาfishinglake",
+    "เคียงนาฟิชชิ่งเลคพะเยา",
+    "เคียงนาfishinglakeพะเยา",
     "บ่อตกปลาพะเยา",
     "บ่อตกปลาดอกคำใต้",
     "บ่อตกปลาใหญ่พะเยา",
+    "บ่อตกปลาใหญ่ดอกคำใต้",
+    "บ่อตกปลาใกล้ฉัน",
     "บ่อตกปลาระบบทันสมัย",
     "ระบบบ่อตกปลา",
     "QR เข้าบ่อ",

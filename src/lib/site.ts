@@ -53,33 +53,33 @@ export const siteContent = {
     lineId: siteContact.lineId,
     pages: {
       home: {
-        title: "เคียงนา Fishing Lake | บ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้",
+        title: "เคียงนา Fishing Lake | บ่อตกปลาพะเยา ในอำเภอดอกคำใต้",
         description:
-          "เคียงนา Fishing Lake บ่อตกปลาพะเยาและบ่อตกปลาดอกคำใต้ บรรยากาศพรีเมียม รองรับกิจกรรมลงปลา ปลาใหญ่ เครดิต การส่งผลงานปลา และการติดตามอันดับผ่าน LINE",
+          "เคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลค บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ สำหรับคนค้นหาบ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ และบ่อตกปลาใกล้ฉัน พร้อมบริการผ่าน LINE",
       },
       news: {
         title: "ข่าวสารและกิจกรรม | เคียงนา Fishing Lake",
-        description: "ติดตามกิจกรรมลงปลา อีเวนต์การแข่งขัน โปรโมชัน และข่าวสารล่าสุดของเคียงนา Fishing Lake",
+        description: "ติดตามกิจกรรมลงปลา อีเวนต์การแข่งขัน โปรโมชัน และข่าวสารล่าสุดของเคียงนา Fishing Lake บ่อตกปลาพะเยา ในอำเภอดอกคำใต้",
       },
       articles: {
-        title: "บทความตกปลา | เคียงนา Fishing Lake",
-        description: "บทความความรู้ เทคนิคตกปลา การเตรียมตัวเข้าบ่อ การใช้งานเมนูบริการ และคำแนะนำสำหรับนักตกปลาที่เคียงนา Fishing Lake",
+        title: "บทความบ่อตกปลาพะเยา ดอกคำใต้ | เคียงนา Fishing Lake",
+        description: "บทความความรู้สำหรับคนค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ เทคนิคตกปลา และการใช้งาน LINE ที่เคียงนา Fishing Lake",
       },
       fishStocking: {
         title: "ตารางการลงปลา | เคียงนา Fishing Lake พะเยา",
-        description: "ดูตารางการลงปลาล่าสุดของเคียงนา Fishing Lake พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา สำหรับวางแผนเข้าบ่อตกปลาพะเยาและดอกคำใต้",
+        description: "ดูตารางการลงปลาล่าสุดของเคียงนา Fishing Lake บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม และข้อมูลสำหรับคนวางแผนเข้าบ่อตกปลาใหญ่พะเยา",
       },
       gallery: {
-        title: "แกลลอรี่ผลงานปลา | บ่อตกปลาเคียงนา Fishing Lake พะเยา",
-        description: "รวมรูปผลงานปลาที่ผ่านการตรวจสอบจากเคียงนา Fishing Lake บ่อตกปลาพะเยา พร้อมน้ำหนัก ชนิดปลา แคปชั่น และบรรยากาศความสำเร็จของนักตกปลา",
+        title: "แกลลอรี่ผลงานปลา | เคียงนาฟิชชิ่งเลคพะเยา",
+        description: "รวมรูปผลงานปลาที่ผ่านการตรวจสอบจากเคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาใหญ่พะเยา ในอำเภอดอกคำใต้ พร้อมน้ำหนัก ชนิดปลา และบรรยากาศจริง",
       },
       about: {
-        title: "เกี่ยวกับเคียงนา Fishing Lake | บ่อตกปลาพะเยา ระบบทันสมัยใช้งานง่าย",
-        description: "รู้จักเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ที่ออกแบบบริการให้ใช้งานง่ายและทันสมัย ครบทั้ง QR เข้าบ่อ เครดิต แต้ม ส่งผลงานปลา แกลลอรี่ และอันดับนักตกปลา",
+        title: "เกี่ยวกับเคียงนา Fishing Lake | เคียงนาฟิชชิ่งเลคพะเยา",
+        description: "รู้จักเคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ ที่ออกแบบบริการให้ใช้งานง่าย ครบทั้ง QR เข้าบ่อ เครดิต ส่งผลงานปลา แกลลอรี่ และอันดับนักตกปลา",
       },
       contact: {
-        title: "ติดต่อเคียงนา Fishing Lake | บ่อตกปลาพะเยา ดอกคำใต้",
-        description: "ติดต่อเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ โทร 062-229-3636 เพิ่มเพื่อน LINE @038gyaxo เปิดแผนที่ Google Maps และสอบถามรอบลงปลา เครดิต อันดับ หรือการจองหมาย",
+        title: "ติดต่อเคียงนา Fishing Lake | บ่อตกปลาพะเยา ในอำเภอดอกคำใต้",
+        description: "ติดต่อเคียงนา Fishing Lake เคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ สำหรับคนค้นหาบ่อตกปลาใกล้ฉัน โทร 062-229-3636 เพิ่มเพื่อน LINE @038gyaxo",
       },
       privacy: {
         title: "นโยบายความเป็นส่วนตัว | เคียงนา Fishing Lake",
@@ -153,11 +153,11 @@ export const siteContent = {
       },
       about: {
         title: "About Kiangna Fishing Lake | Modern fishing lake in Phayao",
-        description: "Learn how Kiangna Fishing Lake in Phayao and Dok Kham Tai provides simple modern services for entry QR, credits, points, catch submissions, gallery, and angler rankings.",
+        description: "Learn how Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, provides simple modern services for entry QR, credits, points, catch submissions, gallery, and angler rankings.",
       },
       contact: {
         title: "Contact Kiangna Fishing Lake | Fishing Lake in Phayao",
-        description: "Contact Kiangna Fishing Lake in Phayao and Dok Kham Tai by phone, LINE @038gyaxo, email, or Google Maps for fish releases, credits, rankings, and reservations.",
+        description: "Contact Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, by phone, LINE @038gyaxo, email, or Google Maps for fish releases, credits, rankings, and reservations.",
       },
       privacy: {
         title: "Privacy Policy | Kiangna Fishing Lake",
@@ -215,12 +215,19 @@ export function buildPageMetadata(locale: Locale, page: SitePage): Metadata {
     category: "Fishing Lake",
     keywords: [
       "เคียงนา Fishing Lake",
+      "เคียงนาฟิชชิ่งเลค",
+      "เคียงนาfishinglake",
+      "เคียงนาฟิชชิ่งเลคพะเยา",
+      "เคียงนาfishinglakeพะเยา",
       "Kiangna Fishing Lake",
       "บ่อตกปลา",
       "บ่อตกปลาพะเยา",
       "บ่อตกปลาดอกคำใต้",
       "บ่อตกปลาใหญ่พะเยา",
       "บ่อตกปลาใหญ่ดอกคำใต้",
+      "บ่อตกปลาใกล้ฉัน",
+      "บ่อตกปลาในพะเยา",
+      "บ่อตกปลาอำเภอดอกคำใต้",
       "แกลลอรี่ผลงานปลา",
       "รูปปลาตกได้",
       "ผลงานปลาเคียงนา",
@@ -306,7 +313,7 @@ export const articleItems = {
       detail: "คู่มือสำหรับนักตกปลาที่กำลังมองหาบ่อตกปลาในพะเยา ทั้งเรื่องบรรยากาศ ความสะดวก รอบลงปลา ความปลอดภัย และช่องทางติดต่อก่อนเดินทาง",
       image: "/site/kiangna-lake-aerial-01.jpg",
       alt: "ภาพมุมสูงเคียงนา Fishing Lake บ่อตกปลาในพะเยา",
-      keywords: ["บ่อตกปลาในพะเยา", "บ่อตกปลาพะเยา", "เคียงนา Fishing Lake"],
+      keywords: ["บ่อตกปลาในพะเยา", "บ่อตกปลาพะเยา", "เคียงนา Fishing Lake", "เคียงนาฟิชชิ่งเลคพะเยา"],
     },
     {
       slug: "dok-kham-tai-fishing-lake",
@@ -314,7 +321,7 @@ export const articleItems = {
       detail: "ดอกคำใต้เป็นพื้นที่ที่เดินทางสะดวกและเหมาะกับการตกปลาแบบจริงจัง บทความนี้สรุปสิ่งที่ควรดูเมื่อเลือกบ่อ ตั้งแต่สภาพหมายไปจนถึงบริการผ่าน LINE",
       image: "/site/kiangna-lake-aerial-02.jpg",
       alt: "บรรยากาศบ่อตกปลาดอกคำใต้พร้อมพื้นที่ริมน้ำ",
-      keywords: ["บ่อตกปลาดอกคำใต้", "ตกปลาดอกคำใต้", "บ่อตกปลาใหญ่ดอกคำใต้"],
+      keywords: ["บ่อตกปลาดอกคำใต้", "ตกปลาดอกคำใต้", "บ่อตกปลาใหญ่ดอกคำใต้", "เคียงนาfishinglakeพะเยา"],
     },
     {
       slug: "big-fish-lake-phayao",
@@ -322,7 +329,7 @@ export const articleItems = {
       detail: "ถ้าเป้าหมายคือปลาไซซ์ใหญ่ ควรดูข้อมูลรอบลงปลา ชนิดปลา น้ำหนักรวม สถิติผลงาน และช่วงเวลาที่เหมาะสม เพื่อวางแผนได้แม่นยำขึ้น",
       image: "/site/kiangna-lake-view-03.jpg",
       alt: "วิวบ่อตกปลาใหญ่พะเยาและบรรยากาศริมน้ำ",
-      keywords: ["บ่อตกปลาใหญ่พะเยา", "ปลาใหญ่พะเยา", "ตารางลงปลา"],
+      keywords: ["บ่อตกปลาใหญ่พะเยา", "ปลาใหญ่พะเยา", "บ่อตกปลาใหญ่ดอกคำใต้", "ตารางลงปลา"],
     },
     {
       slug: "prepare-for-phayao-fishing-lake",
@@ -374,11 +381,11 @@ export const articleItems = {
     },
     {
       slug: "why-kiangna-fishing-lake-phayao",
-      title: "ทำไมเคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาพะเยาและดอกคำใต้",
+      title: "ทำไมเคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาพะเยา ในอำเภอดอกคำใต้",
       detail: "สรุปจุดเด่นของเคียงนา Fishing Lake ทั้งบรรยากาศบ่อ ระบบ LINE ตารางลงปลา แกลลอรี่ผลงาน ติดต่อสะดวก และการดูแลข้อมูลลูกค้าอย่างเป็นระบบ",
       image: "/site/kiangna-lake-aerial-01.jpg",
       alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยาและบ่อตกปลาดอกคำใต้",
-      keywords: ["เคียงนา Fishing Lake", "บ่อตกปลาพะเยา", "บ่อตกปลาดอกคำใต้"],
+      keywords: ["เคียงนา Fishing Lake", "เคียงนาฟิชชิ่งเลค", "เคียงนาfishinglake", "บ่อตกปลาพะเยา", "บ่อตกปลาดอกคำใต้"],
     },
     {
       slug: "bait-basics-for-lake-fishing",
@@ -568,10 +575,10 @@ export const articleItems = {
     },
     {
       slug: "why-kiangna-fishing-lake-phayao",
-      title: "Why Kiangna Fits Phayao and Dok Kham Tai Fishing Searches",
+      title: "Why Kiangna Fits Phayao, in Dok Kham Tai District, Fishing Searches",
       detail: "A summary of Kiangna Fishing Lake's lake atmosphere, LINE service, fish release updates, catch gallery, easy contact, and organized records.",
       image: "/site/kiangna-lake-aerial-01.jpg",
-      alt: "Kiangna Fishing Lake for Phayao and Dok Kham Tai anglers",
+      alt: "Kiangna Fishing Lake for anglers in Phayao, Dok Kham Tai District",
       keywords: ["Kiangna Fishing Lake", "fishing lake Phayao", "fishing lake Dok Kham Tai"],
     },
     {
@@ -780,11 +787,11 @@ export function articleDetailMetadata(locale: Locale, slug: string): Metadata {
 
 export const homeSeoContent = {
   th: {
-    serviceTitle: "บ่อตกปลาพะเยาและบ่อตกปลาดอกคำใต้ พร้อมระบบบริการผ่าน LINE",
+    serviceTitle: "บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ พร้อมระบบบริการผ่าน LINE",
     serviceIntro:
-      "เคียงนา Fishing Lake เป็นบ่อตกปลาพะเยาและบ่อตกปลาดอกคำใต้ที่ออกแบบสำหรับผู้ที่ต้องการพักผ่อน ตกปลาใหญ่ และร่วมกิจกรรมอย่างโปร่งใส ลูกค้าดำเนินรายการผ่าน LINE เป็นหลัก ไม่ว่าจะเป็น QR เข้าบ่อ เติมเครดิต ส่งผลงานปลา ดู ranking ใช้คูปอง หรือสอบถามเจ้าหน้าที่ ทำให้ข้อมูลเป็นระบบและตรวจสอบย้อนหลังได้สะดวก",
+      "เคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ที่ออกแบบสำหรับผู้ที่ต้องการพักผ่อน ตกปลาใหญ่ และร่วมกิจกรรมอย่างโปร่งใส เหมาะกับคนที่ค้นหาบ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ หรือบ่อตกปลาใกล้ฉัน ลูกค้าดำเนินรายการผ่าน LINE เป็นหลัก ไม่ว่าจะเป็น QR เข้าบ่อ เติมเครดิต ส่งผลงานปลา ดู ranking ใช้คูปอง หรือสอบถามเจ้าหน้าที่",
     serviceBlocks: [
-      ["เหมาะสำหรับใคร", "เหมาะกับนักตกปลาที่ค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ หรือบ่อตกปลาใหญ่พะเยา ที่ต้องการบรรยากาศสงบ ข้อมูลกิจกรรมชัดเจน และบริการผ่านมือถือ"],
+      ["เหมาะสำหรับใคร", "เหมาะกับนักตกปลาที่ค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ หรือบ่อตกปลาใกล้ฉัน ที่ต้องการบรรยากาศสงบ ข้อมูลกิจกรรมชัดเจน และบริการผ่านมือถือ"],
       ["ระบบหน้าบ่อ", "เจ้าหน้าที่ตรวจ QR เข้าบ่อและตรวจสอบรายการจากระบบภายใน ส่วนลูกค้าใช้เมนู LINE เพื่อดำเนินรายการสำคัญทั้งหมด"],
       ["ความโปร่งใส", "เครดิต แต้ม คูปอง ผลงานปลา และอันดับถูกผูกกับบัญชี LINE ลดความผิดพลาดและช่วยป้องกันการสวมสิทธิ์"],
     ],
@@ -802,6 +809,11 @@ export const homeSeoContent = {
       "บ่อตกปลาดอกคำใต้",
       "บ่อตกปลาใหญ่พะเยา",
       "บ่อตกปลาใหญ่ดอกคำใต้",
+      "บ่อตกปลาใกล้ฉัน",
+      "เคียงนาฟิชชิ่งเลค",
+      "เคียงนาfishinglake",
+      "เคียงนาฟิชชิ่งเลคพะเยา",
+      "เคียงนาfishinglakeพะเยา",
       "บ่อตกปลาพรีเมียม",
       "บ่อตกปลาใช้ LINE",
       "กิจกรรมลงปลา",
@@ -809,7 +821,6 @@ export const homeSeoContent = {
       "เติมเครดิตผ่าน LINE",
       "ส่งผลงานปลาผ่าน LINE",
       "คูปองบ่อตกปลา",
-      "บ่อตกปลาใกล้ฉัน",
       "เคียงนา Fishing Lake",
     ],
     faqTitle: "คำถามที่พบบ่อย",
@@ -818,7 +829,7 @@ export const homeSeoContent = {
       ["เข้าใช้บ่อต้องทำอย่างไร", "เพิ่มเพื่อน LINE แล้วเปิดเมนูบริการเพื่อแสดง QR เข้าบ่อให้เจ้าหน้าที่สแกน"],
       ["เติมเครดิตและดูแต้มได้ที่ไหน", "ทำผ่านเมนูบริการใน LINE ระบบจะผูกข้อมูลกับบัญชี LINE ของลูกค้า"],
       ["ส่งผลงานปลาเพื่อขึ้น ranking อย่างไร", "เปิดเมนูส่งผลงานปลาใน LINE กรอกชนิดปลา น้ำหนัก และรูปภาพ จากนั้นรอเจ้าหน้าที่ตรวจสอบ"],
-      ["เคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาในพื้นที่ไหน", "เหมาะสำหรับผู้ที่ค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา และบ่อตกปลาใหญ่ดอกคำใต้ โดยสามารถดูข้อมูลและติดต่อผ่าน LINE ได้ก่อนเดินทาง"],
+      ["เคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาในพื้นที่ไหน", "เหมาะสำหรับผู้ที่ค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา บ่อตกปลาใหญ่ดอกคำใต้ บ่อตกปลาใกล้ฉัน เคียงนาฟิชชิ่งเลค หรือเคียงนาfishinglakeพะเยา โดยสามารถดูข้อมูลและติดต่อผ่าน LINE ได้ก่อนเดินทาง"],
       ["ติดต่อเคียงนา Fishing Lake ได้ทางไหน", `ติดต่อผ่าน LINE ${siteContact.lineId} โทร ${siteContact.phone} อีเมล ${siteContact.email} หรือ Facebook/TikTok ของเคียงนา Fishing Lake`],
     ],
   },

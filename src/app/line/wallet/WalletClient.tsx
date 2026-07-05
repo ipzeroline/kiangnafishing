@@ -65,68 +65,86 @@ function WalletPanel() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#f5f8f7] px-4 py-6">
-      <div className="mx-auto grid max-w-4xl gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <form onSubmit={submit} className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-line">
-          <p className="text-xs font-semibold uppercase tracking-widest text-dim">LINE Wallet</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-deep">แจ้งเติมเครดิต</h1>
-          <p className="mt-2 text-sm leading-relaxed text-dim">
-            เลือกยอดเติมแล้วส่งคำขอ 1 รายการต่อครั้ง เมื่อเจ้าหน้าที่อนุมัติหรือปฏิเสธแล้วจึงทำรายการใหม่ได้
-          </p>
+    <main className="min-h-dvh bg-[#f5f8f7] px-3 py-3">
+      <div className="mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-md flex-col gap-3">
+        <section className="rounded-2xl bg-deep p-4 text-white shadow-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/55">LINE Wallet</p>
+              <h1 className="mt-1 font-display text-2xl font-semibold">กระเป๋าเงิน</h1>
+            </div>
+            <button onClick={() => void loadStatus()} className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
+              รีเฟรช
+            </button>
+          </div>
+          <div className="mt-4 grid grid-cols-[1.2fr_.8fr] gap-2">
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-xs text-white/55">ยอดคงเหลือ</p>
+              <p className="mt-1 font-display text-3xl font-semibold">฿{balance.toLocaleString("th-TH")}</p>
+            </div>
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-xs text-white/55">แต้ม</p>
+              <p className="mt-1 text-2xl font-semibold">{points.toLocaleString("th-TH")}</p>
+            </div>
+          </div>
+        </section>
 
-          {pending && (
-            <div className="mt-5 rounded-lg border border-gold bg-gold/10 p-4">
-              <p className="text-sm font-semibold text-deep">มีรายการรออนุมัติ</p>
-              <p className="mt-1 text-sm text-dim">
-                โอน ฿{pending.payAmount.toLocaleString("th-TH")} รับเครดิต ฿{pending.getAmount.toLocaleString("th-TH")}
-              </p>
-              <p className="mt-2 text-xs text-dim">กรุณาส่งสลิปในแชท LINE และรอเจ้าหน้าที่ตรวจสอบก่อนทำรายการใหม่</p>
+        <form onSubmit={submit} className="flex flex-1 flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-line">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold text-pond">เติมเครดิต</p>
+              <h2 className="mt-1 font-display text-xl font-semibold text-deep">เลือกยอดที่ต้องการ</h2>
+            </div>
+            <a href="/wallet" className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-deep">ประวัติ</a>
+          </div>
+
+          {pending ? (
+            <div className="mt-3 rounded-xl border border-gold bg-gold/10 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-deep">รออนุมัติ</p>
+                  <p className="mt-1 text-xs text-dim">ส่งสลิปในแชท LINE แล้วรอเจ้าหน้าที่ตรวจสอบ</p>
+                </div>
+                <p className="shrink-0 text-right text-sm font-semibold text-deep">
+                  ฿{pending.payAmount.toLocaleString("th-TH")}
+                  <span className="block text-xs text-pond">รับ ฿{pending.getAmount.toLocaleString("th-TH")}</span>
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {amounts.map((amount) => (
+                <button key={amount} type="button" disabled={loading} onClick={() => setPayAmount(amount)}
+                  className={`rounded-xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-45 ${payAmount === amount ? "bg-pond text-white shadow-sm" : "bg-mist text-deep"}`}>
+                  ฿{amount.toLocaleString("th-TH")}
+                </button>
+              ))}
             </div>
           )}
 
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {amounts.map((amount) => (
-              <button key={amount} type="button" disabled={Boolean(pending) || loading} onClick={() => setPayAmount(amount)}
-                className={`rounded-lg px-4 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-45 ${payAmount === amount ? "bg-pond text-white" : "bg-mist text-deep"}`}>
-                ฿{amount.toLocaleString("th-TH")}
-              </button>
-            ))}
-          </div>
-          <div className="mt-4 rounded-lg bg-mist p-4">
-            <p className="text-sm font-semibold text-deep">สรุปรายการ</p>
-            <div className="mt-2 flex items-center justify-between text-sm">
+          <div className="mt-3 rounded-xl bg-mist p-3">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-dim">ยอดโอน</span>
               <span className="font-semibold text-deep">฿{payAmount.toLocaleString("th-TH")}</span>
             </div>
             <div className="mt-1 flex items-center justify-between text-sm">
-              <span className="text-dim">เครดิตที่จะได้รับ</span>
+              <span className="text-dim">เครดิตเข้า</span>
               <span className="font-semibold text-pond">฿{getAmount.toLocaleString("th-TH")}</span>
             </div>
           </div>
-          {message && <p className="mt-4 rounded-lg bg-mist px-3 py-2 text-sm text-deep">{message}</p>}
-          <button disabled={busy || loading || Boolean(pending)} className="mt-5 w-full rounded-lg bg-pond py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
+
+          <div className="mt-3 grid grid-cols-3 gap-1.5 text-center text-[11px] font-semibold text-dim">
+            <span className="rounded-full bg-[#f5f8f7] px-2 py-1.5">เลือกยอด</span>
+            <span className="rounded-full bg-[#f5f8f7] px-2 py-1.5">แจ้งเติม</span>
+            <span className="rounded-full bg-[#f5f8f7] px-2 py-1.5">ส่งสลิป</span>
+          </div>
+
+          {message && <p className="mt-3 rounded-xl bg-mist px-3 py-2 text-xs leading-relaxed text-deep">{message}</p>}
+          <button disabled={busy || loading || Boolean(pending)} className="mt-auto w-full rounded-xl bg-pond py-3.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50">
             {loading ? "กำลังโหลด..." : busy ? "กำลังส่ง..." : pending ? "รออนุมัติรายการเดิม" : "แจ้งเติมเครดิต"}
           </button>
+          <p className="mt-2 text-center text-[11px] text-dim">ทำรายการได้ครั้งละ 1 รายการ หลังอนุมัติแล้วจึงเติมใหม่ได้</p>
         </form>
-
-        <aside className="rounded-lg bg-deep p-6 text-white shadow-sm">
-          <p className="text-sm text-white/60">ยอดคงเหลือ</p>
-          <p className="mt-2 font-display text-3xl font-semibold">฿{balance.toLocaleString("th-TH")}</p>
-          <div className="mt-4 rounded-lg bg-white/10 p-3">
-            <p className="text-sm text-white/55">แต้มสะสม</p>
-            <p className="mt-1 text-xl font-semibold">{points.toLocaleString("th-TH")}</p>
-          </div>
-          <div className="mt-4 space-y-2 text-sm text-white/70">
-            <p>1. เลือกยอดเติม</p>
-            <p>2. กดแจ้งเติมเครดิต</p>
-            <p>3. ส่งสลิปในแชท LINE</p>
-            <p>4. รอเจ้าหน้าที่อนุมัติ</p>
-          </div>
-          <button onClick={() => void loadStatus()} className="mt-5 w-full rounded-lg bg-white/12 py-2.5 text-sm font-semibold text-white">
-            รีเฟรชสถานะ
-          </button>
-          <a href="/wallet" className="mt-3 block text-center text-sm font-semibold text-white">ดูยอดและประวัติ</a>
-        </aside>
       </div>
     </main>
   );

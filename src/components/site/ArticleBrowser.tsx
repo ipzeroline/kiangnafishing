@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import ArticleCover from "./ArticleCover";
 import { articlePath, type ArticleViewMap, type Locale } from "@/lib/site";
 
 type ArticleBrowserItem = {
@@ -13,28 +14,6 @@ type ArticleBrowserItem = {
 };
 
 const PAGE_SIZE = 9;
-
-function ArticleCover({ article, index, locale }: { article: ArticleBrowserItem; index: number; locale: Locale }) {
-  const coverNumber = String((index % 10) + 1);
-  const label = locale === "th" ? "คู่มือตกปลา" : "Fishing Guide";
-
-  return (
-    <div className="article-cover" data-cover={coverNumber} aria-label={article.alt}>
-      <div className="article-cover-mark" aria-hidden="true">
-        <svg viewBox="0 0 28 28">
-          <path d="M4 15.5c5.4-5.5 11.6-5.5 18 0-6.4 5.5-12.6 5.5-18 0Z" />
-          <path d="M21.5 15.5 25 12v7l-3.5-3.5Z" />
-          <circle cx="9.2" cy="14.5" r="1.15" />
-        </svg>
-      </div>
-      <div>
-        <p>{label}</p>
-        <strong>{article.keywords[0]}</strong>
-        <span>{article.keywords.slice(1).join(" / ")}</span>
-      </div>
-    </div>
-  );
-}
 
 export default function ArticleBrowser({
   locale,
