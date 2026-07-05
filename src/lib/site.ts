@@ -4,13 +4,17 @@ export type Locale = "th" | "en";
 export type SitePage = "home" | "news" | "articles" | "fishStocking" | "gallery" | "about" | "contact" | "privacy" | "terms";
 
 export const siteUrl = "https://kiangnafishinglake.com";
+export const siteOgImage = `${siteUrl}/site/kiangna-lake-aerial-01.jpg`;
 export const siteContact = {
   phone: "062-229-3636",
   phoneHref: "tel:+66622293636",
-  email: "kaingnagroup@gmail.com",
-  emailHref: "mailto:kaingnagroup@gmail.com",
+  email: "kiangnafishinglake@gmail.com",
+  emailHref: "mailto:kiangnafishinglake@gmail.com",
   lineId: "@038gyaxo",
   lineHref: "https://line.me/R/ti/p/@038gyaxo",
+  facebookHref: "https://www.facebook.com/kiangnafishinglake",
+  instagramHref: "https://www.instagram.com/kiangnafishinglake",
+  tiktokHref: "https://tiktok.com/@kiangnafishinglake",
   mapHref: "https://share.google/e4aQCnRl4BfBwMNs1",
   mapEmbedHref: "https://www.google.com/maps?q=%E0%B9%80%E0%B8%84%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B8%99%E0%B8%B2%20Fishing%20Lake&output=embed",
 };
@@ -205,6 +209,10 @@ export function buildPageMetadata(locale: Locale, page: SitePage): Metadata {
     title: meta.title,
     description: meta.description,
     applicationName: siteContent.th.brand,
+    authors: [{ name: content.brand }],
+    creator: siteContent.th.brand,
+    publisher: siteContent.th.brand,
+    category: "Fishing Lake",
     keywords: [
       "เคียงนา Fishing Lake",
       "Kiangna Fishing Lake",
@@ -254,11 +262,20 @@ export function buildPageMetadata(locale: Locale, page: SitePage): Metadata {
       siteName: siteContent.th.brand,
       locale: locale === "th" ? "th_TH" : "en_US",
       type: "website",
+      images: [
+        {
+          url: siteOgImage,
+          width: 1200,
+          height: 900,
+          alt: locale === "th" ? "เคียงนา Fishing Lake บ่อตกปลาพะเยา" : "Kiangna Fishing Lake in Phayao",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
+      images: [siteOgImage],
     },
   };
 }
@@ -267,7 +284,7 @@ export const newsItems = {
   th: [
     ["ลงปลาใหญ่ประจำเดือน", "อัปเดตรอบลงปลาและช่วงเวลาที่เหมาะสำหรับผู้ที่ต้องการเก็บผลงานใน ranking"],
     ["กิจกรรมสะสมแต้ม", "ใช้เครดิตผ่าน LINE เพื่อรับแต้มเพิ่มและสิทธิแลกคูปองรางวัลในระบบ"],
-    ["แข่งขันแมตช์พิเศษ", "เตรียมพบกิจกรรมแข่งขันแบบจำกัดจำนวน พร้อมการตรวจสอบรายการผ่านระบบหลังบ้าน"],
+    ["แข่งขันแมตช์พิเศษ", "เตรียมพบกิจกรรมแข่งขันแบบจำกัดจำนวน พร้อมการตรวจสอบผลงานอย่างเป็นระบบ"],
   ],
   en: [
     ["Monthly trophy fish release", "Updated release rounds and recommended sessions for ranking hunters."],
@@ -317,7 +334,7 @@ export const homeSeoContent = {
       "เมื่อมาถึงบ่อ ให้แสดง QR เพื่อให้เจ้าหน้าที่สแกนยืนยันการเข้าใช้บริการ",
       "ส่งผลงานปลาผ่าน LINE เพื่อให้เจ้าหน้าที่ตรวจสอบและอัปเดต ranking",
     ],
-    keywordsTitle: "ข้อมูลที่นักตกปลามักค้นหา",
+    keywordsTitle: "เรื่องที่นักตกปลาควรรู้ก่อนมาเคียงนา Fishing Lake",
     keywords: [
       "บ่อตกปลา",
       "บ่อตกปลาพะเยา",
@@ -341,7 +358,7 @@ export const homeSeoContent = {
       ["เติมเครดิตและดูแต้มได้ที่ไหน", "ทำผ่านเมนูบริการใน LINE ระบบจะผูกข้อมูลกับบัญชี LINE ของลูกค้า"],
       ["ส่งผลงานปลาเพื่อขึ้น ranking อย่างไร", "เปิดเมนูส่งผลงานปลาใน LINE กรอกชนิดปลา น้ำหนัก และรูปภาพ จากนั้นรอเจ้าหน้าที่ตรวจสอบ"],
       ["เคียงนา Fishing Lake เหมาะกับคนค้นหาบ่อตกปลาในพื้นที่ไหน", "เหมาะสำหรับผู้ที่ค้นหาบ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ บ่อตกปลาใหญ่พะเยา และบ่อตกปลาใหญ่ดอกคำใต้ โดยสามารถดูข้อมูลและติดต่อผ่าน LINE ได้ก่อนเดินทาง"],
-      ["ติดต่อเคียงนา Fishing Lake ได้ทางไหน", "ติดต่อผ่าน LINE @038gyaxo โทร 062-229-3636 หรืออีเมล kaingnagroup@gmail.com"],
+      ["ติดต่อเคียงนา Fishing Lake ได้ทางไหน", `ติดต่อผ่าน LINE ${siteContact.lineId} โทร ${siteContact.phone} อีเมล ${siteContact.email} หรือ Facebook/TikTok ของเคียงนา Fishing Lake`],
     ],
   },
   en: {
@@ -379,7 +396,7 @@ export const homeSeoContent = {
       ["How do I enter the lake?", "Add the LINE account and open the service menu to show your entry QR for staff scanning."],
       ["Where can I top up credits and check points?", "Use the LINE menu. Records are linked to the customer’s LINE account."],
       ["How do catch submissions affect ranking?", "Submit species, weight, and image through LINE. Staff verifies the record before it updates rankings."],
-      ["How can I contact Kiangna Fishing Lake?", "Contact LINE @038gyaxo, phone 062-229-3636, or email kaingnagroup@gmail.com."],
+      ["How can I contact Kiangna Fishing Lake?", `Contact LINE ${siteContact.lineId}, phone ${siteContact.phone}, email ${siteContact.email}, Facebook, or TikTok.`],
     ],
   },
 } as const;

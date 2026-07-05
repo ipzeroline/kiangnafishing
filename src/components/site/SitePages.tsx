@@ -220,17 +220,17 @@ function LakeVisual({ locale }: { locale: Locale }) {
 function LakeHeroSlider({ locale }: { locale: Locale }) {
   const slides = [
     {
-      image: "/site/kiangna-lake-aerial-01.png",
+      image: "/site/kiangna-lake-aerial-01.jpg",
       title: locale === "th" ? "มุมมองบ่อหลักจากมุมสูง" : "Main lake aerial view",
       detail: locale === "th" ? "พื้นที่บ่อกว้าง พร้อมเส้นทางเข้าถึงสะดวก" : "A spacious lake area with convenient access routes",
     },
     {
-      image: "/site/kiangna-lake-aerial-02.png",
+      image: "/site/kiangna-lake-aerial-02.jpg",
       title: locale === "th" ? "บรรยากาศกลางทุ่งพะเยา" : "Countryside setting in Phayao",
       detail: locale === "th" ? "บรรยากาศเปิดโล่ง เหมาะสำหรับวันพักผ่อนและกิจกรรมตกปลา" : "An open natural setting for fishing sessions and relaxed visits",
     },
     {
-      image: "/site/kiangna-lake-view-03.png",
+      image: "/site/kiangna-lake-view-03.jpg",
       title: locale === "th" ? "พื้นที่ตกปลาริมน้ำ" : "Lakeside fishing area",
       detail: locale === "th" ? "วิวริมน้ำและธรรมชาติรอบบ่อสำหรับประสบการณ์ตกปลาพรีเมียม" : "Lakeside views and natural surroundings for a premium fishing experience",
     },
@@ -241,7 +241,15 @@ function LakeHeroSlider({ locale }: { locale: Locale }) {
       {slides.map((slide, index) => (
         <figure key={slide.image} className="lake-hero-slide" style={{ ["--slide-index" as string]: index }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={slide.image} alt={slide.title} />
+          <img
+            src={slide.image}
+            alt={slide.title}
+            width={1200}
+            height={899}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "low"}
+            decoding={index === 0 ? "sync" : "async"}
+          />
           <figcaption>
             <p>{String(index + 1).padStart(2, "0")}</p>
             <strong>{slide.title}</strong>
@@ -254,6 +262,38 @@ function LakeHeroSlider({ locale }: { locale: Locale }) {
       </div>
     </div>
   );
+}
+
+function ContactChannelIcon({ title }: { title: string }) {
+  const key = title.toLowerCase();
+  if (key === "facebook") {
+    return (
+      <span className="contact-channel-icon contact-channel-icon-facebook" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14.2 8.1h2.2V4.4a29 29 0 0 0-3.2-.2c-3.2 0-5.4 2-5.4 5.6V13H4.4v4.2h3.4V24h4.2v-6.8h3.3l.5-4.2H12V10.2c0-1.2.3-2.1 2.2-2.1Z" />
+        </svg>
+      </span>
+    );
+  }
+  if (key === "tiktok") {
+    return (
+      <span className="contact-channel-icon contact-channel-icon-tiktok" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M16.7 3c.4 2.7 1.9 4.4 4.3 4.6v4.1a8.2 8.2 0 0 1-4.2-1.2v5.7c0 4.3-2.7 6.8-6.5 6.8-3.4 0-6.2-2.5-6.2-5.9 0-3.9 3-6.3 7-5.8v4.3c-1.7-.5-2.9.3-2.9 1.6 0 1.1.9 1.8 2 1.8 1.4 0 2.3-.8 2.3-2.8V3h4.2Z" />
+        </svg>
+      </span>
+    );
+  }
+  if (key === "instagram") {
+    return (
+      <span className="contact-channel-icon contact-channel-icon-instagram" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm0 2.1a3.1 3.1 0 0 0-3.1 3.1v9.6a3.1 3.1 0 0 0 3.1 3.1h9.6a3.1 3.1 0 0 0 3.1-3.1V7.2a3.1 3.1 0 0 0-3.1-3.1H7.2Zm4.8 3.6a4.3 4.3 0 1 1 0 8.6 4.3 4.3 0 0 1 0-8.6Zm0 2.1a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4Zm5.1-2.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+      </span>
+    );
+  }
+  return null;
 }
 
 export async function HomeSitePage({ locale }: { locale: Locale }) {
@@ -289,18 +329,29 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
     "@graph": [
       {
         "@type": "LocalBusiness",
-        "@id": `${siteUrl}${pagePaths.home[locale]}#business`,
+        "@id": `${siteUrl}/#business`,
         name: content.brand,
         url: `${siteUrl}${pagePaths.home[locale]}`,
         telephone: siteContact.phone,
         email: siteContact.email,
-        sameAs: [siteContact.lineHref, siteContact.mapHref],
+        image: [
+          `${siteUrl}/site/kiangna-lake-aerial-01.jpg`,
+          `${siteUrl}/site/kiangna-lake-aerial-02.jpg`,
+          `${siteUrl}/site/kiangna-lake-view-03.jpg`,
+        ],
+        sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
         description: content.pages.home.description,
         areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: locale === "th" ? "ดอกคำใต้" : "Dok Kham Tai",
+          addressRegion: locale === "th" ? "พะเยา" : "Phayao",
+          addressCountry: "TH",
+        },
       },
       {
         "@type": "WebSite",
-        "@id": `${siteUrl}${pagePaths.home[locale]}#website`,
+        "@id": `${siteUrl}/#website`,
         name: content.brand,
         url: siteUrl,
         inLanguage: locale,
@@ -436,7 +487,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
                 <div className="rank-profile">
                   {row.linePictureUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={row.linePictureUrl} alt={row.name} className="rank-avatar" />
+                    <img src={row.linePictureUrl} alt={row.name} className="rank-avatar" loading="lazy" decoding="async" />
                   ) : (
                     <span className="rank-avatar rank-avatar-fallback">{row.name.slice(0, 1)}</span>
                   )}
@@ -483,7 +534,19 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
           <div className="home-gallery-grid">
             {displayGallery.map((item) => (
               <figure key={item.id} className="home-gallery-card">
-                <div className="home-gallery-art" style={{ backgroundImage: item.imagePath && item.imagePath !== "/fish-placeholder.svg" ? `url(${item.imagePath})` : undefined }} />
+                <div className="home-gallery-art">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.imagePath || "/fish-placeholder.svg"}
+                    alt={locale === "th"
+                      ? `${item.species} ${item.weightKg > 0 ? `${Number(item.weightKg).toLocaleString("th-TH")} กิโลกรัม` : ""} ที่เคียงนา Fishing Lake`
+                      : `${item.species} ${item.weightKg > 0 ? `${Number(item.weightKg).toLocaleString("en-US")} kg` : ""} at Kiangna Fishing Lake`}
+                    width={640}
+                    height={416}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
                 <figcaption>
                   <strong>{item.species}</strong>
                   <span>
@@ -710,7 +773,15 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
                 <article key={item.id} className={index === 0 ? "fish-release-card is-featured" : "fish-release-card"}>
                   <div className="fish-release-card-image">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.imagePath} alt={locale === "th" ? `ตารางการลงปลา ${item.species}` : `Fish release ${item.species}`} loading={index < 3 ? "eager" : "lazy"} />
+                    <img
+                      src={item.imagePath}
+                      alt={locale === "th" ? `ตารางการลงปลา ${item.species}` : `Fish release ${item.species}`}
+                      width={760}
+                      height={540}
+                      loading={index < 2 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      decoding={index === 0 ? "sync" : "async"}
+                    />
                   </div>
                   <div className="fish-release-card-body">
                     <div className="fish-release-card-top">
@@ -824,7 +895,10 @@ export async function GallerySitePage({ locale }: { locale: Locale }) {
                 alt={locale === "th"
                   ? `${item.species} น้ำหนัก ${Number(item.weightKg).toLocaleString("th-TH")} กิโลกรัม ผลงานของ ${item.name} ที่เคียงนา Fishing Lake`
                   : `${item.species} weighing ${Number(item.weightKg).toLocaleString("en-US")} kg caught by ${item.name} at Kiangna Fishing Lake`}
+                width={760}
+                height={540}
                 loading={index < 4 ? "eager" : "lazy"}
+                decoding={index < 2 ? "sync" : "async"}
               />
               <figcaption>
                 <div>
@@ -871,7 +945,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
     : [
         ["Fishing lake in Phayao", "A practical fishing lake experience with structured entry, event updates, and verified catch records."],
         ["LINE-first customer service", "Customers use the LINE menu for entry QR, credits, points, catch submissions, and rankings."],
-        ["Staff back office", "Staff review members, top-ups, catch records, reports, and audit logs for transparent operations."],
+        ["Transparent operations", "Important member, payment, catch, report, and audit records are reviewed by the team for reliable service."],
       ];
   const workflows = locale === "th"
     ? ["เพิ่มเพื่อนบัญชีทางการ @038gyaxo", "เปิดเมนูบริการเพื่อเข้าบ่อ เติมเครดิต หรือส่งผลงานปลา", "รายการสำคัญจะถูกตรวจสอบก่อนยืนยัน", "ข้อมูลที่ผ่านการยืนยันจะแสดงในอันดับ แกลลอรี่ หรือประวัติสมาชิก"]
@@ -887,7 +961,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
         ["Where is Kiangna Fishing Lake located?", "Kiangna Fishing Lake serves anglers in Phayao and Dok Kham Tai. Customers can open the map on the contact page or ask through the LINE account."],
         ["Do customers need LINE?", "Core customer services are designed around the LINE account, including entry QR, credits, balances, catch submissions, and rankings."],
         ["How are rankings verified?", "Catch records are reviewed by staff before they are used in rankings or public gallery pages."],
-        ["Are credits and points auditable?", "Credits, points, top-ups, and important actions are recorded in the back office for staff review."],
+        ["Are credits and points auditable?", "Credits, points, top-ups, and important actions are recorded for team review when customers need support."],
       ];
   const jsonLd = {
     "@context": "https://schema.org",
@@ -903,7 +977,7 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
         about: { "@id": `${siteUrl}/#business` },
         primaryImageOfPage: {
           "@type": "ImageObject",
-          url: `${siteUrl}/site/kiangna-lake-aerial-02.png`,
+          url: `${siteUrl}/site/kiangna-lake-aerial-02.jpg`,
         },
       },
       {
@@ -914,11 +988,11 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
         telephone: siteContact.phone,
         email: siteContact.email,
         image: [
-          `${siteUrl}/site/kiangna-lake-aerial-01.png`,
-          `${siteUrl}/site/kiangna-lake-aerial-02.png`,
-          `${siteUrl}/site/kiangna-lake-view-03.png`,
+          `${siteUrl}/site/kiangna-lake-aerial-01.jpg`,
+          `${siteUrl}/site/kiangna-lake-aerial-02.jpg`,
+          `${siteUrl}/site/kiangna-lake-view-03.jpg`,
         ],
-        sameAs: [siteContact.lineHref, siteContact.mapHref],
+        sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
         areaServed: locale === "th" ? ["พะเยา", "ดอกคำใต้", "Thailand"] : ["Phayao", "Dok Kham Tai", "Thailand"],
         address: {
           "@type": "PostalAddress",
@@ -1030,11 +1104,17 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
         ["LINE", siteContact.lineId, "สอบถามรอบลงปลา เครดิต QR เข้าบ่อ ส่งผลงานปลา และติดต่อเจ้าหน้าที่", siteContact.lineHref, "เพิ่มเพื่อน LINE"],
         ["โทรศัพท์", siteContact.phone, "โทรสอบถามข้อมูลการเข้าใช้บริการ จองหมาย และกิจกรรมหน้าบ่อ", siteContact.phoneHref, "โทรเลย"],
         ["อีเมล", siteContact.email, "ติดต่อเรื่องข้อมูลธุรกิจ เอกสาร หรือคำถามที่ต้องการรายละเอียดเพิ่มเติม", siteContact.emailHref, "ส่งอีเมล"],
+        ["Facebook", "Kiangna Fishing Lake", "ติดตามข่าวสาร รูปภาพ กิจกรรม และประกาศจากบ่อตกปลาเคียงนา", siteContact.facebookHref, "เปิด Facebook"],
+        ["Instagram", "@kiangnafishinglake", "ติดตามภาพบรรยากาศริมบ่อ ผลงานปลา และโมเมนต์จากเคียงนา Fishing Lake", siteContact.instagramHref, "เปิด Instagram"],
+        ["TikTok", "@kiangnafishinglake", "ชมคลิปบรรยากาศ กิจกรรม และผลงานปลาจากเคียงนา Fishing Lake", siteContact.tiktokHref, "เปิด TikTok"],
       ]
     : [
         ["LINE", siteContact.lineId, "Ask about fish releases, credits, entry QR, catch submissions, and staff support.", siteContact.lineHref, "Add LINE friend"],
         ["Phone", siteContact.phone, "Call for lake visits, spot reservations, and event information.", siteContact.phoneHref, "Call now"],
         ["Email", siteContact.email, "Send business questions, document requests, or detailed inquiries.", siteContact.emailHref, "Send email"],
+        ["Facebook", "Kiangna Fishing Lake", "Follow news, photos, activities, and lake announcements.", siteContact.facebookHref, "Open Facebook"],
+        ["Instagram", "@kiangnafishinglake", "Follow lakeside photos, catch highlights, and Kiangna Fishing Lake moments.", siteContact.instagramHref, "Open Instagram"],
+        ["TikTok", "@kiangnafishinglake", "Watch lake moments, activities, and catch highlights.", siteContact.tiktokHref, "Open TikTok"],
       ];
   const serviceList = locale === "th"
     ? ["บ่อตกปลาพะเยาและดอกคำใต้", "รอบลงปลาและกิจกรรมหน้าบ่อ", "QR เข้าบ่อ เครดิต แต้ม และคูปอง", "ส่งผลงานปลาและตรวจสอบอันดับ", "แผนที่และเส้นทางไปเคียงนา Fishing Lake"]
@@ -1078,7 +1158,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
             availableLanguage: ["Thai"],
           },
         ],
-        sameAs: [siteContact.lineHref, siteContact.mapHref],
+        sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
       },
       {
         "@type": "FAQPage",
@@ -1115,7 +1195,10 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
       <div className="site-contact-grid contact-card-grid">
         {contactCards.map(([title, value, detail, href, cta]) => (
           <section className="site-contact-panel contact-channel-card" key={title}>
-            <p className="site-eyebrow">{title}</p>
+            <div className="contact-channel-heading">
+              <ContactChannelIcon title={title} />
+              <p className="site-eyebrow">{title}</p>
+            </div>
             <h2>{value}</h2>
             <p>{detail}</p>
             <Link href={href} className="site-secondary-btn" target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener noreferrer" : undefined}>

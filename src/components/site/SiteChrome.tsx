@@ -4,6 +4,34 @@ import { Locale, SitePage, pagePaths, siteContact, siteContent } from "@/lib/sit
 
 const navItems = ["home", "news", "articles", "fishStocking", "gallery", "about", "contact"] as const;
 
+function SocialIcon({ type }: { type: "facebook" | "instagram" | "tiktok" }) {
+  if (type === "facebook") {
+    return (
+      <span className="site-social-icon site-social-icon-facebook" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14.2 8.1h2.2V4.4a29 29 0 0 0-3.2-.2c-3.2 0-5.4 2-5.4 5.6V13H4.4v4.2h3.4V24h4.2v-6.8h3.3l.5-4.2H12V10.2c0-1.2.3-2.1 2.2-2.1Z" />
+        </svg>
+      </span>
+    );
+  }
+  if (type === "instagram") {
+    return (
+      <span className="site-social-icon site-social-icon-instagram" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm0 2.1a3.1 3.1 0 0 0-3.1 3.1v9.6a3.1 3.1 0 0 0 3.1 3.1h9.6a3.1 3.1 0 0 0 3.1-3.1V7.2a3.1 3.1 0 0 0-3.1-3.1H7.2Zm4.8 3.6a4.3 4.3 0 1 1 0 8.6 4.3 4.3 0 0 1 0-8.6Zm0 2.1a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4Zm5.1-2.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+      </span>
+    );
+  }
+  return (
+    <span className="site-social-icon site-social-icon-tiktok" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M16.7 3c.4 2.7 1.9 4.4 4.3 4.6v4.1a8.2 8.2 0 0 1-4.2-1.2v5.7c0 4.3-2.7 6.8-6.5 6.8-3.4 0-6.2-2.5-6.2-5.9 0-3.9 3-6.3 7-5.8v4.3c-1.7-.5-2.9.3-2.9 1.6 0 1.1.9 1.8 2 1.8 1.4 0 2.3-.8 2.3-2.8V3h4.2Z" />
+      </svg>
+    </span>
+  );
+}
+
 export default function SiteChrome({
   locale,
   page,
@@ -56,6 +84,9 @@ export default function SiteChrome({
                 <a href={siteContact.phoneHref}>{siteContact.phone}</a>
                 <a href={siteContact.emailHref}>{siteContact.email}</a>
                 <a href={siteContact.lineHref}>LINE {siteContact.lineId}</a>
+                <a href={siteContact.facebookHref}><SocialIcon type="facebook" />Facebook</a>
+                <a href={siteContact.instagramHref}><SocialIcon type="instagram" />Instagram</a>
+                <a href={siteContact.tiktokHref}><SocialIcon type="tiktok" />TikTok</a>
               </div>
             </div>
           </details>
@@ -91,6 +122,9 @@ export default function SiteChrome({
             <div className="site-footer-contact">
               <a href={siteContact.phoneHref}>{siteContact.phone}</a>
               <a href={siteContact.emailHref}>{siteContact.email}</a>
+              <a href={siteContact.facebookHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="facebook" />Facebook</a>
+              <a href={siteContact.instagramHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="instagram" />Instagram</a>
+              <a href={siteContact.tiktokHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="tiktok" />TikTok</a>
             </div>
           </div>
           <div className="site-footer-col">
@@ -113,6 +147,9 @@ export default function SiteChrome({
             <Link href={pagePaths.contact[locale]}>{content.nav.contact}</Link>
             <a href={siteContact.phoneHref}>{siteContact.phone}</a>
             <a href={siteContact.emailHref}>{siteContact.email}</a>
+            <a href={siteContact.facebookHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="facebook" />Facebook</a>
+            <a href={siteContact.instagramHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="instagram" />Instagram</a>
+            <a href={siteContact.tiktokHref} target="_blank" rel="noopener noreferrer"><SocialIcon type="tiktok" />TikTok</a>
           </div>
         </div>
         <div className="site-footer-bottom">

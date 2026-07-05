@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLineProfile, lineUrl, replyText, upsertLineMember, verifyLineSignature } from "@/lib/line";
+import { query, type FishStocking } from "@/lib/db";
 
 type LineEvent = {
   type: string;
@@ -56,6 +57,10 @@ async function handleEvent(event: LineEvent) {
     if (["กระเป๋า", "wallet"].includes(text)) return replyText(event.replyToken || "", lineUrl("/line/wallet"));
     if (["ส่งปลา", "ส่งผลงานปลา", "catch"].includes(text)) return replyText(event.replyToken || "", lineUrl("/line/catch"));
     if (["อันดับ", "ranking"].includes(text)) return replyText(event.replyToken || "", lineUrl("/ranking"));
+    if (["ตารางลงปลา", "ตารางการลงปลา", "ลงปลา", "fish release", "stocking"].includes(text) || text.includes("ตารางลงปลา") || text.includes("ตารางการลงปลา")) {
+      return replyText(event.replyToken || "", await fishStockingText());
+    }
+    if (["ติดต่อแอดมิน", "ติดต่อ", "แอดมิน", "admin", "contact"].includes(text)) return replyText(event.replyToken || "", contactText());
   }
 }
 
@@ -66,8 +71,73 @@ async function replyByAction(replyToken: string, action: string) {
     wallet: "/line/wallet",
     catch: "/line/catch",
     ranking: "/ranking",
+    contact: "/contact",
   };
+  if (["fishStocking", "fish_stocking", "stocking", "fish-release"].includes(action)) {
+    await replyText(replyToken, await fishStockingText());
+    return;
+  }
   await replyText(replyToken, urls[action] ? lineUrl(urls[action]) : menuText());
+}
+
+function contactText() {
+  return [
+    "ติดต่อทีมงานเคียงนา Fishing Lake",
+    "LINE: @038gyaxo",
+    "โทร: 062-229-3636",
+    `หน้าติดต่อ: ${lineUrl("/contact")}`,
+    "",
+    "แจ้งรอบที่ต้องการเข้าบ่อ หรือสอบถามตารางลงปลาได้เลยครับ",
+  ].join("\n");
+}
+
+async function fishStockingText() {
+  const rows = await query<Pick<FishStocking, "species" | "fishCount" | "totalWeightKg" | "detail" | "stockingDate">>(`
+    SELECT species, fishCount, totalWeightKg, detail, stockingDate
+    FROM fish_stockings
+    ORDER BY stockingDate DESC, createdAt DESC
+    LIMIT 5
+  `);
+  if (rows.length === 0) {
+    return [
+      "ตารางการลงปลา เคียงนา Fishing Lake",
+      "ยังไม่มีรายการลงปลาที่เผยแพร่ในขณะนี้",
+      `ดูตารางเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
+      `สอบถามทีมงาน: ${lineUrl("/contact")}`,
+    ].join("\n");
+  }
+
+  const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 2 });
+  const lines = rows.flatMap((row, index) => {
+    const date = dateLabel(row.stockingDate);
+    const detail = row.detail ? `รายละเอียด: ${shortText(row.detail, 64)}` : "";
+    return [
+      `${index + 1}. ${date} · ${row.species}`,
+      `   จำนวน ${nf.format(Number(row.fishCount || 0))} ตัว · น้ำหนักรวม ${nf.format(Number(row.totalWeightKg || 0))} กก.`,
+      ...(detail ? [`   ${detail}`] : []),
+    ];
+  });
+
+  return [
+    "ตารางการลงปลาล่าสุด",
+    "เคียงนา Fishing Lake",
+    "",
+    ...lines,
+    "",
+    `ดูรูปและรายละเอียดเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
+    "ต้องการสอบถามรอบลงปลา พิมพ์ ติดต่อแอดมิน",
+  ].join("\n");
+}
+
+function dateLabel(value: string) {
+  const date = String(value || "").slice(0, 10);
+  if (!date) return "-";
+  return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(`${date}T00:00:00`));
+}
+
+function shortText(value: string, maxLength: number) {
+  const clean = value.replace(/\s+/g, " ").trim();
+  return clean.length > maxLength ? `${clean.slice(0, maxLength - 1)}…` : clean;
 }
 
 function menuText() {
@@ -78,5 +148,6 @@ function menuText() {
     `กระเป๋าเงิน: ${lineUrl("/line/wallet")}`,
     `ส่งผลงานปลา: ${lineUrl("/line/catch")}`,
     `อันดับ: ${lineUrl("/ranking")}`,
+    `ตารางลงปลา: ${lineUrl("/fish-stocking-schedule")}`,
   ].join("\n");
 }

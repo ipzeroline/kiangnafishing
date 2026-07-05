@@ -6,13 +6,13 @@ import { query as dbQuery, type RankingLevel } from "@/lib/db";
 import { monthKeyBKK, thaiMonthLabel } from "@/lib/date";
 import { levelForScore } from "@/lib/ranking";
 import { RANKING_BOARDS, normalizeRankingBoard, queryRankingBoard } from "@/lib/public-ranking";
-import { siteContact, siteUrl } from "@/lib/site";
+import { siteContact, siteOgImage, siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 const rankingsTitle = "อันดับนักตกปลา เคียงนา Fishing Lake | Ranking บ่อตกปลาพะเยา";
 const rankingsDescription = "ดูอันดับนักตกปลาเคียงนา Fishing Lake พะเยา จากผลงานปลาที่ตรวจสอบแล้ว แยกปลาใหญ่สุด จำนวนตัว น้ำหนักรวม และขาประจำ พร้อมรูปโปรไฟล์ ระดับสมาชิก และกระดานอันดับล่าสุด";
-const rankingsImage = `${siteUrl}/site/kiangna-lake-aerial-01.png`;
+const rankingsImage = siteOgImage;
 
 export const metadata: Metadata = {
   title: rankingsTitle,
@@ -142,7 +142,7 @@ export default async function PublicRankingsPage({ searchParams }: { searchParam
         telephone: siteContact.phone,
         email: siteContact.email,
         image: rankingsImage,
-        sameAs: [siteContact.lineHref, siteContact.mapHref],
+        sameAs: [siteContact.lineHref, siteContact.facebookHref, siteContact.instagramHref, siteContact.tiktokHref, siteContact.mapHref],
         address: {
           "@type": "PostalAddress",
           addressLocality: "ดอกคำใต้",

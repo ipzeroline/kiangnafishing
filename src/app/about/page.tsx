@@ -4,7 +4,7 @@ import { siteContact, siteUrl } from "@/lib/site";
 
 const title = "เกี่ยวกับเคียงนา Fishing Lake | บ่อตกปลาพะเยา ระบบทันสมัยใช้งานง่าย";
 const description = "รู้จักเคียงนา Fishing Lake บ่อตกปลาพะเยาและดอกคำใต้ที่ออกแบบบริการให้ใช้งานง่ายและทันสมัย ครบทั้ง QR เข้าบ่อ เครดิต แต้ม ส่งผลงานปลา แกลลอรี่ และอันดับนักตกปลา";
-const image = `${siteUrl}/site/kiangna-lake-aerial-02.png`;
+const image = `${siteUrl}/site/kiangna-lake-aerial-02.jpg`;
 
 export const metadata: Metadata = {
   title,
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: "เคียงนา Fishing Lake",
     locale: "th_TH",
     type: "website",
-    images: [{ url: image, width: 1200, height: 630, alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยา" }],
+    images: [{ url: image, width: 1200, height: 900, alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยา" }],
   },
   twitter: {
     card: "summary_large_image",

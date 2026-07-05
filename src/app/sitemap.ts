@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { pagePaths, siteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return Object.values(pagePaths).flatMap((paths) => [
+  const pages = Object.values(pagePaths).flatMap((paths) => [
     {
       url: `${siteUrl}${paths.th}`,
       lastModified: new Date(),
@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: {
           th: `${siteUrl}${paths.th}`,
           en: `${siteUrl}${paths.en}`,
+          "x-default": `${siteUrl}${paths.th}`,
         },
       },
     },
@@ -24,8 +25,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
         languages: {
           th: `${siteUrl}${paths.th}`,
           en: `${siteUrl}${paths.en}`,
+          "x-default": `${siteUrl}${paths.th}`,
         },
       },
     },
   ]);
+
+  return [
+    ...pages,
+    {
+      url: `${siteUrl}/rankings`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+  ];
 }

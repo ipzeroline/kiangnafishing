@@ -1,5 +1,5 @@
 import SiteChrome from "./SiteChrome";
-import { Locale } from "@/lib/site";
+import { Locale, siteContact } from "@/lib/site";
 
 const privacy = {
   th: {
@@ -10,7 +10,7 @@ const privacy = {
       ["วัตถุประสงค์การใช้ข้อมูล", "ใช้เพื่อยืนยันตัวตนผ่าน LINE, ให้บริการเข้าบ่อ, ตรวจสอบเครดิตและแต้ม, จัดอันดับ, ยืนยันคูปอง/รางวัล, ป้องกันการทุจริต และปรับปรุงการให้บริการ"],
       ["การเข้าถึงข้อมูล", "ข้อมูลสำคัญเข้าถึงได้เฉพาะเจ้าหน้าที่ที่ได้รับสิทธิ์ในระบบหลังบ้าน และมีการบันทึกประวัติรายการเพื่อรองรับการตรวจสอบ"],
       ["การเก็บรักษาและความปลอดภัย", "ระบบใช้การยืนยันตัวตนผ่าน LINE และการแยกสิทธิ์ผู้ใช้งานหลังบ้าน ข้อมูลจะถูกเก็บเท่าที่จำเป็นต่อการให้บริการและการตรวจสอบ"],
-      ["ช่องทางติดต่อ", "หากต้องการสอบถาม แก้ไข หรือขอลบข้อมูล กรุณาติดต่อ LINE @038gyaxo โทร 062-229-3636 หรืออีเมล kaingnagroup@gmail.com"],
+      ["ช่องทางติดต่อ", `หากต้องการสอบถาม แก้ไข หรือขอลบข้อมูล กรุณาติดต่อ LINE ${siteContact.lineId} โทร ${siteContact.phone} หรืออีเมล ${siteContact.email}`],
     ],
   },
   en: {
@@ -21,7 +21,7 @@ const privacy = {
       ["How we use information", "To verify LINE identity, provide entry service, manage credits and points, run rankings, validate coupons and rewards, prevent fraud, and improve operations."],
       ["Data access", "Important data is accessible only by authorized backend staff, with activity records kept for audit purposes."],
       ["Retention and security", "The system uses LINE identity verification and role-based staff access. Information is retained only as needed for service and audit."],
-      ["Contact", "For questions, corrections, or deletion requests, contact the LINE account @038gyaxo, phone 062-229-3636, or email kaingnagroup@gmail.com."],
+      ["Contact", `For questions, corrections, or deletion requests, contact the LINE account ${siteContact.lineId}, phone ${siteContact.phone}, or email ${siteContact.email}.`],
     ],
   },
 } as const;

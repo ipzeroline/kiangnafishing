@@ -22,15 +22,23 @@ const actionMap = {
   "/wallet": liffUrl("/line/wallet"),
   "/catch": liffUrl("/line/catch"),
   "/ranking": `${appUrl}/ranking`,
+  "/fish-stocking-schedule": `${appUrl}/fish-stocking-schedule`,
 };
 
-const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking)/g, (_all, route) => {
+const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule)/g, (_all, route) => {
   return actionMap[route] || `${appUrl}${route}`;
 }));
 
 for (const area of menu.areas || []) {
   if (area.action?.type === "uri" && area.action.uri?.startsWith("/")) {
     area.action.uri = `${appUrl}${area.action.uri}`;
+  }
+  if (area.action?.type === "uri" && area.action.uri?.includes("/fish-stocking-schedule")) {
+    area.action = {
+      type: "postback",
+      data: "action=fishStocking",
+      displayText: "ขอดูตารางลงปลาและโปรโมชั่นล่าสุด",
+    };
   }
 }
 

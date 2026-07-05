@@ -37,6 +37,33 @@ export const metadata: Metadata = {
   authors: [{ name: "เคียงนา Fishing Lake" }],
   creator: "เคียงนา Fishing Lake",
   publisher: "เคียงนา Fishing Lake",
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    title: "เคียงนา Fishing Lake",
+    description: "เคียงนา Fishing Lake บ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ และบ่อตกปลาใหญ่พะเยา พร้อมบริการผ่าน LINE",
+    url: "https://kiangnafishinglake.com",
+    siteName: "เคียงนา Fishing Lake",
+    locale: "th_TH",
+    type: "website",
+    images: [{ url: "/site/kiangna-lake-aerial-01.jpg", width: 1200, height: 900, alt: "เคียงนา Fishing Lake บ่อตกปลาพะเยา" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "เคียงนา Fishing Lake",
+    description: "บ่อตกปลาพะเยา บ่อตกปลาดอกคำใต้ และบ่อตกปลาใหญ่พะเยา พร้อมบริการผ่าน LINE",
+    images: ["/site/kiangna-lake-aerial-01.jpg"],
+  },
   formatDetection: { telephone: false },
 };
 export const viewport: Viewport = {
