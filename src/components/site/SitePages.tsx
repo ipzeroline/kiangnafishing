@@ -205,26 +205,49 @@ function dateText(value: string, locale: Locale) {
 
 function LakeVisual({ locale }: { locale: Locale }) {
   const labels = locale === "th"
-    ? ["บรรยากาศริมบ่อ", "ผลงานปลาใหญ่", "กิจกรรมลงปลา", "ระบบบริการ"]
-    : ["Lakeside Setting", "Trophy Catches", "Fish Release", "Service System"];
+    ? [
+        ["QR เข้าบ่อ", "สแกนไว"],
+        ["เครดิต", "ตรวจสอบได้"],
+        ["ผลงานปลา", "ผ่านอนุมัติ"],
+        ["อันดับ", "โปร่งใส"],
+      ]
+    : [
+        ["Entry QR", "Fast scan"],
+        ["Credits", "Auditable"],
+        ["Catch records", "Verified"],
+        ["Ranking", "Transparent"],
+      ];
 
   return (
-    <div className="lake-visual" aria-label={locale === "th" ? "คอลเลกชันบรรยากาศบ่อตกปลา" : "Fishing lake collection"}>
-      {labels.map((label, index) => (
-        <article key={label} className={`lake-tile lake-tile-${index + 1}`}>
-          <div className="lake-tile-art">
-            <span className="fish-line" />
-            <span className="fish-body" />
-          </div>
-          <div className="lake-tile-info">
-            <p>{String(index + 1).padStart(2, "0")}</p>
-            <h3>{label}</h3>
-          </div>
-        </article>
-      ))}
-      <div className="lake-center-card">
-        <p>{locale === "th" ? "MODERN SERVICE" : "MODERN SERVICE"}</p>
-        <strong>{locale === "th" ? "ระบบบริการทันสมัย ใช้งานง่าย ตรวจสอบได้" : "Simple, modern, auditable service"}</strong>
+    <div className="lake-visual about-service-visual" aria-label={locale === "th" ? "ภาพรวมบรรยากาศและระบบเคียงนา Fishing Lake" : "Fishing lake service overview"}>
+      <div className="about-service-photo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/site/kiangna-lake-aerial-02.jpg" alt={locale === "th" ? "บรรยากาศบ่อเคียงนา Fishing Lake" : "Kiangna Fishing Lake aerial view"} />
+        <div className="about-service-photo-overlay">
+          <p>KIANGNA SERVICE</p>
+          <strong>{locale === "th" ? "บริการสมาชิกผ่าน LINE ที่เป็นระบบ" : "LINE-first member service"}</strong>
+          <span>{locale === "th" ? "เข้าบ่อ เติมเครดิต ส่งผลงาน และดูอันดับใน flow เดียว" : "Entry, credits, catches, and ranking in one flow"}</span>
+        </div>
+      </div>
+
+      <div className="about-service-cards">
+        {labels.map(([label, detail], index) => (
+          <article key={label}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <h3>{label}</h3>
+              <p>{detail}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="about-service-summary">
+        <div>
+          <p>MODERN SERVICE</p>
+          <strong>{locale === "th" ? "ง่าย ชัดเจน ตรวจสอบย้อนหลังได้" : "Simple, clear, auditable"}</strong>
+        </div>
+        <span>{locale === "th" ? "เหมาะสำหรับงานหน้าบ่อและสมาชิกประจำ" : "Built for staff operations and returning anglers"}</span>
       </div>
     </div>
   );
