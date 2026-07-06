@@ -110,9 +110,14 @@ export default function CatchClient({ species }: { species: string[] }) {
                 <h1 className="mt-1 font-display text-2xl font-semibold">ส่งผลงานปลา</h1>
                 <p className="mt-1 text-xs text-white/65">รูป 1 ใบ · น้ำหนัก · ชนิดปลา</p>
               </div>
-              <a href="/catch" className="shrink-0 rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
-                อัลบั้ม
-              </a>
+              <div className="flex shrink-0 flex-col gap-1.5">
+                <a href="/line/profile" className="rounded-full bg-white px-3 py-1.5 text-center text-xs font-semibold text-deep">
+                  แก้รูป
+                </a>
+                <a href="/catch" className="rounded-full bg-white/12 px-3 py-1.5 text-center text-xs font-semibold text-white">
+                  อัลบั้ม
+                </a>
+              </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold text-white/65">
               <span className="rounded-xl bg-white/10 px-2 py-2">ถ่ายรูป</span>
@@ -177,7 +182,10 @@ export default function CatchClient({ species }: { species: string[] }) {
             <button disabled={busy || processingImage || !form.species || !form.weightKg || !form.imageData} className="mt-auto w-full rounded-xl bg-pond py-3.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50">
             {busy ? "กำลังส่ง..." : processingImage ? "กำลังปรับรูป..." : "ส่งผลงานปลา"}
           </button>
-            <a href="/catch" className="mt-3 block text-center text-sm font-semibold text-pond">ดูอัลบั้มของฉัน</a>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-center text-sm font-semibold">
+              <a href="/catch" className="rounded-xl bg-mist px-3 py-2.5 text-pond">ดูอัลบั้มของฉัน</a>
+              <a href="/line/profile" className="rounded-xl bg-mist px-3 py-2.5 text-deep">แก้รูปโปรไฟล์</a>
+            </div>
           </form>
         </div>
       </main>

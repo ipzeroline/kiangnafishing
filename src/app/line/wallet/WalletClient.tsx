@@ -74,9 +74,14 @@ function WalletPanel() {
               <p className="text-xs font-semibold uppercase tracking-widest text-white/55">LINE Wallet</p>
               <h1 className="mt-1 font-display text-2xl font-semibold">กระเป๋าเงิน</h1>
             </div>
-            <button onClick={() => void loadStatus()} className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
-              รีเฟรช
-            </button>
+            <div className="flex shrink-0 flex-col gap-1.5">
+              <a href="/line/profile" className="rounded-full bg-white px-3 py-1.5 text-center text-xs font-semibold text-deep">
+                แก้รูป
+              </a>
+              <button onClick={() => void loadStatus()} className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
+                รีเฟรช
+              </button>
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-[1.2fr_.8fr] gap-2">
             <div className="rounded-xl bg-white/10 p-3">
@@ -96,7 +101,10 @@ function WalletPanel() {
               <p className="text-xs font-semibold text-pond">เติมเครดิต</p>
               <h2 className="mt-1 font-display text-xl font-semibold text-deep">เลือกหรือกรอกยอด</h2>
             </div>
-            <a href="/wallet" className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-deep">ประวัติ</a>
+            <div className="flex shrink-0 gap-1.5">
+              <a href="/line/profile" className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-deep">โปรไฟล์</a>
+              <a href="/wallet" className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-deep">ประวัติ</a>
+            </div>
           </div>
 
           {pending ? (

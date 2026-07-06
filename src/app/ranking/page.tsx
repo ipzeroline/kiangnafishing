@@ -45,9 +45,14 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
               <h1 className="mt-1 font-display text-2xl font-semibold">อันดับนักตกปลา</h1>
               <p className="mt-1 truncate text-xs text-white/65">{thaiMonthLabel(mk)} · {boardMeta.label}</p>
             </div>
-            <Link href="/line/catch" className="shrink-0 rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
-              ส่งผลงาน
-            </Link>
+            <div className="flex shrink-0 flex-col gap-1.5">
+              <Link href="/line/profile" className="rounded-full bg-white px-3 py-1.5 text-center text-xs font-semibold text-deep">
+                แก้รูป
+              </Link>
+              <Link href="/line/catch" className="rounded-full bg-white/12 px-3 py-1.5 text-center text-xs font-semibold text-white">
+                ส่งผลงาน
+              </Link>
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-[1.2fr_.8fr] gap-2">
             <div className="rounded-xl bg-white/10 p-3">
@@ -89,6 +94,9 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                 <p className="text-xs font-semibold text-pond">อันดับของฉัน</p>
                 <h2 className="truncate font-display text-lg font-semibold text-deep">{user.alias || user.name}</h2>
                 <p className="truncate font-mono text-xs text-dim">{user.memberCode}</p>
+                <Link href="/line/profile" className="mt-1 inline-flex text-xs font-semibold text-pond">
+                  เปลี่ยนรูปโปรไฟล์
+                </Link>
               </div>
               <div className="shrink-0 text-right">
                 <p className="font-display text-2xl font-semibold text-deep">

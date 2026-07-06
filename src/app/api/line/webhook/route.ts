@@ -51,6 +51,7 @@ async function handleEvent(event: LineEvent) {
 
   if (event.type === "message" && event.message?.type === "text") {
     const text = (event.message.text || "").trim().toLowerCase();
+    if (isContactRequest(text)) return replyText(event.replyToken || "", contactText());
     if (["เมนู", "menu", "help"].includes(text)) {
       await replyText(event.replyToken || "", menuText());
       return;
@@ -63,8 +64,19 @@ async function handleEvent(event: LineEvent) {
     if (["ตารางลงปลา", "ตารางการลงปลา", "ลงปลา", "fish release", "stocking"].includes(text) || text.includes("ตารางลงปลา") || text.includes("ตารางการลงปลา")) {
       return replyText(event.replyToken || "", await fishStockingText());
     }
-    if (["ติดต่อแอดมิน", "ติดต่อ", "แอดมิน", "admin", "contact"].includes(text)) return replyText(event.replyToken || "", contactText());
+    if (["ติดต่อ", "แอดมิน", "admin", "contact"].includes(text)) return replyText(event.replyToken || "", contactText());
   }
+}
+
+function isContactRequest(text: string) {
+  return (
+    text.includes("ติดต่อแอดมิน") ||
+    text.includes("ติดต่อเจ้าหน้าที่") ||
+    text.includes("ต้องการติดต่อ") ||
+    text.includes("สอบถาม") ||
+    text.includes("contact admin") ||
+    text.includes("admin contact")
+  );
 }
 
 async function replyByAction(replyToken: string, action: string) {

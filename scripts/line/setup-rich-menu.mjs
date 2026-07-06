@@ -27,6 +27,18 @@ const actionMap = {
   "/contact": staffContactLineUrl,
 };
 
+const isContactActionText = (value = "") => {
+  const text = String(value).toLowerCase();
+  return (
+    text.includes("ติดต่อแอดมิน") ||
+    text.includes("ติดต่อเจ้าหน้าที่") ||
+    text.includes("ต้องการติดต่อ") ||
+    text.includes("สอบถาม") ||
+    text.includes("contact admin") ||
+    text.includes("admin contact")
+  );
+};
+
 const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule|\/contact)/g, (_all, route) => {
   return actionMap[route] || `${appUrl}${route}`;
 }));
@@ -48,8 +60,17 @@ for (const area of menu.areas || []) {
       uri: staffContactLineUrl,
     };
   }
+  if (area.action?.type === "message" && isContactActionText(area.action.text)) {
+    area.action = {
+      type: "uri",
+      uri: staffContactLineUrl,
+    };
+  }
   if (area.action?.type === "postback" && ["action=contact", "action=staff", "action=admin_contact"].includes(area.action.data || "")) {
-    area.action.displayText = "ติดต่อเจ้าหน้าที่";
+    area.action = {
+      type: "uri",
+      uri: staffContactLineUrl,
+    };
   }
 }
 
