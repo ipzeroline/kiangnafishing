@@ -69,6 +69,19 @@ export const metadata: Metadata = {
     description: "บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ บ่อตกปลาใหญ่พะเยา และบ่อตกปลาใกล้ฉัน พร้อมบริการผ่าน LINE",
     images: ["/site/kiangna-lake-aerial-01.jpg"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    other: [
+      { rel: "icon", url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
   formatDetection: { telephone: false },
 };
 export const viewport: Viewport = {

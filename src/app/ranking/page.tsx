@@ -47,7 +47,7 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
             </div>
             <div className="flex shrink-0 flex-col gap-1.5">
               <Link href="/line/profile" className="rounded-full bg-white px-3 py-1.5 text-center text-xs font-semibold text-deep">
-                โปรไฟล์
+                บัญชี
               </Link>
               <Link href="/line/catch" className="rounded-full bg-white/12 px-3 py-1.5 text-center text-xs font-semibold text-white">
                 ส่งผลงาน
@@ -94,9 +94,6 @@ export default async function RankingPage({ searchParams }: { searchParams: Prom
                 <p className="text-xs font-semibold text-pond">อันดับของฉัน</p>
                 <h2 className="truncate font-display text-lg font-semibold text-deep">{user.alias || user.name}</h2>
                 <p className="truncate font-mono text-xs text-dim">{user.memberCode}</p>
-                <Link href="/line/profile" className="mt-1 inline-flex text-xs font-semibold text-pond">
-                  จัดการโปรไฟล์
-                </Link>
               </div>
               <div className="shrink-0 text-right">
                 <p className="font-display text-2xl font-semibold text-deep">
