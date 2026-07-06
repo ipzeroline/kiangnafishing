@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { queryOne } from "@/lib/db";
 import { dateKeyBKK } from "@/lib/date";
+import { requireLineBrowser } from "@/lib/line-request";
 import BottomNav from "@/components/BottomNav";
 import LogoutButton from "@/components/LogoutButton";
 import MemberProfileForm from "../MemberProfileForm";
@@ -14,6 +15,7 @@ export const metadata = {
 };
 
 export default async function MemberPage() {
+  await requireLineBrowser();
   const user = await getSessionUser();
   if (!user) redirect("/login");
   if (user.role === "STAFF" || user.role === "ADMIN") redirect("/admin");

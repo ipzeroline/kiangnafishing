@@ -8,6 +8,7 @@ loadEnvConfig(process.cwd());
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/$/, "");
 const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
+const staffContactLineUrl = "https://line.me/ti/p/SeS2mH9yey";
 const richMenuJson = process.argv[2] || "/Users/zeroline/Downloads/files/richmenu-pack/richmenu.json";
 const richMenuImage = process.argv[3] || "/Users/zeroline/Downloads/files/richmenu-pack/richmenu.png";
 
@@ -23,6 +24,7 @@ const actionMap = {
   "/catch": liffUrl("/line/catch"),
   "/ranking": `${appUrl}/ranking`,
   "/fish-stocking-schedule": `${appUrl}/fish-stocking-schedule`,
+  "/contact": staffContactLineUrl,
 };
 
 const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule)/g, (_all, route) => {
@@ -39,6 +41,15 @@ for (const area of menu.areas || []) {
       data: "action=fishStocking",
       displayText: "ขอดูตารางลงปลาและโปรโมชั่นล่าสุด",
     };
+  }
+  if (area.action?.type === "uri" && area.action.uri?.includes("/contact")) {
+    area.action = {
+      type: "uri",
+      uri: staffContactLineUrl,
+    };
+  }
+  if (area.action?.type === "postback" && ["action=contact", "action=staff", "action=admin_contact"].includes(area.action.data || "")) {
+    area.action.displayText = "ติดต่อเจ้าหน้าที่";
   }
 }
 

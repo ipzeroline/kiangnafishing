@@ -71,8 +71,11 @@ async function replyByAction(replyToken: string, action: string) {
     wallet: "/line/wallet",
     catch: "/line/catch",
     ranking: "/ranking",
-    contact: "/contact",
   };
+  if (["contact", "staff", "admin_contact"].includes(action)) {
+    await replyText(replyToken, contactText());
+    return;
+  }
   if (["fishStocking", "fish_stocking", "stocking", "fish-release"].includes(action)) {
     await replyText(replyToken, await fishStockingText());
     return;
@@ -82,12 +85,12 @@ async function replyByAction(replyToken: string, action: string) {
 
 function contactText() {
   return [
-    "ติดต่อทีมงานเคียงนา Fishing Lake",
-    "LINE: kiangnafishinglake",
+    "ติดต่อเจ้าหน้าที่เคียงนา Fishing Lake",
+    "LINE ID: kingnafishinglake",
+    "กดเพิ่มเพื่อน: https://line.me/ti/p/SeS2mH9yey",
     "โทร: 062-229-3636",
-    `หน้าติดต่อ: ${lineUrl("/contact")}`,
     "",
-    "แจ้งรอบที่ต้องการเข้าบ่อ หรือสอบถามตารางลงปลาได้เลยครับ",
+    "สอบถามรอบลงปลา การเข้าบ่อ เครดิต หรือให้เจ้าหน้าที่ช่วยตรวจสอบข้อมูลสมาชิกได้ที่ LINE นี้",
   ].join("\n");
 }
 

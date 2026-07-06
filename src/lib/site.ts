@@ -10,7 +10,7 @@ export const siteContact = {
   phoneHref: "tel:+66622293636",
   email: "kiangnafishinglake@gmail.com",
   emailHref: "mailto:kiangnafishinglake@gmail.com",
-  lineId: "kiangnafishinglake",
+  lineId: "kingnafishinglake",
   lineHref: "https://line.me/ti/p/SeS2mH9yey",
   facebookHref: "https://www.facebook.com/kiangnafishinglake",
   instagramHref: "https://www.instagram.com/kiangnafishinglake",
@@ -797,7 +797,7 @@ export const homeSeoContent = {
     ],
     howToTitle: "วิธีเริ่มใช้งาน เคียงนา Fishing Lake",
     howToSteps: [
-      "เพิ่มเพื่อน LINE kiangnafishinglake",
+      "เพิ่มเพื่อน LINE kingnafishinglake",
       "เปิดเมนูบริการเพื่อดู QR เข้าบ่อ เครดิต การส่งผลงานปลา อันดับ และช่องทางติดต่อเจ้าหน้าที่",
       "เมื่อมาถึงบ่อ ให้แสดง QR เพื่อให้เจ้าหน้าที่สแกนยืนยันการเข้าใช้บริการ",
       "ส่งผลงานปลาผ่าน LINE เพื่อให้เจ้าหน้าที่ตรวจสอบและอัปเดต ranking",
@@ -844,7 +844,7 @@ export const homeSeoContent = {
     ],
     howToTitle: "How to get started",
     howToSteps: [
-      "Add the LINE account kiangnafishinglake",
+      "Add the LINE account kingnafishinglake",
       "Open the เมนูบริการ for entry QR, credits, catch submission, ranking, and admin contact",
       "Show the QR to staff when arriving at the lake",
       "Submit catches through LINE for verification and ranking updates",

@@ -69,5 +69,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.85,
     },
+    {
+      url: `${siteUrl}/line-guide`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.86,
+    },
   ];
 }

@@ -2,12 +2,14 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { thaiDateTime } from "@/lib/date";
+import { requireLineBrowser } from "@/lib/line-request";
 
 export const dynamic = "force-dynamic";
 
 const TYPE_LABEL: Record<string, string> = { TOPUP: "เติมเงิน", ENTRY_FEE: "ค่าเข้าบ่อ", REWARD: "รางวัล/แต้ม" };
 
 export default async function WalletPage() {
+  await requireLineBrowser();
   const user = await getSessionUser();
   if (!user) redirect("/login");
   const txs = await query<{ id: string; type: string; amount: number; note: string; createdAt: string }>(

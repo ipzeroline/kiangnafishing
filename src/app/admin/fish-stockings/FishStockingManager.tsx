@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { FishStocking } from "@/lib/db";
 
@@ -47,6 +47,7 @@ function readImage(file: File) {
 
 export default function FishStockingManager({ stockings, species, today }: { stockings: FishStocking[]; species: string[]; today: string }) {
   const router = useRouter();
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [form, setForm] = useState<FormState>(() => emptyForm(today));
   const [modalOpen, setModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -56,12 +57,14 @@ export default function FishStockingManager({ stockings, species, today }: { sto
   const previewImage = form.imageData || form.imagePath;
 
   function openCreate() {
+    if (imageInputRef.current) imageInputRef.current.value = "";
     setForm(emptyForm(today));
     setMessage("");
     setModalOpen(true);
   }
 
   function edit(stocking: FishStocking) {
+    if (imageInputRef.current) imageInputRef.current.value = "";
     setForm({
       stockingId: stocking.id,
       imagePath: stocking.imagePath,
@@ -205,8 +208,24 @@ export default function FishStockingManager({ stockings, species, today }: { sto
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block md:col-span-2">
                 <span className="mb-1 block text-sm font-medium text-ink">รูปภาพ</span>
-                <input type="file" accept="image/*" required={!editing && !form.imagePath} onChange={changeImage}
-                  className="w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-mist file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-deep focus:border-pond" />
+                <div className="rounded-lg border border-line bg-white p-3">
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/*"
+                    required={!editing && !form.imagePath}
+                    onChange={changeImage}
+                    className="sr-only"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    className="rounded-lg bg-mist px-3 py-2 text-sm font-semibold text-deep"
+                  >
+                    {previewImage ? "เปลี่ยนรูป" : "เลือกรูปภาพ"}
+                  </button>
+                  <span className="ml-3 text-xs text-dim">{form.imageData ? "เลือกรูปใหม่แล้ว" : editing ? "ยังใช้รูปเดิม" : "ยังไม่ได้เลือกรูป"}</span>
+                </div>
                 {previewImage && (
                   <div className="mt-3 flex items-center gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -67,6 +67,7 @@ export default function SiteChrome({
               {content.nav[item]}
             </Link>
           ))}
+          <Link href="/line-guide">{locale === "th" ? "คู่มือ LINE" : "LINE Guide"}</Link>
         </nav>
         <div className="site-actions">
           <details className="mobile-menu">
@@ -86,6 +87,7 @@ export default function SiteChrome({
                     {content.nav[item]}
                   </Link>
                 ))}
+                <Link href="/line-guide">{locale === "th" ? "คู่มือ LINE" : "LINE Guide"}</Link>
               </div>
               <div className="mobile-menu-section">
                 <p>{locale === "th" ? "ช่องทางติดต่อ" : "Contact Channels"}</p>
@@ -143,6 +145,7 @@ export default function SiteChrome({
           </div>
           <div className="site-footer-col">
             <h2>{locale === "th" ? "บริการผ่าน LINE" : "LINE Services"}</h2>
+            <Link href="/line-guide">{locale === "th" ? "คู่มือใช้งาน LINE" : "LINE User Guide"}</Link>
             <p>{locale === "th" ? "QR เข้าบ่อ" : "Entry QR"}</p>
             <p>{locale === "th" ? "เครดิตและแต้ม" : "Credits and points"}</p>
             <p>{locale === "th" ? "ส่งผลงานปลาและดูอันดับ" : "Catch submissions and ranking"}</p>

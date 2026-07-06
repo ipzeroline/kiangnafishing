@@ -460,6 +460,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
               ? [
                   ["ลงปลา", "ดูตารางการลงปลาพร้อมรูป ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่ล่าสุด", pagePaths.fishStocking[locale]],
                   ["เครดิต", "ดูวิธีเติมเครดิต ตรวจสอบยอด และใช้งานกระเป๋าเงินผ่าน LINE", pagePaths.articles[locale]],
+                  ["คู่มือ LINE", "อ่านขั้นตอนใช้งาน QR เข้าบ่อ เติมเครดิต ส่งผลงานปลา และดูอันดับ", "/line-guide"],
                   ["อันดับ", "ดูอันดับนักตกปลา น้ำหนักปลาใหญ่ และผลงานล่าสุด", "/rankings"],
                   ["คูปอง", "ดูสิทธิพิเศษ แต้มสะสม และการแลกรางวัลสำหรับสมาชิก", pagePaths.news[locale]],
                   ["แกลลอรี่", "ชมรูปผลงานปลาใหญ่และบรรยากาศบ่อตกปลาเคียงนา", pagePaths.gallery[locale]],
@@ -468,6 +469,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
               : [
                   ["Fish release", "View official release records with photos, species, fish count, total weight, and dates", pagePaths.fishStocking[locale]],
                   ["Credits", "Check top-up guidance, balances, and LINE wallet usage", pagePaths.articles[locale]],
+                  ["LINE Guide", "Learn how to use entry QR, credits, catch submissions, and rankings", "/line-guide"],
                   ["Ranking", "View angler rankings, biggest fish, and latest verified catches", "/rankings"],
                   ["Coupons", "Review member privileges, points, and reward redemption", pagePaths.news[locale]],
                   ["Gallery", "Browse trophy catch photos and Kiangna Fishing Lake moments", pagePaths.gallery[locale]],

@@ -1,3 +1,5 @@
+import { requireLineBrowser } from "@/lib/line-request";
+
 const actions = [
   { href: "/line/entry", label: "QR เข้าบ่อ", detail: "เปิดให้เจ้าหน้าที่สแกน", tone: "bg-pond text-white" },
   { href: "/line/wallet", label: "เติมเครดิต", detail: "เลือกยอดหรือกรอกเอง", tone: "bg-white text-deep" },
@@ -6,10 +8,15 @@ const actions = [
   { href: "/line/catch", label: "ส่งผลงานปลา", detail: "อัปโหลดรูปและน้ำหนัก", tone: "bg-white text-deep" },
   { href: "/catch", label: "อัลบั้มผลงาน", detail: "ตรวจสถานะผลงานของฉัน", tone: "bg-white text-deep" },
   { href: "/fish-stocking-schedule", label: "ตารางลงปลา", detail: "รอบลงปลาล่าสุด", tone: "bg-white text-deep" },
+  { href: "/line-guide", label: "คู่มือ LINE", detail: "วิธีใช้งานระบบ", tone: "bg-white text-deep" },
   { href: "/contact", label: "ติดต่อทีมงาน", detail: "LINE โทร แผนที่", tone: "bg-white text-deep" },
 ];
 
-export default function EntryPage() {
+export const dynamic = "force-dynamic";
+
+export default async function EntryPage() {
+  await requireLineBrowser();
+
   return (
     <main className="min-h-dvh bg-[#f5f8f7] px-3 py-3">
       <div className="mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-md flex-col gap-3">

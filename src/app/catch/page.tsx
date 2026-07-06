@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { query, type FishCatch } from "@/lib/db";
 import { thaiDate } from "@/lib/date";
+import { requireLineBrowser } from "@/lib/line-request";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 };
 
 export default async function CatchPage() {
+  await requireLineBrowser();
   const user = await getSessionUser();
   if (!user) redirect("/login");
   const mine = await query<FishCatch>("SELECT * FROM catches WHERE userId=? ORDER BY createdAt DESC LIMIT 30", [user.id]);
