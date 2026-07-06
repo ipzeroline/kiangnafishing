@@ -23,7 +23,8 @@ const actionMap = {
   "/wallet": liffUrl("/line/wallet"),
   "/catch": liffUrl("/line/catch"),
   "/ranking": `${appUrl}/ranking`,
-  "/fish-stocking-schedule": `${appUrl}/fish-stocking-schedule`,
+  "/fish-stocking-schedule": liffUrl("/line/stocking"),
+  "/line-guide": liffUrl("/entry"),
   "/contact": staffContactLineUrl,
 };
 
@@ -39,7 +40,7 @@ const isContactActionText = (value = "") => {
   );
 };
 
-const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule|\/contact)/g, (_all, route) => {
+const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule|\/line-guide|\/contact)/g, (_all, route) => {
   return actionMap[route] || `${appUrl}${route}`;
 }));
 
@@ -49,9 +50,14 @@ for (const area of menu.areas || []) {
   }
   if (area.action?.type === "uri" && area.action.uri?.includes("/fish-stocking-schedule")) {
     area.action = {
-      type: "postback",
-      data: "action=fishStocking",
-      displayText: "ขอดูตารางลงปลาและโปรโมชั่นล่าสุด",
+      type: "uri",
+      uri: liffUrl("/line/stocking"),
+    };
+  }
+  if (area.action?.type === "uri" && area.action.uri?.includes("/line-guide")) {
+    area.action = {
+      type: "uri",
+      uri: liffUrl("/entry"),
     };
   }
   if (area.action?.type === "uri" && area.action.uri?.includes("/contact")) {

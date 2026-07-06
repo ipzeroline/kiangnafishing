@@ -123,7 +123,7 @@ async function fishStockingText() {
       "",
       "ยังไม่มีรายการลงปลาที่เผยแพร่ในขณะนี้",
       "",
-      `ดูตารางล่าสุด: ${lineUrl("/fish-stocking-schedule")}`,
+      `ดูตารางใน LINE: ${lineUrl("/line/stocking")}`,
       `สอบถามทีมงาน: ${staffContactLineUrl}`,
     ].join("\n");
   }
@@ -145,7 +145,7 @@ async function fishStockingText() {
     "เคียงนา Fishing Lake",
     "",
     ...lines,
-    `ดูรูปและตารางเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
+    `ดูตารางใน LINE: ${lineUrl("/line/stocking")}`,
     "ต้องการสอบถามรอบลงปลา พิมพ์ ติดต่อแอดมิน",
   ].join("\n");
 }
@@ -164,7 +164,7 @@ function menuText() {
     `กระเป๋าเงิน: ${lineUrl("/line/wallet")}`,
     `ส่งผลงานปลา: ${lineUrl("/line/catch")}`,
     `อันดับ: ${lineUrl("/ranking")}`,
-    `ตารางลงปลา: ${lineUrl("/fish-stocking-schedule")}`,
+    `ตารางลงปลา: ${lineUrl("/line/stocking")}`,
     `ติดต่อแอดมิน: ${staffContactLineUrl}`,
   ].join("\n");
 }

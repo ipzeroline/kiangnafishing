@@ -9,8 +9,8 @@ const actions = [
   { href: "/ranking", label: "อันดับ", detail: "กระดานนักตกปลา", tone: "bg-white text-deep" },
   { href: "/line/catch", label: "ส่งผลงานปลา", detail: "อัปโหลดรูปและน้ำหนัก", tone: "bg-white text-deep" },
   { href: "/catch", label: "อัลบั้มผลงาน", detail: "ตรวจสถานะผลงานของฉัน", tone: "bg-white text-deep" },
-  { href: "/fish-stocking-schedule", label: "ตารางลงปลา", detail: "รอบลงปลาล่าสุด", tone: "bg-white text-deep" },
-  { href: "/line-guide", label: "คู่มือ LINE", detail: "วิธีใช้งานระบบ", tone: "bg-white text-deep" },
+  { href: "/line/stocking", label: "ตารางลงปลา", detail: "รอบลงปลาใน LINE", tone: "bg-white text-deep" },
+  { href: "/line/profile", label: "โปรไฟล์", detail: "จัดการชื่อและรูป", tone: "bg-white text-deep" },
   { href: staffContactLineUrl, label: "ติดต่อแอดมิน", detail: "แอด LINE เจ้าหน้าที่", tone: "bg-white text-deep" },
 ];
 

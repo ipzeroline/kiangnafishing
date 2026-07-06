@@ -112,7 +112,7 @@ export default function CatchClient({ species }: { species: string[] }) {
               </div>
               <div className="flex shrink-0 flex-col gap-1.5">
                 <a href="/line/profile" className="rounded-full bg-white px-3 py-1.5 text-center text-xs font-semibold text-deep">
-                  แก้รูป
+                  โปรไฟล์
                 </a>
                 <a href="/catch" className="rounded-full bg-white/12 px-3 py-1.5 text-center text-xs font-semibold text-white">
                   อัลบั้ม
@@ -184,7 +184,7 @@ export default function CatchClient({ species }: { species: string[] }) {
           </button>
             <div className="mt-3 grid grid-cols-2 gap-2 text-center text-sm font-semibold">
               <a href="/catch" className="rounded-xl bg-mist px-3 py-2.5 text-pond">ดูอัลบั้มของฉัน</a>
-              <a href="/line/profile" className="rounded-xl bg-mist px-3 py-2.5 text-deep">แก้รูปโปรไฟล์</a>
+              <a href="/line/profile" className="rounded-xl bg-mist px-3 py-2.5 text-deep">จัดการโปรไฟล์</a>
             </div>
           </form>
         </div>
