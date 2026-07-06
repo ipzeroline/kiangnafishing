@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/member", label: "ข้อมูลสมาชิก", icon: "⌂" },
   { href: "/wallet", label: "รายละเอียด", icon: "฿" },
-  { href: "/entry", label: "LINE เมนู", icon: "▣", center: true },
+  { href: "/entry", label: "เมนู", icon: "▣", center: true },
   { href: "/ranking", label: "อันดับ", icon: "▦" },
   { href: "/catch", label: "ผลงานปลา", icon: "▤" },
 ];

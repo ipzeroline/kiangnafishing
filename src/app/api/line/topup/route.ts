@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   if (!user || user.role !== "MEMBER") return NextResponse.json({ error: "ต้องเปิดผ่าน LINE" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   const payAmount = Math.floor(Number(body.payAmount || 0));
-  if (![100, 300, 500, 1000, 2000].includes(payAmount)) {
+  if (!Number.isFinite(payAmount) || payAmount < 1) {
     return NextResponse.json({ error: "ยอดเติมเงินไม่ถูกต้อง" }, { status: 400 });
   }
   const existing = await queryOne<PendingTopup>(

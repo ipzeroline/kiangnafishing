@@ -24,6 +24,7 @@ function WalletPanel() {
   const [balance, setBalance] = useState(0);
   const [points, setPoints] = useState(0);
   const getAmount = getAmountFor(payAmount);
+  const invalidAmount = payAmount < 1;
 
   async function loadStatus() {
     setLoading(true);
@@ -93,7 +94,7 @@ function WalletPanel() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs font-semibold text-pond">เติมเครดิต</p>
-              <h2 className="mt-1 font-display text-xl font-semibold text-deep">เลือกยอดที่ต้องการ</h2>
+              <h2 className="mt-1 font-display text-xl font-semibold text-deep">เลือกหรือกรอกยอด</h2>
             </div>
             <a href="/wallet" className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-deep">ประวัติ</a>
           </div>
@@ -112,13 +113,32 @@ function WalletPanel() {
               </div>
             </div>
           ) : (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {amounts.map((amount) => (
-                <button key={amount} type="button" disabled={loading} onClick={() => setPayAmount(amount)}
-                  className={`rounded-xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-45 ${payAmount === amount ? "bg-pond text-white shadow-sm" : "bg-mist text-deep"}`}>
-                  ฿{amount.toLocaleString("th-TH")}
-                </button>
-              ))}
+            <div className="mt-3 space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                {amounts.map((amount) => (
+                  <button key={amount} type="button" disabled={loading} onClick={() => setPayAmount(amount)}
+                    className={`rounded-xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-45 ${payAmount === amount ? "bg-pond text-white shadow-sm" : "bg-mist text-deep"}`}>
+                    ฿{amount.toLocaleString("th-TH")}
+                  </button>
+                ))}
+              </div>
+              <label className="block rounded-xl border border-line bg-[#f5f8f7] px-3 py-2.5">
+                <span className="block text-xs font-semibold text-dim">กรอกจำนวนเอง</span>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="font-display text-xl font-semibold text-deep">฿</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    step={1}
+                    disabled={loading}
+                    value={payAmount || ""}
+                    onChange={(e) => setPayAmount(Math.max(0, Math.floor(Number(e.target.value || 0))))}
+                    className="min-w-0 flex-1 bg-transparent text-xl font-semibold text-deep outline-none placeholder:text-dim/60 disabled:opacity-45"
+                    placeholder="ใส่ยอดที่ต้องการ"
+                  />
+                </div>
+              </label>
             </div>
           )}
 
@@ -140,7 +160,7 @@ function WalletPanel() {
           </div>
 
           {message && <p className="mt-3 rounded-xl bg-mist px-3 py-2 text-xs leading-relaxed text-deep">{message}</p>}
-          <button disabled={busy || loading || Boolean(pending)} className="mt-auto w-full rounded-xl bg-pond py-3.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50">
+          <button disabled={busy || loading || Boolean(pending) || invalidAmount} className="mt-auto w-full rounded-xl bg-pond py-3.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50">
             {loading ? "กำลังโหลด..." : busy ? "กำลังส่ง..." : pending ? "รออนุมัติรายการเดิม" : "แจ้งเติมเครดิต"}
           </button>
           <p className="mt-2 text-center text-[11px] text-dim">ทำรายการได้ครั้งละ 1 รายการ หลังอนุมัติแล้วจึงเติมใหม่ได้</p>

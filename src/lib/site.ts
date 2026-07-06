@@ -10,8 +10,8 @@ export const siteContact = {
   phoneHref: "tel:+66622293636",
   email: "kiangnafishinglake@gmail.com",
   emailHref: "mailto:kiangnafishinglake@gmail.com",
-  lineId: "@038gyaxo",
-  lineHref: "https://line.me/R/ti/p/@038gyaxo",
+  lineId: "kiangnafishinglake",
+  lineHref: "https://line.me/ti/p/SeS2mH9yey",
   facebookHref: "https://www.facebook.com/kiangnafishinglake",
   instagramHref: "https://www.instagram.com/kiangnafishinglake",
   tiktokHref: "https://tiktok.com/@kiangnafishinglake",
@@ -79,7 +79,7 @@ export const siteContent = {
       },
       contact: {
         title: "ติดต่อเคียงนา Fishing Lake | บ่อตกปลาพะเยา ในอำเภอดอกคำใต้",
-        description: "ติดต่อเคียงนา Fishing Lake เคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ สำหรับคนค้นหาบ่อตกปลาใกล้ฉัน โทร 062-229-3636 เพิ่มเพื่อน LINE @038gyaxo",
+        description: "ติดต่อเคียงนา Fishing Lake เคียงนาฟิชชิ่งเลคพะเยา บ่อตกปลาพะเยา ในอำเภอดอกคำใต้ สำหรับคนค้นหาบ่อตกปลาใกล้ฉัน โทร 062-229-3636 เพิ่มเพื่อน LINE kiangnafishinglake",
       },
       privacy: {
         title: "นโยบายความเป็นส่วนตัว | เคียงนา Fishing Lake",
@@ -116,7 +116,7 @@ export const siteContent = {
     },
   },
   en: {
-    brand: "Kiangna Fishing Lake",
+    brand: "เคียงนา Fishing Lake",
     nav: {
       home: "Home",
       news: "News & Events",
@@ -131,7 +131,7 @@ export const siteContent = {
     lineId: siteContact.lineId,
     pages: {
       home: {
-        title: "Kiangna Fishing Lake | Premium fishing lake with LINE service",
+        title: "เคียงนา Fishing Lake | Premium fishing lake with LINE service",
         description:
           "Kiangna Fishing Lake combines a premium lake atmosphere with the LINE account for entry QR, credits, catch submissions, and rankings.",
       },
@@ -145,7 +145,7 @@ export const siteContent = {
       },
       fishStocking: {
         title: "Fish Release Schedule | Kiangna Fishing Lake Phayao",
-        description: "View the latest Kiangna Fishing Lake fish release schedule with photos, species, fish count, total weight, release details, and dates for planning your fishing trip in Phayao.",
+        description: "View the latest Kiangna Fishing Lake fish release schedule with photos, species, fish count, total weight, and dates for planning your fishing trip in Phayao.",
       },
       gallery: {
         title: "Verified Catch Gallery | Kiangna Fishing Lake Phayao",
@@ -157,7 +157,7 @@ export const siteContent = {
       },
       contact: {
         title: "Contact Kiangna Fishing Lake | Fishing Lake in Phayao",
-        description: "Contact Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, by phone, LINE @038gyaxo, email, or Google Maps for fish releases, credits, rankings, and reservations.",
+        description: "Contact Kiangna Fishing Lake in Phayao, in Dok Kham Tai District, by phone, LINE kiangnafishinglake, email, or Google Maps for fish releases, credits, rankings, and reservations.",
       },
       privacy: {
         title: "Privacy Policy | Kiangna Fishing Lake",
@@ -797,7 +797,7 @@ export const homeSeoContent = {
     ],
     howToTitle: "วิธีเริ่มใช้งาน เคียงนา Fishing Lake",
     howToSteps: [
-      "เพิ่มเพื่อน LINE @038gyaxo",
+      "เพิ่มเพื่อน LINE kiangnafishinglake",
       "เปิดเมนูบริการเพื่อดู QR เข้าบ่อ เครดิต การส่งผลงานปลา อันดับ และช่องทางติดต่อเจ้าหน้าที่",
       "เมื่อมาถึงบ่อ ให้แสดง QR เพื่อให้เจ้าหน้าที่สแกนยืนยันการเข้าใช้บริการ",
       "ส่งผลงานปลาผ่าน LINE เพื่อให้เจ้าหน้าที่ตรวจสอบและอัปเดต ranking",
@@ -844,7 +844,7 @@ export const homeSeoContent = {
     ],
     howToTitle: "How to get started",
     howToSteps: [
-      "Add the LINE account @038gyaxo",
+      "Add the LINE account kiangnafishinglake",
       "Open the เมนูบริการ for entry QR, credits, catch submission, ranking, and admin contact",
       "Show the QR to staff when arriving at the lake",
       "Submit catches through LINE for verification and ranking updates",

@@ -1,47 +1,57 @@
-import TopBar from "@/components/TopBar";
-import BottomNav from "@/components/BottomNav";
+const actions = [
+  { href: "/line/entry", label: "QR เข้าบ่อ", detail: "เปิดให้เจ้าหน้าที่สแกน", tone: "bg-pond text-white" },
+  { href: "/line/wallet", label: "เติมเครดิต", detail: "เลือกยอดหรือกรอกเอง", tone: "bg-white text-deep" },
+  { href: "/wallet", label: "รายละเอียด", detail: "ยอดเงิน แต้ม และประวัติ", tone: "bg-white text-deep" },
+  { href: "/ranking", label: "อันดับ", detail: "กระดานนักตกปลา", tone: "bg-white text-deep" },
+  { href: "/line/catch", label: "ส่งผลงานปลา", detail: "อัปโหลดรูปและน้ำหนัก", tone: "bg-white text-deep" },
+  { href: "/catch", label: "อัลบั้มผลงาน", detail: "ตรวจสถานะผลงานของฉัน", tone: "bg-white text-deep" },
+  { href: "/fish-stocking-schedule", label: "ตารางลงปลา", detail: "รอบลงปลาล่าสุด", tone: "bg-white text-deep" },
+  { href: "/contact", label: "ติดต่อทีมงาน", detail: "LINE โทร แผนที่", tone: "bg-white text-deep" },
+];
 
 export default function EntryPage() {
   return (
-    <main className="min-h-dvh bg-[#f5f8f7] pb-28">
-      <TopBar title="เข้าบ่อผ่าน LINE" back />
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:px-8 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <section className="rounded-card bg-white p-6 shadow-sm ring-1 ring-line">
-          <p className="text-xs font-semibold uppercase tracking-widest text-dim">LINE</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-deep">การเข้าบ่อดำเนินผ่านเมนูบริการเท่านั้น</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-dim">
-            เพื่อความปลอดภัยและป้องกันการใช้งานแทนกัน ระบบจะสร้าง QR เช็คอินจากบัญชี LINE ของสมาชิกเท่านั้น
-            ข้อมูลจะผูกกับ LINE ID ที่เพิ่มเพื่อนบัญชีทางการไว้
-          </p>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-3">
-            <div className="rounded-lg bg-mist p-4">
-              <p className="font-semibold text-deep">1. เปิด LINE</p>
-              <p className="mt-1 text-sm text-dim">เข้าแชทบัญชี LINE</p>
+    <main className="min-h-dvh bg-[#f5f8f7] px-3 py-3">
+      <div className="mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-md flex-col gap-3">
+        <section className="rounded-2xl bg-deep p-4 text-white shadow-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/55">LINE Menu</p>
+              <h1 className="mt-1 font-display text-2xl font-semibold">เมนูบริการ</h1>
+              <p className="mt-1 text-xs text-white/65">ศูนย์รวมบริการสมาชิกใน LINE</p>
             </div>
-            <div className="rounded-lg bg-mist p-4">
-              <p className="font-semibold text-deep">2. กด “เข้าบ่อ”</p>
-              <p className="mt-1 text-sm text-dim">จากเมนูบริการช่องซ้ายบน</p>
-            </div>
-            <div className="rounded-lg bg-mist p-4">
-              <p className="font-semibold text-deep">3. ให้เจ้าหน้าที่สแกน</p>
-              <p className="mt-1 text-sm text-dim">ระบบบันทึกการเข้าใช้บริการโดยอัตโนมัติ</p>
-            </div>
+            <a href="/line/entry" className="shrink-0 rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
+              QR
+            </a>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold text-white/65">
+            <span className="rounded-xl bg-white/10 px-2 py-2">เข้าบ่อ</span>
+            <span className="rounded-xl bg-white/10 px-2 py-2">เติมเครดิต</span>
+            <span className="rounded-xl bg-white/10 px-2 py-2">ผลงาน</span>
           </div>
         </section>
 
-        <aside className="rounded-card bg-deep p-6 text-white shadow-sm">
-          <p className="text-sm text-white/60">เมนู LINE</p>
-          <h2 className="mt-2 font-display text-2xl font-semibold">เมนูบริการหลัก</h2>
-          <div className="mt-5 space-y-3 text-sm text-white/75">
-            <p className="rounded-lg bg-white/10 p-3">เข้าบ่อ</p>
-            <p className="rounded-lg bg-white/10 p-3">กระเป๋าเงิน</p>
-            <p className="rounded-lg bg-white/10 p-3">ส่งผลงานปลา</p>
-            <p className="rounded-lg bg-white/10 p-3">อันดับ / ตารางลงปลา / ติดต่อเจ้าหน้าที่</p>
-          </div>
-        </aside>
+        <section className="grid grid-cols-2 gap-2">
+          {actions.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={`rounded-2xl p-3 shadow-sm ring-1 ring-line ${item.tone}`}
+            >
+              <span className="block font-semibold">{item.label}</span>
+              <span className={`mt-1 block text-xs ${item.tone.includes("text-white") ? "text-white/70" : "text-dim"}`}>{item.detail}</span>
+            </a>
+          ))}
+        </section>
+
+        <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-line">
+          <p className="text-xs font-semibold text-pond">ใช้งานหน้าบ่อ</p>
+          <h2 className="mt-1 font-display text-xl font-semibold text-deep">เปิด QR ให้เจ้าหน้าที่สแกน</h2>
+          <p className="mt-2 text-sm leading-relaxed text-dim">
+            เมนูนี้เป็นหน้ารวมทางลัดของสมาชิก ถ้าจะเข้าบ่อให้กด “QR เข้าบ่อ” เพื่อสร้างรหัสจากบัญชี LINE ของตัวเอง
+          </p>
+        </section>
       </div>
-      <BottomNav />
     </main>
   );
 }

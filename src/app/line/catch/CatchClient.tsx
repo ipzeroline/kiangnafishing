@@ -101,29 +101,56 @@ export default function CatchClient({ species }: { species: string[] }) {
 
   return (
     <LineLiffGate>
-      <main className="min-h-dvh bg-[#f5f8f7] px-4 py-6">
-        <form onSubmit={submit} className="mx-auto max-w-md rounded-lg bg-white p-6 shadow-sm ring-1 ring-line">
-          <p className="text-xs font-semibold uppercase tracking-widest text-dim">LINE Catch</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-deep">ส่งผลงานปลา</h1>
-          <div className="mt-5 space-y-4">
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">ชนิดปลา</span>
+      <main className="min-h-dvh bg-[#f5f8f7] px-3 py-3">
+        <div className="mx-auto flex min-h-[calc(100dvh-1.5rem)] max-w-md flex-col gap-3">
+          <section className="rounded-2xl bg-deep p-4 text-white shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/55">LINE Catch</p>
+                <h1 className="mt-1 font-display text-2xl font-semibold">ส่งผลงานปลา</h1>
+                <p className="mt-1 text-xs text-white/65">รูป 1 ใบ · น้ำหนัก · ชนิดปลา</p>
+              </div>
+              <a href="/catch" className="shrink-0 rounded-full bg-white/12 px-3 py-1.5 text-xs font-semibold text-white">
+                อัลบั้ม
+              </a>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold text-white/65">
+              <span className="rounded-xl bg-white/10 px-2 py-2">ถ่ายรูป</span>
+              <span className="rounded-xl bg-white/10 px-2 py-2">กรอกน้ำหนัก</span>
+              <span className="rounded-xl bg-white/10 px-2 py-2">รอตรวจ</span>
+            </div>
+          </section>
+
+          <form onSubmit={submit} className="flex flex-1 flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-line">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-pond">ข้อมูลผลงาน</p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-deep">รายการใหม่</h2>
+              </div>
+              <p className="rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-dim">{form.caption.length}/180</p>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold text-dim">ชนิดปลา</span>
               <select value={form.species} onChange={(e) => setForm((v) => ({ ...v, species: e.target.value }))}
-                className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond">
+                  className="h-12 w-full rounded-xl border border-line bg-white px-3 text-sm font-semibold text-deep outline-none focus:border-pond">
                 {species.map((name) => <option key={name} value={name}>{name}</option>)}
               </select>
             </label>
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">น้ำหนัก (กก.)</span>
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold text-dim">น้ำหนัก (กก.)</span>
               <input type="number" step="0.01" min="0" value={form.weightKg} onChange={(e) => setForm((v) => ({ ...v, weightKg: e.target.value }))}
-                className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond" />
+                  className="h-12 w-full rounded-xl border border-line px-3 text-sm font-semibold text-deep outline-none focus:border-pond" />
             </label>
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">รูปภาพผลงานปลา</span>
+            </div>
+
+            <label className="mt-3 block">
+              <span className="mb-1 block text-xs font-semibold text-dim">รูปภาพผลงานปลา</span>
               <input type="file" accept="image/*" disabled={busy || processingImage} onChange={(e) => readImage(e.target.files?.[0])}
-                className="w-full rounded-lg border border-line px-3 py-3 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-mist file:px-3 file:py-2 file:font-semibold file:text-deep focus:border-pond" />
+                className="w-full rounded-xl border border-line px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-mist file:px-3 file:py-2 file:font-semibold file:text-deep focus:border-pond" />
               {form.imageData && (
-                <div className="mt-3 overflow-hidden rounded-lg bg-mist ring-1 ring-line" style={{ aspectRatio: "4 / 3" }}>
+                <div className="mt-3 overflow-hidden rounded-xl bg-mist ring-1 ring-line" style={{ aspectRatio: "4 / 3" }}>
                   {/* Preview is the exact normalized image that will be uploaded. */}
                   <img src={form.imageData} alt="ตัวอย่างรูปผลงานปลา" className="h-full w-full object-cover" />
                 </div>
@@ -131,25 +158,28 @@ export default function CatchClient({ species }: { species: string[] }) {
               {processingImage
                 ? <span className="mt-2 block text-xs font-medium text-pond">กำลังปรับรูปภาพให้เป็นขนาดมาตรฐาน...</span>
                 : form.imageData
-                  ? <span className="mt-2 block text-xs font-medium text-pond">ระบบปรับรูปเป็น 4:3 ขนาด 1600x1200 แล้ว พร้อมบันทึกเข้า Cloudinary</span>
-                  : <span className="mt-2 block text-xs text-dim">เลือกได้ 1 รูปจากอัลบั้ม หรือถ่ายใหม่จากตัวเลือกของเครื่อง ระบบจะจัดภาพให้เท่ากันอัตโนมัติ</span>}
+                  ? <span className="mt-2 block text-xs font-medium text-pond">ปรับรูปเป็น 4:3 แล้ว พร้อมส่งตรวจ</span>
+                  : <span className="mt-2 block text-xs text-dim">เลือก 1 รูปจากอัลบั้ม หรือถ่ายใหม่ ระบบจะจัดภาพให้เท่ากันอัตโนมัติ</span>}
             </label>
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-ink">แคปชั่นโดนๆ</span>
+
+            <label className="mt-3 block">
+              <span className="mb-1 block text-xs font-semibold text-dim">แคปชั่น</span>
               <input value={form.caption} onChange={(e) => setForm((v) => ({ ...v, caption: e.target.value }))}
                 maxLength={180}
                 placeholder="เช่น ตัวนี้ลากคันแทบหลุดมือ"
-                className="w-full rounded-lg border border-line px-3 py-3 outline-none focus:border-pond" />
-              <span className="mt-1 block text-xs text-dim">{form.caption.length}/180 ตัวอักษร</span>
+                className="h-12 w-full rounded-xl border border-line px-3 text-sm outline-none focus:border-pond" />
             </label>
-          </div>
-          <p className="mt-4 text-sm text-dim">หลังส่งรายการแล้ว เจ้าหน้าที่จะตรวจสอบรูปภาพและน้ำหนักก่อนยืนยันเข้าสู่กระดานอันดับ</p>
-          {message && <p className="mt-4 rounded-lg bg-mist px-3 py-2 text-sm text-deep">{message}</p>}
-          <button disabled={busy || processingImage || !form.species || !form.weightKg} className="mt-5 w-full rounded-lg bg-pond py-3 font-semibold text-white disabled:opacity-50">
+
+            <div className="mt-3 rounded-xl bg-mist p-3 text-xs leading-relaxed text-dim">
+              เจ้าหน้าที่จะตรวจสอบรูปภาพและน้ำหนักก่อนยืนยันเข้าสู่กระดานอันดับ
+            </div>
+            {message && <p className="mt-3 rounded-xl bg-mist px-3 py-2 text-xs leading-relaxed text-deep">{message}</p>}
+            <button disabled={busy || processingImage || !form.species || !form.weightKg || !form.imageData} className="mt-auto w-full rounded-xl bg-pond py-3.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50">
             {busy ? "กำลังส่ง..." : processingImage ? "กำลังปรับรูป..." : "ส่งผลงานปลา"}
           </button>
-          <a href="/catch" className="mt-3 block text-center text-sm font-semibold text-pond">ดูอัลบั้มของฉัน</a>
-        </form>
+            <a href="/catch" className="mt-3 block text-center text-sm font-semibold text-pond">ดูอัลบั้มของฉัน</a>
+          </form>
+        </div>
       </main>
     </LineLiffGate>
   );

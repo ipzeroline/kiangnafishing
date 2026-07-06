@@ -401,7 +401,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
             <h1>{content.home.headline}</h1>
             <p>{content.home.intro}</p>
             <div className="site-hero-actions">
-              <Link href="https://line.me/R/ti/p/@038gyaxo" className="site-primary-btn">{content.home.primary}</Link>
+              <Link href={siteContact.lineHref} className="site-primary-btn">{content.home.primary}</Link>
               <Link href={pagePaths.contact[locale]} className="site-secondary-btn">{content.home.secondary}</Link>
             </div>
           </div>
@@ -957,13 +957,13 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
   const speciesCount = new Set(rows.map((item) => item.species)).size;
   const faqs = locale === "th"
     ? [
-        ["ตารางการลงปลาอัปเดตจากที่ไหน", "เคียงนา Fishing Lake อัปเดตรายการลงปลาจากข้อมูลที่ทีมงานตรวจสอบแล้ว พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่บนหน้านี้"],
-        ["ควรใช้ตารางลงปลาเพื่อวางแผนอย่างไร", "ดูวันที่ลงปลา ชนิดปลา และน้ำหนักรวมประกอบกับข่าวสารกิจกรรม แล้วติดต่อ LINE @038gyaxo เพื่อสอบถามรอบที่เหมาะกับการเข้าบ่อ"],
+        ["ตารางการลงปลาอัปเดตจากที่ไหน", "เคียงนา Fishing Lake อัปเดตรายการลงปลาจากข้อมูลที่ทีมงานตรวจสอบแล้ว พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่บนหน้านี้"],
+        ["ควรใช้ตารางลงปลาเพื่อวางแผนอย่างไร", "ดูวันที่ลงปลา ชนิดปลา และน้ำหนักรวมประกอบกับข่าวสารกิจกรรม แล้วติดต่อ LINE kiangnafishinglake เพื่อสอบถามรอบที่เหมาะกับการเข้าบ่อ"],
         ["จำนวนปลาและน้ำหนักรวมหมายถึงอะไร", "จำนวนตัวคือจำนวนปลาที่ลงในรอบนั้น ส่วนน้ำหนักรวมเป็นกิโลกรัมรวมของรอบลงปลา ใช้เป็นข้อมูลประกอบการวางแผนเท่านั้น"],
       ]
     : [
-        ["Where does the fish release schedule come from?", "Kiangna Fishing Lake publishes verified release updates with photos, species, fish count, total weight, details, and date."],
-        ["How should anglers use this schedule?", "Review the release date, species, and total weight together with event news, then contact LINE @038gyaxo to plan the best visit."],
+        ["Where does the fish release schedule come from?", "Kiangna Fishing Lake publishes verified release updates with photos, species, fish count, total weight, and date."],
+        ["How should anglers use this schedule?", "Review the release date, species, and total weight together with event news, then contact LINE kiangnafishinglake to plan the best visit."],
         ["What do fish count and total weight mean?", "Fish count is the number of fish released in that round. Total weight is the combined release weight in kilograms."],
       ];
   const jsonLd = {
@@ -994,7 +994,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             eventStatus: "https://schema.org/EventScheduled",
             image: item.imagePath.startsWith("http") ? item.imagePath : `${siteUrl}${item.imagePath}`,
             location: { "@type": "Place", name: content.brand },
-            description: item.detail || `${item.species} ${nf.format(Number(item.fishCount || 0))} fish, ${nf.format(Number(item.totalWeightKg || 0))} kg`,
+            description: `${item.species} ${nf.format(Number(item.fishCount || 0))} fish, ${nf.format(Number(item.totalWeightKg || 0))} kg`,
           },
         })),
       },
@@ -1020,8 +1020,8 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             <h1>{locale === "th" ? "ตารางการลงปลา เคียงนา Fishing Lake" : "Kiangna Fishing Lake Fish Release Schedule"}</h1>
             <p>
               {locale === "th"
-                ? "ติดตามรอบลงปลาล่าสุด พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม รายละเอียด และวันที่ลงปลา เพื่อวางแผนเข้าบ่อได้อย่างมั่นใจ"
-                : "Review official fish release updates with photos, species, fish count, total weight, details, and release dates before planning your visit."}
+                ? "ติดตามรอบลงปลาล่าสุด พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่ลงปลา เพื่อวางแผนเข้าบ่อได้อย่างมั่นใจ"
+                : "Review official fish release updates with photos, species, fish count, total weight, and release dates before planning your visit."}
             </p>
             <div className="site-hero-actions">
               <Link href={siteContact.lineHref} className="site-primary-btn" target="_blank" rel="noopener noreferrer">{content.cta}</Link>
@@ -1080,7 +1080,11 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
                       <b>{String(index + 1).padStart(2, "0")}</b>
                     </div>
                     <h2>{item.species}</h2>
-                    <p>{item.detail || (locale === "th" ? "รายละเอียดรอบลงปลาจะอัปเดตจากเจ้าหน้าที่" : "Release details will be updated by staff.")}</p>
+                    <p>
+                      {locale === "th"
+                        ? `ลงปลา ${item.fishCount ? nf.format(Number(item.fishCount)) : "-"} ตัว น้ำหนักรวม ${item.totalWeightKg ? `${nf.format(Number(item.totalWeightKg))} kg` : "-"}`
+                        : `${item.fishCount ? nf.format(Number(item.fishCount)) : "-"} fish released, ${item.totalWeightKg ? `${nf.format(Number(item.totalWeightKg))} kg` : "-"} total weight`}
+                    </p>
                     <dl>
                       <div>
                         <dt>{locale === "th" ? "จำนวนตัว" : "Fish count"}</dt>
@@ -1098,7 +1102,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
           ) : (
             <div className="fish-release-empty">
               <p className="site-eyebrow">{locale === "th" ? "ยังไม่มีรายการลงปลา" : "No release updates yet"}</p>
-              <h2>{locale === "th" ? "รอบลงปลาพร้อมรูปภาพและรายละเอียดจะแสดงที่นี่เมื่อมีการอัปเดต" : "Fish photos and release details will appear here when new updates are published."}</h2>
+              <h2>{locale === "th" ? "รอบลงปลาพร้อมรูปภาพ จำนวน และน้ำหนักรวมจะแสดงที่นี่เมื่อมีการอัปเดต" : "Fish photos, counts, and total weights will appear here when new updates are published."}</h2>
               <p>{locale === "th" ? "ติดตามหน้านี้หรือสอบถามทีมงานทาง LINE เพื่อรับข้อมูลรอบลงปลาล่าสุด" : "Follow this page or contact the team on LINE for the latest fish release information."}</p>
             </div>
           )}
@@ -1111,7 +1115,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             <p>
               {locale === "th"
                 ? "ตารางการลงปลาเป็นข้อมูลสำคัญสำหรับนักตกปลาที่ต้องการติดตามรอบปล่อยปลาใหญ่ กิจกรรมลงปลา และช่วงเวลาที่เหมาะกับการเข้าบ่อ รายการแต่ละรอบแสดงข้อมูลที่จำเป็นต่อการวางแผนอย่างชัดเจน"
-                : "The fish release schedule helps anglers follow release rounds, fish species, total release weight, and relevant lake activity details before visiting Kiangna Fishing Lake."}
+                : "The fish release schedule helps anglers follow release rounds, fish species, total release weight, and relevant lake activity information before visiting Kiangna Fishing Lake."}
             </p>
           </div>
           <ul>
@@ -1398,11 +1402,11 @@ export function AboutSitePage({ locale }: { locale: Locale }) {
         ["Transparent operations", "Important member, payment, catch, report, and audit records are reviewed by the team for reliable service."],
       ];
   const workflows = locale === "th"
-    ? ["เพิ่มเพื่อนบัญชีทางการ @038gyaxo", "เปิดเมนูบริการเพื่อเข้าบ่อ เติมเครดิต หรือส่งผลงานปลา", "รายการสำคัญจะถูกตรวจสอบก่อนยืนยัน", "ข้อมูลที่ผ่านการยืนยันจะแสดงในอันดับ แกลลอรี่ หรือประวัติสมาชิก"]
-    : ["Add the LINE account @038gyaxo", "Use the service menu for entry, credits, or catch submissions", "Staff review important records before approval", "Approved records appear in rankings, gallery, or member history"];
+    ? ["เพิ่มเพื่อนบัญชีทางการ kiangnafishinglake", "เปิดเมนูบริการเพื่อเข้าบ่อ เติมเครดิต หรือส่งผลงานปลา", "รายการสำคัญจะถูกตรวจสอบก่อนยืนยัน", "ข้อมูลที่ผ่านการยืนยันจะแสดงในอันดับ แกลลอรี่ หรือประวัติสมาชิก"]
+    : ["Add the LINE account kiangnafishinglake", "Use the service menu for entry, credits, or catch submissions", "Staff review important records before approval", "Approved records appear in rankings, gallery, or member history"];
   const faqs = locale === "th"
     ? [
-        ["เคียงนา Fishing Lake อยู่ที่ไหน", "เคียงนา Fishing Lake เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ ลูกค้าสามารถเปิดแผนที่จากหน้า Contact หรือสอบถามทาง LINE @038gyaxo"],
+        ["เคียงนา Fishing Lake อยู่ที่ไหน", "เคียงนา Fishing Lake เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ ลูกค้าสามารถเปิดแผนที่จากหน้า Contact หรือสอบถามทาง LINE kiangnafishinglake"],
         ["ระบบบริการใช้งานยากไหม", "ไม่ยาก ระบบถูกออกแบบให้เปิดเมนูแล้วเลือกบริการที่ต้องการได้เลย เช่น QR เข้าบ่อ เติมเครดิต ตรวจสอบยอด ส่งผลงานปลา และดูอันดับ"],
         ["อันดับนักตกปลาน่าเชื่อถืออย่างไร", "ผลงานปลาต้องผ่านการตรวจสอบจากเจ้าหน้าที่ก่อนนำไปคำนวณอันดับหรือแสดงในแกลลอรี่สาธารณะ"],
         ["ข้อมูลเครดิตและแต้มตรวจสอบได้หรือไม่", "รายการเครดิต แต้ม เติมเงิน และกิจกรรมสำคัญถูกบันทึกเป็นประวัติ จึงตรวจสอบย้อนหลังได้เมื่อจำเป็น"],
@@ -1570,7 +1574,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
         ["LINE", siteContact.lineId, "สอบถามรอบลงปลา เครดิต QR เข้าบ่อ ส่งผลงานปลา และติดต่อเจ้าหน้าที่", siteContact.lineHref, "เพิ่มเพื่อน LINE"],
         ["โทรศัพท์", siteContact.phone, "โทรสอบถามข้อมูลการเข้าใช้บริการ จองหมาย และกิจกรรมหน้าบ่อ", siteContact.phoneHref, "โทรเลย"],
         ["อีเมล", siteContact.email, "ติดต่อเรื่องข้อมูลธุรกิจ เอกสาร หรือคำถามที่ต้องการรายละเอียดเพิ่มเติม", siteContact.emailHref, "ส่งอีเมล"],
-        ["Facebook", "Kiangna Fishing Lake", "ติดตามข่าวสาร รูปภาพ กิจกรรม และประกาศจากบ่อตกปลาเคียงนา", siteContact.facebookHref, "เปิด Facebook"],
+        ["Facebook", "เคียงนา Fishing Lake", "ติดตามข่าวสาร รูปภาพ กิจกรรม และประกาศจากบ่อตกปลาเคียงนา", siteContact.facebookHref, "เปิด Facebook"],
         ["Instagram", "@kiangnafishinglake", "ติดตามภาพบรรยากาศริมบ่อ ผลงานปลา และโมเมนต์จากเคียงนา Fishing Lake", siteContact.instagramHref, "เปิด Instagram"],
         ["TikTok", "@kiangnafishinglake", "ชมคลิปบรรยากาศ กิจกรรม และผลงานปลาจากเคียงนา Fishing Lake", siteContact.tiktokHref, "เปิด TikTok"],
       ]
@@ -1578,7 +1582,7 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
         ["LINE", siteContact.lineId, "Ask about fish releases, credits, entry QR, catch submissions, and staff support.", siteContact.lineHref, "Add LINE friend"],
         ["Phone", siteContact.phone, "Call for lake visits, spot reservations, and event information.", siteContact.phoneHref, "Call now"],
         ["Email", siteContact.email, "Send business questions, document requests, or detailed inquiries.", siteContact.emailHref, "Send email"],
-        ["Facebook", "Kiangna Fishing Lake", "Follow news, photos, activities, and lake announcements.", siteContact.facebookHref, "Open Facebook"],
+        ["Facebook", "เคียงนา Fishing Lake", "Follow news, photos, activities, and lake announcements.", siteContact.facebookHref, "Open Facebook"],
         ["Instagram", "@kiangnafishinglake", "Follow lakeside photos, catch highlights, and Kiangna Fishing Lake moments.", siteContact.instagramHref, "Open Instagram"],
         ["TikTok", "@kiangnafishinglake", "Watch lake moments, activities, and catch highlights.", siteContact.tiktokHref, "Open TikTok"],
       ];
@@ -1587,12 +1591,12 @@ export function ContactSitePage({ locale }: { locale: Locale }) {
     : ["Fishing lake in Phayao, in Dok Kham Tai District", "Fish release schedules and lake events", "Entry QR, credits, points, and coupons", "Catch submissions and ranking verification", "Map and directions to Kiangna Fishing Lake"];
   const faqs = locale === "th"
     ? [
-        ["ติดต่อเคียงนา Fishing Lake ทางไหนเร็วที่สุด", "แนะนำให้เพิ่มเพื่อน LINE @038gyaxo เพื่อสอบถามรอบลงปลา เครดิต QR เข้าบ่อ การส่งผลงานปลา และติดต่อเจ้าหน้าที่"],
+        ["ติดต่อเคียงนา Fishing Lake ทางไหนเร็วที่สุด", "แนะนำให้เพิ่มเพื่อน LINE kiangnafishinglake เพื่อสอบถามรอบลงปลา เครดิต QR เข้าบ่อ การส่งผลงานปลา และติดต่อเจ้าหน้าที่"],
         ["บ่ออยู่พื้นที่ไหน", "เคียงนา Fishing Lake หรือเคียงนาฟิชชิ่งเลคพะเยา เป็นบ่อตกปลาพะเยา ในอำเภอดอกคำใต้ เหมาะกับคนค้นหาบ่อตกปลาใกล้ฉัน และสามารถเปิดเส้นทางจาก Google Maps ในหน้านี้ได้ทันที"],
         ["ต้องเตรียมข้อมูลอะไรก่อนสอบถาม", "หากเป็นสมาชิกให้แจ้งชื่อหรือบัญชี LINE ที่ใช้บริการ หากสอบถามจองหมายหรือกิจกรรมให้แจ้งวันที่ต้องการเข้าใช้บริการ"],
       ]
     : [
-        ["What is the fastest way to contact Kiangna Fishing Lake?", "Add LINE @038gyaxo for fish releases, credits, entry QR, catch submissions, and staff support."],
+        ["What is the fastest way to contact Kiangna Fishing Lake?", "Add LINE kiangnafishinglake for fish releases, credits, entry QR, catch submissions, and staff support."],
         ["Where is the lake located?", "Kiangna Fishing Lake is in Phayao, in Dok Kham Tai District. Use the Google Maps link on this page for directions."],
         ["What should I prepare before contacting staff?", "Members can share their name or LINE account. For visits or events, include the date you plan to come."],
       ];

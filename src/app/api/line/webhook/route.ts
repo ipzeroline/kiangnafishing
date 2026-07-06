@@ -83,7 +83,7 @@ async function replyByAction(replyToken: string, action: string) {
 function contactText() {
   return [
     "ติดต่อทีมงานเคียงนา Fishing Lake",
-    "LINE: @038gyaxo",
+    "LINE: kiangnafishinglake",
     "โทร: 062-229-3636",
     `หน้าติดต่อ: ${lineUrl("/contact")}`,
     "",
@@ -92,17 +92,20 @@ function contactText() {
 }
 
 async function fishStockingText() {
-  const rows = await query<Pick<FishStocking, "species" | "fishCount" | "totalWeightKg" | "detail" | "stockingDate">>(`
-    SELECT species, fishCount, totalWeightKg, detail, stockingDate
+  const rows = await query<Pick<FishStocking, "species" | "fishCount" | "totalWeightKg" | "stockingDate">>(`
+    SELECT species, fishCount, totalWeightKg, stockingDate
     FROM fish_stockings
     ORDER BY stockingDate DESC, createdAt DESC
     LIMIT 5
   `);
   if (rows.length === 0) {
     return [
-      "ตารางการลงปลา เคียงนา Fishing Lake",
+      "ตารางการลงปลา",
+      "เคียงนา Fishing Lake",
+      "",
       "ยังไม่มีรายการลงปลาที่เผยแพร่ในขณะนี้",
-      `ดูตารางเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
+      "",
+      `ดูตารางล่าสุด: ${lineUrl("/fish-stocking-schedule")}`,
       `สอบถามทีมงาน: ${lineUrl("/contact")}`,
     ].join("\n");
   }
@@ -110,11 +113,12 @@ async function fishStockingText() {
   const nf = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 2 });
   const lines = rows.flatMap((row, index) => {
     const date = dateLabel(row.stockingDate);
-    const detail = row.detail ? `รายละเอียด: ${shortText(row.detail, 64)}` : "";
     return [
-      `${index + 1}. ${date} · ${row.species}`,
-      `   จำนวน ${nf.format(Number(row.fishCount || 0))} ตัว · น้ำหนักรวม ${nf.format(Number(row.totalWeightKg || 0))} กก.`,
-      ...(detail ? [`   ${detail}`] : []),
+      `${index + 1}. ${row.species}`,
+      `วันที่: ${date}`,
+      `จำนวน: ${nf.format(Number(row.fishCount || 0))} ตัว`,
+      `น้ำหนักรวม: ${nf.format(Number(row.totalWeightKg || 0))} กก.`,
+      "",
     ];
   });
 
@@ -123,8 +127,7 @@ async function fishStockingText() {
     "เคียงนา Fishing Lake",
     "",
     ...lines,
-    "",
-    `ดูรูปและรายละเอียดเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
+    `ดูรูปและตารางเต็ม: ${lineUrl("/fish-stocking-schedule")}`,
     "ต้องการสอบถามรอบลงปลา พิมพ์ ติดต่อแอดมิน",
   ].join("\n");
 }
@@ -133,11 +136,6 @@ function dateLabel(value: string) {
   const date = String(value || "").slice(0, 10);
   if (!date) return "-";
   return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(`${date}T00:00:00`));
-}
-
-function shortText(value: string, maxLength: number) {
-  const clean = value.replace(/\s+/g, " ").trim();
-  return clean.length > maxLength ? `${clean.slice(0, maxLength - 1)}…` : clean;
 }
 
 function menuText() {
