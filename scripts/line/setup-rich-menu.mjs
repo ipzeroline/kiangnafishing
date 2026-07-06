@@ -27,7 +27,7 @@ const actionMap = {
   "/contact": staffContactLineUrl,
 };
 
-const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule)/g, (_all, route) => {
+const menu = JSON.parse(JSON.stringify(raw).replace(/https?:\/\/[^"\\]+(\/entry|\/wallet|\/catch|\/ranking|\/fish-stocking-schedule|\/contact)/g, (_all, route) => {
   return actionMap[route] || `${appUrl}${route}`;
 }));
 

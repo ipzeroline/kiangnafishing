@@ -1,5 +1,7 @@
 import { requireLineBrowser } from "@/lib/line-request";
 
+const staffContactLineUrl = "https://line.me/ti/p/SeS2mH9yey";
+
 const actions = [
   { href: "/line/entry", label: "QR เข้าบ่อ", detail: "เปิดให้เจ้าหน้าที่สแกน", tone: "bg-pond text-white" },
   { href: "/line/wallet", label: "เติมเครดิต", detail: "เลือกยอดหรือกรอกเอง", tone: "bg-white text-deep" },
@@ -9,7 +11,7 @@ const actions = [
   { href: "/catch", label: "อัลบั้มผลงาน", detail: "ตรวจสถานะผลงานของฉัน", tone: "bg-white text-deep" },
   { href: "/fish-stocking-schedule", label: "ตารางลงปลา", detail: "รอบลงปลาล่าสุด", tone: "bg-white text-deep" },
   { href: "/line-guide", label: "คู่มือ LINE", detail: "วิธีใช้งานระบบ", tone: "bg-white text-deep" },
-  { href: "/contact", label: "ติดต่อทีมงาน", detail: "LINE โทร แผนที่", tone: "bg-white text-deep" },
+  { href: staffContactLineUrl, label: "ติดต่อแอดมิน", detail: "แอด LINE เจ้าหน้าที่", tone: "bg-white text-deep" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -43,6 +45,8 @@ export default async function EntryPage() {
             <a
               key={item.href}
               href={item.href}
+              target={item.href.startsWith("http") ? "_blank" : undefined}
+              rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
               className={`rounded-2xl p-3 shadow-sm ring-1 ring-line ${item.tone}`}
             >
               <span className="block font-semibold">{item.label}</span>

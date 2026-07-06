@@ -10,6 +10,9 @@ type LineEvent = {
   postback?: { data?: string };
 };
 
+const staffContactLineId = "kingnafishinglake";
+const staffContactLineUrl = "https://line.me/ti/p/SeS2mH9yey";
+
 export async function POST(req: Request) {
   const raw = await req.text();
   const signature = req.headers.get("x-line-signature");
@@ -86,8 +89,8 @@ async function replyByAction(replyToken: string, action: string) {
 function contactText() {
   return [
     "ติดต่อเจ้าหน้าที่เคียงนา Fishing Lake",
-    "LINE ID: kingnafishinglake",
-    "กดเพิ่มเพื่อน: https://line.me/ti/p/SeS2mH9yey",
+    `LINE ID: ${staffContactLineId}`,
+    `กดเพิ่มเพื่อน: ${staffContactLineUrl}`,
     "โทร: 062-229-3636",
     "",
     "สอบถามรอบลงปลา การเข้าบ่อ เครดิต หรือให้เจ้าหน้าที่ช่วยตรวจสอบข้อมูลสมาชิกได้ที่ LINE นี้",
@@ -109,7 +112,7 @@ async function fishStockingText() {
       "ยังไม่มีรายการลงปลาที่เผยแพร่ในขณะนี้",
       "",
       `ดูตารางล่าสุด: ${lineUrl("/fish-stocking-schedule")}`,
-      `สอบถามทีมงาน: ${lineUrl("/contact")}`,
+      `สอบถามทีมงาน: ${staffContactLineUrl}`,
     ].join("\n");
   }
 
@@ -150,5 +153,6 @@ function menuText() {
     `ส่งผลงานปลา: ${lineUrl("/line/catch")}`,
     `อันดับ: ${lineUrl("/ranking")}`,
     `ตารางลงปลา: ${lineUrl("/fish-stocking-schedule")}`,
+    `ติดต่อแอดมิน: ${staffContactLineUrl}`,
   ].join("\n");
 }

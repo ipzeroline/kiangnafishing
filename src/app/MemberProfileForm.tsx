@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function MemberProfileForm({ name, alias, pictureUrl }: { name: string; alias: string; pictureUrl: string }) {
   const router = useRouter();
+  const pictureInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({ name, alias });
   const [pictureData, setPictureData] = useState("");
   const [previewUrl, setPreviewUrl] = useState(pictureUrl);
@@ -58,20 +59,33 @@ export default function MemberProfileForm({ name, alias, pictureUrl }: { name: s
   return (
     <form onSubmit={submit} className="rounded-card bg-white p-4 shadow-sm ring-1 ring-line sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div className="flex items-center gap-3 sm:w-48 sm:flex-col sm:items-start">
-          {canPreview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt={displayName} className="h-20 w-20 shrink-0 rounded-2xl object-cover ring-1 ring-line" />
-          ) : (
-            <span className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-deep text-2xl font-bold text-white">{displayName.slice(0, 1)}</span>
-          )}
-          <div className="min-w-0">
-            <h2 className="font-display text-lg font-semibold text-deep">แก้ไขข้อมูล</h2>
-            <p className="mt-1 text-sm leading-relaxed text-dim">ใช้แสดงในระบบสมาชิกและกระดานอันดับ</p>
+        <div className="rounded-2xl bg-mist/70 p-3 sm:w-52">
+          <div className="flex items-center gap-3 sm:flex-col sm:text-center">
+            {canPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={previewUrl} alt={displayName} className="h-24 w-24 shrink-0 rounded-2xl object-cover ring-2 ring-white shadow-sm" />
+            ) : (
+              <span className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-deep text-3xl font-bold text-white shadow-sm">{displayName.slice(0, 1)}</span>
+            )}
+            <div className="min-w-0 flex-1 sm:w-full">
+              <h2 className="font-display text-lg font-semibold text-deep">รูปโปรไฟล์</h2>
+              <p className="mt-1 text-xs leading-relaxed text-dim">รูปนี้จะแสดงในอันดับและข้อมูลสมาชิก</p>
+              <button
+                type="button"
+                onClick={() => pictureInputRef.current?.click()}
+                className="mt-3 w-full rounded-xl bg-deep px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-pond"
+              >
+                เปลี่ยนรูป
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
+          <div className="min-w-0">
+            <h2 className="font-display text-lg font-semibold text-deep">แก้ไขข้อมูล</h2>
+            <p className="mt-1 text-sm leading-relaxed text-dim">ใช้แสดงในระบบสมาชิกและกระดานอันดับ</p>
+          </div>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-ink">ชื่อแสดง</span>
@@ -86,10 +100,13 @@ export default function MemberProfileForm({ name, alias, pictureUrl }: { name: s
             </label>
           </div>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-deep hover:border-pond hover:text-pond">
-              อัปโหลดรูปโปรไฟล์
-              <input type="file" accept="image/png,image/jpeg,image/webp" onChange={choosePicture} className="sr-only" />
-            </label>
+            <button
+              type="button"
+              onClick={() => pictureInputRef.current?.click()}
+              className="inline-flex items-center justify-center rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-deep hover:border-pond hover:text-pond"
+            >
+              เลือกรูปใหม่
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -102,6 +119,7 @@ export default function MemberProfileForm({ name, alias, pictureUrl }: { name: s
               ลบรูป
             </button>
           </div>
+          <input ref={pictureInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={choosePicture} className="sr-only" />
           {message && <p className="mt-3 rounded-lg bg-mist px-3 py-2 text-sm text-deep">{message}</p>}
           <button disabled={busy} className="mt-4 w-full rounded-lg bg-pond px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50 sm:w-auto">
             {busy ? "กำลังบันทึก..." : "บันทึกข้อมูลสมาชิก"}
