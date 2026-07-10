@@ -334,12 +334,13 @@ function ContactChannelIcon({ title }: { title: string }) {
 
 export async function HomeSitePage({ locale }: { locale: Locale }) {
   const content = siteContent[locale];
-  const [ranking, levels, stats, events, gallery] = await Promise.all([
+  const [ranking, levels, stats, events, gallery, fishStockings] = await Promise.all([
     getHomeRanking(),
     getHomeLevels(),
     getHomeStats(locale),
     getHomeEvents(),
     getHomeGallery(),
+    getPublicFishStockings(),
   ]);
   const fallbackEvents = newsItems[locale].map(([title, detail], index) => ({
     id: `fallback-${index}`,
@@ -361,6 +362,7 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
   const displayGallery = gallery.length ? gallery : fallbackGallery;
   const seo = homeSeoContent[locale];
   const latestArticles = latestArticleItems(locale).slice(0, 3);
+  const latestFishStockings = fishStockings.slice(0, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -455,6 +457,49 @@ export async function HomeSitePage({ locale }: { locale: Locale }) {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="site-section site-section-tight home-stocking-section">
+          <div className="home-stocking-head">
+            <div>
+              <p className="site-eyebrow">{locale === "th" ? "ตารางการลงปลา" : "Fish Release Schedule"}</p>
+              <h2>{locale === "th" ? "ตารางการลงปลาล่าสุด" : "Latest fish releases"}</h2>
+            </div>
+            <Link href={pagePaths.fishStocking[locale]}>{locale === "th" ? "ดูทั้งหมด" : "View all"}</Link>
+          </div>
+          {latestFishStockings.length > 0 ? (
+            <div className="home-stocking-grid">
+              {latestFishStockings.map((item, index) => (
+                <article key={item.id} className="home-stocking-card">
+                  <div className="home-stocking-image">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.imagePath}
+                      alt={locale === "th" ? `ตารางการลงปลาล่าสุด ${item.species}` : `Latest fish release ${item.species}`}
+                      width={640}
+                      height={420}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      decoding={index === 0 ? "sync" : "async"}
+                    />
+                    {index === 0 ? <span>{locale === "th" ? "ล่าสุด" : "Latest"}</span> : null}
+                  </div>
+                  <div className="home-stocking-body">
+                    <time dateTime={item.stockingDate}>{dateText(item.stockingDate, locale)}</time>
+                    <h3>{item.species}</h3>
+                    <p>
+                      {locale === "th"
+                        ? `${item.fishCount ? Number(item.fishCount).toLocaleString("th-TH") : "-"} ตัว · ${item.totalWeightKg ? `${Number(item.totalWeightKg).toLocaleString("th-TH")} kg` : "-"}`
+                        : `${item.fishCount ? Number(item.fishCount).toLocaleString("en-US") : "-"} fish · ${item.totalWeightKg ? `${Number(item.totalWeightKg).toLocaleString("en-US")} kg` : "-"}`}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="home-stocking-empty">
+              <p>{locale === "th" ? "ยังไม่มีรายการลงปลาที่เผยแพร่" : "No published release records yet."}</p>
+            </div>
+          )}
         </section>
 
         <section className="site-section">
@@ -980,6 +1025,10 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
   const totalFish = rows.reduce((sum, item) => sum + Number(item.fishCount || 0), 0);
   const totalWeight = rows.reduce((sum, item) => sum + Number(item.totalWeightKg || 0), 0);
   const speciesCount = new Set(rows.map((item) => item.species)).size;
+  const latestRelease = rows[0];
+  const releaseIntro = locale === "th"
+    ? "รวมประวัติการลงปลาล่าสุดของบ่อตกปลาเคียงนา พร้อมวันที่ลงปลา รูปภาพจริง ชนิดปลา จำนวนตัว น้ำหนักรวม และรายละเอียดจากทีมงาน เพื่อช่วยให้นักตกปลาวางแผนเข้าบ่อได้แม่นยำขึ้น"
+    : "Browse the latest Kiangna Fishing Lake fish release records with dates, real photos, species, fish count, total weight, and team notes so anglers can plan a better visit.";
   const faqs = locale === "th"
     ? [
         ["ตารางการลงปลาอัปเดตจากที่ไหน", "เคียงนา Fishing Lake อัปเดตรายการลงปลาจากข้อมูลที่ทีมงานตรวจสอบแล้ว พร้อมรูปภาพ ชนิดปลา จำนวนตัว น้ำหนักรวม และวันที่บนหน้านี้"],
@@ -1019,7 +1068,14 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             eventStatus: "https://schema.org/EventScheduled",
             image: item.imagePath.startsWith("http") ? item.imagePath : `${siteUrl}${item.imagePath}`,
             location: { "@type": "Place", name: content.brand },
-            description: `${item.species} ${nf.format(Number(item.fishCount || 0))} fish, ${nf.format(Number(item.totalWeightKg || 0))} kg`,
+            description: item.detail.trim() || (locale === "th"
+              ? `ลงปลา ${item.species} จำนวน ${nf.format(Number(item.fishCount || 0))} ตัว น้ำหนักรวม ${nf.format(Number(item.totalWeightKg || 0))} กิโลกรัม`
+              : `${item.species}: ${nf.format(Number(item.fishCount || 0))} fish released, ${nf.format(Number(item.totalWeightKg || 0))} kg total weight`),
+            additionalProperty: [
+              { "@type": "PropertyValue", name: locale === "th" ? "ชนิดปลา" : "Species", value: item.species },
+              { "@type": "PropertyValue", name: locale === "th" ? "จำนวนตัว" : "Fish count", value: Number(item.fishCount || 0) },
+              { "@type": "PropertyValue", name: locale === "th" ? "น้ำหนักรวมกิโลกรัม" : "Total weight kg", value: Number(item.totalWeightKg || 0) },
+            ],
           },
         })),
       },
@@ -1050,7 +1106,6 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
             </p>
             <div className="site-hero-actions">
               <Link href={siteContact.lineHref} className="site-primary-btn" target="_blank" rel="noopener noreferrer">{content.cta}</Link>
-              <Link href={pagePaths.contact[locale]} className="site-secondary-btn">{locale === "th" ? "สอบถามรอบลงปลา" : "Ask about releases"}</Link>
             </div>
             <div className="fish-release-hero-proof" aria-label={locale === "th" ? "ข้อมูลหลักของตารางลงปลา" : "Fish release highlights"}>
               <span>{locale === "th" ? "ข้อมูลอัปเดตจากทีมงาน" : "Verified lake updates"}</span>
@@ -1058,6 +1113,7 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
               <span>{locale === "th" ? "รูปและน้ำหนักรวมครบ" : "Photos and total weight"}</span>
             </div>
           </div>
+
           <section className="fish-release-stats" aria-label={locale === "th" ? "สรุปตารางการลงปลา" : "Fish release summary"}>
             <article>
               <span>{locale === "th" ? "รายการเผยแพร่" : "Published rounds"}</span>
@@ -1079,14 +1135,23 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
         </section>
 
         <section className="site-section fish-release-section">
-          <div className="section-head">
-            <p className="site-eyebrow">{locale === "th" ? "ประวัติการลงปลา" : "Release Records"}</p>
-            <h2 className="h2">{locale === "th" ? "รายการลงปลาล่าสุด" : "Latest fish releases"}</h2>
+          <div className="section-head fish-release-record-head">
+            <div>
+              <p className="site-eyebrow">{locale === "th" ? "ประวัติการลงปลา" : "Release Records"}</p>
+              <h2 className="h2">{locale === "th" ? "รายการลงปลาล่าสุด" : "Latest fish releases"}</h2>
+              <p className="fish-release-section-copy">{releaseIntro}</p>
+            </div>
+            {latestRelease ? (
+              <div className="fish-release-record-meta">
+                <span>{locale === "th" ? "อัปเดตล่าสุด" : "Latest update"}</span>
+                <strong>{dateText(latestRelease.stockingDate, locale)}</strong>
+              </div>
+            ) : null}
           </div>
           {rows.length > 0 ? (
             <div className="fish-release-grid">
               {rows.map((item, index) => (
-                <article key={item.id} className={index === 0 ? "fish-release-card is-featured" : "fish-release-card"}>
+                <article key={item.id} className="fish-release-card" itemScope itemType="https://schema.org/Event">
                   <div className="fish-release-card-image">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -1098,18 +1163,27 @@ export async function FishStockingSitePage({ locale }: { locale: Locale }) {
                       fetchPriority={index === 0 ? "high" : "auto"}
                       decoding={index === 0 ? "sync" : "async"}
                     />
+                    {index === 0 ? (
+                      <span className="fish-release-card-badge">{locale === "th" ? "รอบล่าสุด" : "Latest round"}</span>
+                    ) : null}
                   </div>
                   <div className="fish-release-card-body">
                     <div className="fish-release-card-top">
-                      <span>{dateText(item.stockingDate, locale)}</span>
+                      <time dateTime={item.stockingDate} itemProp="startDate">{dateText(item.stockingDate, locale)}</time>
                       <b>{String(index + 1).padStart(2, "0")}</b>
                     </div>
-                    <h2>{item.species}</h2>
-                    <p>
+                    <h3 itemProp="name">{item.species}</h3>
+                    <p className="fish-release-card-summary">
                       {locale === "th"
                         ? `ลงปลา ${item.fishCount ? nf.format(Number(item.fishCount)) : "-"} ตัว น้ำหนักรวม ${item.totalWeightKg ? `${nf.format(Number(item.totalWeightKg))} kg` : "-"}`
                         : `${item.fishCount ? nf.format(Number(item.fishCount)) : "-"} fish released, ${item.totalWeightKg ? `${nf.format(Number(item.totalWeightKg))} kg` : "-"} total weight`}
                     </p>
+                    {item.detail.trim() ? (
+                      <p className="fish-release-card-detail" itemProp="description">
+                        <span>{locale === "th" ? "บันทึกรายละเอียด" : "Release note"}</span>
+                        {item.detail}
+                      </p>
+                    ) : null}
                     <dl>
                       <div>
                         <dt>{locale === "th" ? "จำนวนตัว" : "Fish count"}</dt>
